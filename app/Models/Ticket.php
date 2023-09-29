@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Ticket extends Model
 {
@@ -36,4 +37,23 @@ class Ticket extends Model
         return $this->belongsTo(Type::class);
     }
 
+    public function resolver()
+    {
+        return $this->belongsTo(Resolver::class);
+    }
+
+    public function assign(Resolver $resolver)
+    {
+        $this->resolver = $resolver;
+    }
+
+    public function setPriority(int $number): bool
+    {
+        if(Auth::user()->can('setPriority', $this)){
+            $this->priority = $number;
+            return true;
+        }
+
+        abort(403);
+    }
 }

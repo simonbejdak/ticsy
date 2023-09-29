@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\Incident;
+use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,6 +19,7 @@ class IncidentFactory extends TicketFactory
         return [
             'category_id' => rand(1, count(Incident::CATEGORIES)),
             'type_id' => Ticket::TYPES['incident'],
+            'resolver_id' => Resolver::factory()->create(),
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

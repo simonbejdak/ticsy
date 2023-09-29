@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('type_id')->constrained();
             $table->foreignId('category_id')->constrained();
+            $table->foreignId('resolver_id')->constrained()->references('id')->on('users');
             $table->enum('priority', Ticket::PRIORITIES)->default(Ticket::DEFAULT_PRIORITY);
             $table->text('description');
             $table->timestamps();

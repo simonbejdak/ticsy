@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\Request;
+use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,6 +19,7 @@ class RequestFactory extends TicketFactory
         return [
             'category_id' => Category::factory()->create(),
             'type_id' => Ticket::TYPES['request'],
+            'resolver_id' => Resolver::factory()->create(),
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

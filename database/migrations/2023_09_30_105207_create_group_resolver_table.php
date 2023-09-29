@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('group_resolver', function (Blueprint $table) {
             $table->foreignId('group_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('resolver_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('resolver_id')->constrained()->references('id')->on('users')->cascadeOnDelete();
             $table->primary(['group_id', 'resolver_id']);
             $table->timestamps();
         });

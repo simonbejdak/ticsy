@@ -1,15 +1,17 @@
 <?php
 
 
+namespace Tests\Feature;
+
 use App\Models\Change;
 use App\Models\Group;
 use App\Models\Incident;
+use App\Models\Request;
 use App\Models\Resolver;
-use App\Models\Type;
 use App\Models\Ticket;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class TicketTest extends TestCase
@@ -21,7 +23,6 @@ class TicketTest extends TestCase
     }
 
     use RefreshDatabase;
-
 
 
     function testIncidentTicketHasIncidentType()
@@ -47,20 +48,22 @@ class TicketTest extends TestCase
 
     function testTicketsCanHaveAllPredefinedPriorities()
     {
-        foreach (Ticket::PRIORITIES as $key => $value){
+        foreach (Ticket::PRIORITIES as $key => $value) {
             $ticket = Incident::factory(['priority' => $value])->create();
 
             $this->assertEquals($value, $ticket->priority);
         }
     }
 
-    function testSQLViolationThrowsWhenHigherPriorityThanPredefinedIsAssigned(){
+    function testSQLViolationThrowsWhenHigherPriorityThanPredefinedIsAssigned()
+    {
         $this->expectException(QueryException::class);
 
         Ticket::factory(['priority' => count(Ticket::PRIORITIES) + 1])->create();
     }
 
-    function testTicketHasCorrectDefaultPriority(){
+    function testTicketHasCorrectDefaultPriority()
+    {
         $ticket = new Ticket();
 
         $this->assertEquals(Ticket::DEFAULT_PRIORITY, $ticket->priority);
@@ -68,7 +71,7 @@ class TicketTest extends TestCase
 
     function testTicketsCanHaveAllPredefinedCategories()
     {
-        foreach (Ticket::CATEGORIES as $key => $value){
+        foreach (Ticket::CATEGORIES as $key => $value) {
             $ticket = Incident::factory(['category_id' => $value])->create();
 
             $this->assertEquals($value, $ticket->category_id);
@@ -87,7 +90,8 @@ class TicketTest extends TestCase
         $this->assertEquals('Request description', $request->description);
     }
 
-    function testResolversBelongToCorrectGroups(){
+    function testResolversBelongToCorrectGroups()
+    {
         $groupOne = Group::factory(['name' => 'Group One'])->create();
         $groupTwo = Group::factory(['name' => 'Group Two'])->create();
 
@@ -101,7 +105,8 @@ class TicketTest extends TestCase
         $this->assertEquals('Group Two', $resolverTwo->groups->all()[0]['name']);
     }
 
-    function testResolversCanBelongToMultipleGroups(){
+    function testResolversCanBelongToMultipleGroups()
+    {
         $groupOne = Group::factory(['name' => 'Group One'])->create();
         $groupTwo = Group::factory(['name' => 'Group Two'])->create();
 
@@ -111,5 +116,38 @@ class TicketTest extends TestCase
 
         $this->assertEquals('Group One', $resolver->groups->all()[0]['name']);
         $this->assertEquals('Group Two', $resolver->groups->all()[1]['name']);
+    }
+
+    function testOnlyOneResolverCanBeAssignedToTicket()
+    {
+        $ticket = Incident::factory()->create();
+        $resolverOne = Resolver::factory()->create();
+        $resolverTwo = Resolver::factory()->create();
+
+        $ticket->assign($resolverOne);
+
+        $this->assertEquals($resolverOne, $ticket->resolver);
+
+        $ticket->assign($resolverTwo);
+        $this->assertEquals($resolverTwo, $ticket->resolver);
+        $this->assertNotEquals($resolverOne, $ticket->resolver);
+    }
+
+    function testOnlyResolverWithPermissionCanChangeTicketPriority()
+    {
+        $resolverWithPermission = Resolver::factory(['can_change_priority' => 1])->create();
+        $resolverWithoutPermission = Resolver::factory()->create();
+
+        $this->actingAs($resolverWithPermission);
+
+        $ticket = Incident::factory(['resolver_id' => $resolverWithPermission])->create();
+
+        $this->assertTrue($ticket->setPriority(1));
+
+        $this->actingAs($resolverWithoutPermission);
+
+        $this->expectException(HttpException::class);
+
+        $ticket->setPriority(1);
     }
 }
