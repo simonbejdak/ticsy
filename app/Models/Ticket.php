@@ -37,6 +37,11 @@ class Ticket extends Model
         return $this->belongsTo(Type::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function resolver()
     {
         return $this->belongsTo(Resolver::class);
@@ -45,6 +50,11 @@ class Ticket extends Model
     public function assign(Resolver $resolver)
     {
         $this->resolver = $resolver;
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function setPriority(int $number): bool

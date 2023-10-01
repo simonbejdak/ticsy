@@ -12,4 +12,9 @@ class TicketsController extends Controller
         $tickets = Ticket::simplePaginate(10);
         return view('tickets.index', ['tickets' => $tickets]);
     }
+
+    public function show(Ticket $ticket)
+    {
+        return Ticket::findOrFail($ticket->id);
+    }
 }

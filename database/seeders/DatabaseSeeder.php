@@ -9,6 +9,7 @@ use App\Models\Incident;
 use App\Models\Resolver;
 use App\Models\Type;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use App\Models\Request;
 
@@ -32,5 +33,10 @@ class DatabaseSeeder extends Seeder
         Change::factory(10)->create();
 
         Resolver::factory(5)->create();
+
+        User::factory([
+            'name' => 'Šimon Bejdák',
+            'email' => 'bejdakxd@gmail.com',
+        ])->create();
     }
 }

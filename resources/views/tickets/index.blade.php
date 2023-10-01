@@ -1,9 +1,6 @@
-@extends('layouts.app')
-@section('content')
+<x-app-layout>
     @foreach($tickets as $ticket)
-        <div class="m-5 bg-amber-300">{{$ticket->description}}</div>
+        <x-ticket-card :$ticket />
     @endforeach
-    <div class="flex flex-row justify-between">
-        {{$tickets->links()}}
-    </div>
-@endsection
+    {{$tickets->links()}}
+</x-app-layout>
