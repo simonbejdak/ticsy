@@ -10,4 +10,9 @@ class Type extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
 }

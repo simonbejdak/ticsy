@@ -2,7 +2,7 @@
     <div class="flex justify-between h-8">
         <!-- Logo -->
         <div class="shrink-0 flex items-center">
-            <a href="{{ route('default') }}">
+            <a href="{{ route('home') }}">
                 <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
             </a>
         </div>
@@ -47,8 +47,8 @@
                     </div>
                 </div>
             @else
-                <a class="hover:underline" href="{{route('login')}}">Prihlásiť sa</a>
-                <a class="hover:underline" href="{{route('register')}}">Registrovať</a>
+                <a class="hover:underline" href="{{route('login')}}">Login</a>
+                <a class="hover:underline" href="{{route('register')}}">Register</a>
             @endauth
         </div>
     </div>

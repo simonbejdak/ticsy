@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,8 @@ class Ticket extends Model
 
     const PRIORITIES = [1, 2, 3, 4];
     const DEFAULT_PRIORITY = 4;
+
+    const DEFAULT_PAGINATION = 10;
 
     use HasFactory;
 

@@ -9,6 +9,7 @@ use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Resolver;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -27,31 +28,34 @@ class TicketTest extends TestCase
 
     function testIncidentTicketHasIncidentType()
     {
-        $ticket = Incident::factory()->create();
+        $ticket = Ticket::factory(['type_id' => Ticket::TYPES['incident']])
+            ->create();
 
-        $this->assertEquals('incident', $ticket->type->name);
+        $this->assertEquals('Incident', $ticket->type->name);
     }
 
     function testRequestTicketHasRequestType()
     {
-        $ticket = Request::factory()->create();
+        $ticket = Ticket::factory(['type_id' => Ticket::TYPES['request']])
+            ->create();
 
-        $this->assertEquals('request', $ticket->type->name);
+        $this->assertEquals('Request', $ticket->type->name);
     }
 
     function testChangeTicketHasChangeType()
     {
-        $ticket = Change::factory()->create();
+        $ticket = Ticket::factory(['type_id' => Ticket::TYPES['change']])
+            ->create();
 
-        $this->assertEquals('change', $ticket->type->name);
+        $this->assertEquals('Change', $ticket->type->name);
     }
 
     function testTicketsCanHaveAllPredefinedPriorities()
     {
-        foreach (Ticket::PRIORITIES as $key => $value) {
-            $ticket = Incident::factory(['priority' => $value])->create();
+        foreach (Ticket::PRIORITIES as $PRIORITY) {
+            $ticket = Ticket::factory(['priority' => $PRIORITY])->create();
 
-            $this->assertEquals($value, $ticket->priority);
+            $this->assertEquals($PRIORITY, $ticket->priority);
         }
     }
 
@@ -72,7 +76,7 @@ class TicketTest extends TestCase
     function testTicketsCanHaveAllPredefinedCategories()
     {
         foreach (Ticket::CATEGORIES as $key => $value) {
-            $ticket = Incident::factory(['category_id' => $value])->create();
+            $ticket = Ticket::factory(['category_id' => $value])->create();
 
             $this->assertEquals($value, $ticket->category_id);
         }
@@ -80,17 +84,21 @@ class TicketTest extends TestCase
 
     function testIncidentAndRequestTypesAcceptArbitraryTextMarkedAsDescription()
     {
-        $incident = Incident::factory()->create();
-        $request = Request::factory()->create();
+        $incident = Ticket::factory([
+                'type_id' => Ticket::TYPES['incident'],
+                'description' => 'Incident description',
+            ])->create();
 
-        $incident->description = 'Incident description';
-        $request->description = 'Request description';
+        $request = Ticket::factory([
+            'type_id' => Ticket::TYPES['request'],
+            'description' => 'Request description',
+        ])->create();
 
         $this->assertEquals('Incident description', $incident->description);
         $this->assertEquals('Request description', $request->description);
     }
 
-    function testResolversBelongToCorrectGroups()
+    function testResolversCanBelongToGroups()
     {
         $groupOne = Group::factory(['name' => 'Group One'])->create();
         $groupTwo = Group::factory(['name' => 'Group Two'])->create();
@@ -105,7 +113,7 @@ class TicketTest extends TestCase
         $this->assertEquals('Group Two', $resolverTwo->groups->all()[0]['name']);
     }
 
-    function testResolversCanBelongToMultipleGroups()
+    function testResolverCanBelongToMultipleGroups()
     {
         $groupOne = Group::factory(['name' => 'Group One'])->create();
         $groupTwo = Group::factory(['name' => 'Group Two'])->create();
@@ -120,7 +128,7 @@ class TicketTest extends TestCase
 
     function testOnlyOneResolverCanBeAssignedToTicket()
     {
-        $ticket = Incident::factory()->create();
+        $ticket = Ticket::factory()->create();
         $resolverOne = Resolver::factory()->create();
         $resolverTwo = Resolver::factory()->create();
 
@@ -140,7 +148,7 @@ class TicketTest extends TestCase
 
         $this->actingAs($resolverWithPermission);
 
-        $ticket = Incident::factory(['resolver_id' => $resolverWithPermission])->create();
+        $ticket = Ticket::factory(['resolver_id' => $resolverWithPermission])->create();
 
         $this->assertTrue($ticket->setPriority(1));
 
@@ -149,5 +157,62 @@ class TicketTest extends TestCase
         $this->expectException(HttpException::class);
 
         $ticket->setPriority(1);
+    }
+
+    function testTicketsIndexShowsTicketsCorrectly(){
+        Ticket::truncate();
+
+        $this->actingAs(User::factory()->create());
+
+        $userOne = User::factory(['name' => 'John'])->create();
+        $resolverOne = Resolver::factory(['name' => 'Thomas'])->create();
+
+        Ticket::factory([
+            'description' => 'Ticket 1 description',
+            'user_id' => $userOne,
+            'resolver_id' => $resolverOne,
+        ])->create();
+
+        $response = $this->get(route('tickets.index'));
+        $response->assertSee('Ticket 1 description');
+        $response->assertDontSee('Ticket 2 description');
+        $response->assertSee('John');
+        $response->assertSee('Thomas');
+        $response->assertDontSee('Alex');
+
+        $userTwo = User::factory(['name' => 'Alex'])->create();
+        $resolverTwo = Resolver::factory(['name' => 'Jane'])->create();
+
+        Ticket::factory([
+            'description' => 'Ticket 2 description',
+            'user_id' => $userTwo,
+            'resolver_id' => $resolverTwo,
+        ])->create();
+
+        $response = $this->get(route('tickets.index'));
+        $response->assertSee('Ticket 1 description');
+        $response->assertSee('Ticket 2 description');
+        $response->assertDontSee('Ticket 3 description');
+        $response->assertSee('John');
+        $response->assertSee('Thomas');
+        $response->assertSee('Alex');
+        $response->assertSee('Jane');
+    }
+
+    function testTicketsIndexPaginationShowsCorrectNumberOfTickets(){
+        Ticket::truncate();
+
+        $this->actingAs(User::factory()->create());
+
+        Ticket::factory(Ticket::DEFAULT_PAGINATION)->create();
+        Ticket::factory(['description' =>
+            $description = 'This ticket is supposed to be on second pagination page'
+        ])->create();
+
+        $response = $this->get(route('tickets.index', ['page' => 1]));
+        $response->assertDontSee($description);
+
+        $response = $this->get(route('tickets.index', ['page' => 2]));
+        $response->assertSee($description);
     }
 }

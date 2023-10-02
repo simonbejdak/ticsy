@@ -1,5 +1,5 @@
-<a href="{{route('requests.create')}}">
-    <div class="mt-8 flex flex-row rounded-sm shadow-md px-2 py-2 my-2 bg-white justify-between items-center max-w-xs">
+<a href="{{route('tickets.create', ['type' => 'request'])}}">
+    <div class="mt-2 flex flex-row rounded-sm shadow-md px-2 py-2 my-2 bg-white justify-between items-center max-w-xs">
         <div class="flex flex-row w-full justify-center">
             <div class="mr-2 flex flex-col justify-center">
                 <svg class="w-16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

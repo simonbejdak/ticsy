@@ -20,4 +20,19 @@ class TicketPolicy
     {
         return $resolver->canChangePriority();
     }
+
+    public function edit(User $user, Ticket $ticket)
+    {
+        return $user->id === $ticket->user_id;
+    }
+
+    public function update(User $user, Ticket $ticket)
+    {
+        return $user->id === $ticket->user_id;
+    }
+
+    public function destroy(User $user, Ticket $ticket)
+    {
+        return $user->id === $ticket->user_id;
+    }
 }

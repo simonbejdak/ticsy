@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory([
+            'name' => 'Šimon Bejdák',
+            'email' => 'bejdakxd@gmail.com',
+        ])->create();
+
         foreach (Ticket::TYPES as $key => $value){
             Type::factory(['name' => $key])->create();
         }
@@ -28,15 +33,8 @@ class DatabaseSeeder extends Seeder
             Category::factory(['name' => $key])->create();
         }
 
-        Incident::factory(10)->create();
-        Request::factory(10)->create();
-        Change::factory(10)->create();
+        Ticket::factory(30)->create();
 
         Resolver::factory(5)->create();
-
-        User::factory([
-            'name' => 'Šimon Bejdák',
-            'email' => 'bejdakxd@gmail.com',
-        ])->create();
     }
 }
