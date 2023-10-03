@@ -15,6 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-100 dark:bg-slate-100">
+        <x-flash-messages></x-flash-messages>
         <div class="min-h-screen">
             <x-navbar />
             <!-- Page Heading -->

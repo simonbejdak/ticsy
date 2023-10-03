@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             Category::factory(['name' => $key])->create();
         }
 
-        Ticket::factory(30)->create();
+        Ticket::factory(30)->existing()->create();
 
         Resolver::factory(5)->create();
     }

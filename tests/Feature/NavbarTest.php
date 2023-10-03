@@ -11,7 +11,7 @@ class NavbarTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testGuestUserSeesCorrectAuthMenu()
+    public function test_it_shows_correct_menu_to_guest_user()
     {
         $response = $this->get(route('home'));
 
@@ -20,15 +20,15 @@ class NavbarTest extends TestCase
         $response->assertDontSee('Logout');
     }
 
-    public function testAuthUserSeesCorrectAuthMenu()
+    public function test_it_shows_correct_menu_to_auth_user()
     {
         $this->actingAs(User::factory([
-            'name' => 'Šimon Bejdák',
+            'name' => 'John Doe',
         ])->create());
 
         $response = $this->get(route('home'));
 
-        $response->assertSee('Šimon Bejdák');
+        $response->assertSee('John Doe');
         $response->assertSee('Logout');
         $response->assertDontSee('Login');
         $response->assertDontSee('Register');

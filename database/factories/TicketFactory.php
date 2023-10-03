@@ -18,13 +18,28 @@ class TicketFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => 1,
-            'category_id' => rand(1, count(Ticket::CATEGORIES)),
-            'type_id' => rand(1, count(Ticket::TYPES)),
+            'user_id' => User::factory()->create(),
+            'category_id' => Category::factory()->create(),
+            'type_id' => Type::factory()->create(),
             'resolver_id' => Resolver::factory()->create(),
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
+    }
+
+    public function existing(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'user_id' => 2,
+                'category_id' => rand(1, count(Ticket::CATEGORIES)),
+                'type_id' => rand(1, count(Ticket::TYPES)),
+                'resolver_id' => Resolver::factory()->create(),
+                'description' => fake()->sentence(10),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+        });
     }
 }

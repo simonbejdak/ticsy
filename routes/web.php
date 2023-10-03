@@ -24,7 +24,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::resource('/tickets', TicketsController::class)->middleware(Authenticate::class);
 
-Route::get('/tickets/create/{type}', [TicketsController::class, 'create'])->name('tickets.create');
-Route::get('/tickets/edit/{id}', [TicketsController::class, 'edit'])->name('tickets.edit');
+Route::get('/tickets/create/{type?}', [TicketsController::class, 'create'])->name('tickets.create')
+    ->middleware(Authenticate::class);
+Route::get('/tickets/edit/{id}', [TicketsController::class, 'edit'])->name('tickets.edit')
+    ->middleware(Authenticate::class);
+Route::patch('/tickets/set/priority/{priority}/{id}', [TicketsController::class, 'setPriority'])->name('tickets.setPriority')->middleware(Authenticate::class);
 
 require __DIR__.'/auth.php';

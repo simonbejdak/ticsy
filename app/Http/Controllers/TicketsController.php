@@ -4,32 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Incident;
+use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketsController extends Controller
 {
+    const DEFAULT_PAGINATION = 10;
 
     public function index()
     {
-        $tickets = Ticket::with(['category', 'user', 'resolver'])
+        $user = Auth::user();
+        $tickets = $user->tickets()
+            ->with(['category', 'user', 'resolver'])
             ->latest()
-            ->simplePaginate(Ticket::DEFAULT_PAGINATION);
+            ->simplePaginate(self::DEFAULT_PAGINATION);
 
         return view('tickets.index', ['tickets' => $tickets]);
     }
 
     public function show(Ticket $ticket)
     {
-        $ticket = Ticket::findOrFail($ticket->id);
+        $this->authorize('show', $ticket);
 
-        return view('tickets.show', ['ticket' => $ticket]);
+        $ticket = Ticket::findOrFail($ticket->id);
+        $resolvers = Resolver::all();
+
+        return view('tickets.show', [
+            'ticket' => $ticket,
+            'resolvers' => $resolvers,
+        ]);
     }
 
     public function create($type = null)
     {
-        $type = Type::where('name', '=', $type)->firstOrFail();
+        $type = ($type === null) ? Type::find(Ticket::DEFAULT_TYPE) : Type::where('name', '=', $type)->firstOrFail();
 
         $formType = ucfirst('create');
         $action = route('tickets.store');
@@ -47,16 +58,19 @@ class TicketsController extends Controller
 
     public function store(Request $request)
     {
+        $min_desc = Ticket::MINIMUM_DESCRIPTION_CHARACTERS;
+        $max_desc = Ticket::MAXIMUM_DESCRIPTION_CHARACTERS;
+
         $request->validate([
             'type' => 'numeric|required|min:1|max:' . count(Ticket::TYPES),
             'category' => 'numeric|required|min:1|max:' . count(Ticket::CATEGORIES),
-            'description' => 'string|required|min:8|max:255',
+            'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
             'priority' => 'numeric|required|min:1|max:' . count(Ticket::PRIORITIES),
         ]);
 
         $ticket = new Incident();
-        $ticket->user_id = 1;
-        $ticket->type_id = Ticket::TYPES['incident'];
+        $ticket->user_id = Auth::user()->id;
+        $ticket->type_id = $request['type'];
         $ticket->category_id = $request['category'];
         $ticket->description = $request['description'];
         $ticket->save();
@@ -86,7 +100,7 @@ class TicketsController extends Controller
     {
         $ticket = Ticket::findOrFail($id);
 
-        $this->authorize('destroy', $ticket);
+        $this->authorize('update', $ticket);
 
         $request->validate([
             'priority' => 'numeric|required|min:1|max:' . count(Ticket::PRIORITIES),
@@ -107,5 +121,17 @@ class TicketsController extends Controller
         $ticket->delete();
 
         return redirect()->route('tickets.index');
+    }
+
+    public function setPriority(int $priority, int $id)
+    {
+        $ticket = Ticket::findOrFail($id);
+
+        $this->authorize('setPriority', $ticket);
+
+        $ticket->priority = $priority;
+        $ticket->save();
+
+        return redirect()->route('tickets.show', $ticket);
     }
 }

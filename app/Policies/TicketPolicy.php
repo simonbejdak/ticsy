@@ -18,7 +18,12 @@ class TicketPolicy
 
     public function setPriority(Resolver $resolver, Ticket $ticket): bool
     {
-        return $resolver->canChangePriority();
+        return (bool) $resolver->can_change_priority;
+    }
+
+    public function show(User $user, Ticket $ticket)
+    {
+        return $user->id === $ticket->user_id;
     }
 
     public function edit(User $user, Ticket $ticket)

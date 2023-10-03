@@ -9,6 +9,14 @@ class Resolver extends User
 {
     protected $table = 'users';
 
+    protected $attributes = [
+        'can_change_priority' => false,
+    ];
+
+    protected $casts = [
+        'can_change_priority' => 'boolean',
+    ];
+
     use HasFactory;
 
     public static function boot()
@@ -25,10 +33,5 @@ class Resolver extends User
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
-    }
-
-    public function canChangePriority(): bool
-    {
-        return (bool) $this->can_change_priority;
     }
 }

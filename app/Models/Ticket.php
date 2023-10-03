@@ -14,7 +14,7 @@ class Ticket extends Model
         'request' => 2,
         'change' => 3,
     ];
-
+    const DEFAULT_TYPE = 1;
     const CATEGORIES = [
         'network' => 1,
         'server' => 2,
@@ -22,11 +22,11 @@ class Ticket extends Model
         'application' => 4,
         'email' => 5,
     ];
-
     const PRIORITIES = [1, 2, 3, 4];
     const DEFAULT_PRIORITY = 4;
-
     const DEFAULT_PAGINATION = 10;
+    const MINIMUM_DESCRIPTION_CHARACTERS = 8;
+    const MAXIMUM_DESCRIPTION_CHARACTERS = 255;
 
     use HasFactory;
 
@@ -58,15 +58,5 @@ class Ticket extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function setPriority(int $number): bool
-    {
-        if(Auth::user()->can('setPriority', $this)){
-            $this->priority = $number;
-            return true;
-        }
-
-        abort(403);
     }
 }
