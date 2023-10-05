@@ -7,6 +7,7 @@ use App\Models\Incident;
 use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\Type;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -80,20 +81,9 @@ class TicketsController extends Controller
             'formType' => $formType,
             'categories' => Category::all(),
             'priorities' => Ticket::PRIORITIES,
+            'resolvers' => User::where('is_resolver', '=', true)->get(),
             'action' => $action,
         ]);
-    }
-
-    public function destroy($id)
-    {
-        $ticket = Ticket::findOrFail($id);
-
-        $this->authorize('destroy', $ticket);
-
-        $ticket->delete();
-
-        Session::flash('error', 'You have deleted the ticket');
-        return redirect()->route('tickets.index');
     }
 
     public function setPriority($id, Request $request)
@@ -106,6 +96,19 @@ class TicketsController extends Controller
         $ticket->save();
 
         Session::flash('success', 'You have successfully changed the priority');
+        return redirect()->route('tickets.edit', $ticket);
+    }
+
+    public function setResolver($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+
+        $this->authorize('setResolver', $ticket);
+
+        $ticket->resolver_id = $request['resolver'];
+        $ticket->save();
+
+        Session::flash('success', 'You have successfully changed the resolver');
         return redirect()->route('tickets.edit', $ticket);
     }
 }

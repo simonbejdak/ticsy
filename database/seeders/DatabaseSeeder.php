@@ -2,16 +2,11 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Category;
-use App\Models\Change;
-use App\Models\Incident;
-use App\Models\Resolver;
 use App\Models\Type;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Models\Request;
 
 class DatabaseSeeder extends Seeder
 {
@@ -38,6 +33,6 @@ class DatabaseSeeder extends Seeder
 
         Ticket::factory(30)->existing()->create();
 
-        Resolver::factory(5)->create();
+        User::factory(5)->resolver()->create();
     }
 }

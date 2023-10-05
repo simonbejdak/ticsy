@@ -1,5 +1,3 @@
-<div class="flex flex-row w-full justify-center">
-    <div class="flex flex-col space-y-8 w-1/3">
-        {{ $slot }}
-    </div>
+<div class="grid grid-cols-3 grid-flow-col grid-rows-5 gap-4 w-full">
+    {{ $slot }}
 </div>

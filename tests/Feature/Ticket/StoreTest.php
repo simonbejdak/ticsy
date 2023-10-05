@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Str;
 use Tests\TestCase;
 
-class TicketsStoreTest extends TestCase
+class StoreTest extends TestCase
 {
     use RefreshDatabase;
     function test_it_permits_authenticated_user_to_store_ticket(){

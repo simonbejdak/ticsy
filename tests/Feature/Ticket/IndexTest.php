@@ -10,7 +10,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class TicketsIndexTest extends TestCase
+class IndexTest extends TestCase
 {
     use RefreshDatabase;
     function testTicketsIndexRedirectsGuestsToLoginPage()

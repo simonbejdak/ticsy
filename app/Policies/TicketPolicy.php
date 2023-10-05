@@ -40,4 +40,9 @@ class TicketPolicy
     {
         return (bool) $user->can_change_priority;
     }
+
+    public function setResolver(User $user, Ticket $ticket)
+    {
+        return (bool) $user->is_resolver;
+    }
 }

@@ -2,11 +2,10 @@
     'submittable' => false,
     'disabled' => false,
     'name',
-    'values',
-    'selected',
 ])
+
 <div class="flex flex-col space-y-2">
-    <x-input-label class="font-bold text-lg" for="{{ $name }}">Priority</x-input-label>
+    <x-input-label class="font-bold text-lg" for="{{ $name }}">{{ ucfirst($name) }}</x-input-label>
     <div class="flex flex-row space-x-2">
         <select
             {{ ($disabled) ? 'disabled' : '' }}
@@ -14,9 +13,8 @@
             name="{{ $name }}"
             id="{{ $name }}"
         >
-            @foreach($values as $value)
-                <option {{ ($value == $selected) ? 'selected' : '' }} value="{{ $value }}">{{ $value }}</option>
-            @endforeach
+            <x-ticket-select-option></x-ticket-select-option>
+            {{ $slot }}
         </select>
         @if($submittable)
             <x-secondary-button type="submit">Update</x-secondary-button>

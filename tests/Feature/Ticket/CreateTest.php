@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class TicketsCreateTest extends TestCase
+class CreateTest extends TestCase
 {
     use RefreshDatabase;
     function test_it_redirects_guests_to_login_page()
