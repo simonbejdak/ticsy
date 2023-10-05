@@ -10,7 +10,9 @@
     @isset($tickets)
         <div class="mt-12 flex flex-row justify-between">
             <h2 class="text-2xl">Recent tickets you have already created: </h2>
-            <a href="{{route('tickets.index')}}" class="rounded-lg shadow-md px-2 py-1 bg-white">See All</a>
+            <a href="{{route('tickets.index')}}">
+                <x-secondary-button>See All</x-secondary-button>
+            </a>
         </div>
         <div class="mb-4 flex flex-col justify-start mt-4 space-y-4">
             @foreach($tickets as $ticket)

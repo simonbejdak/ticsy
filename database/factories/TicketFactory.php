@@ -21,7 +21,7 @@ class TicketFactory extends Factory
             'user_id' => User::factory()->create(),
             'category_id' => Category::factory()->create(),
             'type_id' => Type::factory()->create(),
-            'resolver_id' => Resolver::factory()->create(),
+            'resolver_id' => User::factory()->resolver()->create(),
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

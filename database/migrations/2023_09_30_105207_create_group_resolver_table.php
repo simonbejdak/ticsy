@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_resolver', function (Blueprint $table) {
+        Schema::create('group_user', function (Blueprint $table) {
             $table->foreignId('group_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('resolver_id')->constrained()->references('id')->on('users')->cascadeOnDelete();
-            $table->primary(['group_id', 'resolver_id']);
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->primary(['group_id', 'user_id']);
             $table->timestamps();
         });
     }

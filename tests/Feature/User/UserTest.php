@@ -1,14 +1,15 @@
 <?php
 
-namespace Resolver;
+namespace User;
 
 use App\Models\Group;
 use App\Models\Resolver;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ResolverTest extends TestCase
+class UserTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -16,7 +17,7 @@ class ResolverTest extends TestCase
     {
         $groupOne = Group::factory(['name' => 'Group 0'])->create();
         $groupTwo = Group::factory(['name' => 'Group 1'])->create();
-        $resolver = Resolver::factory()->create();
+        $resolver = User::factory()->resolver()->create();
 
         $resolver->groups()->attach($groupOne);
         $resolver->groups()->attach($groupTwo);
@@ -31,8 +32,8 @@ class ResolverTest extends TestCase
     function test_only_one_resolver_can_be_assigned_to_ticket()
     {
         $ticket = Ticket::factory()->create();
-        $resolverOne = Resolver::factory()->create();
-        $resolverTwo = Resolver::factory()->create();
+        $resolverOne = User::factory()->resolver()->create();
+        $resolverTwo = User::factory()->resolver()->create();
 
         $ticket->assign($resolverOne);
 
@@ -43,24 +44,35 @@ class ResolverTest extends TestCase
         $this->assertNotEquals($resolverOne, $ticket->resolver);
     }
 
-    function test_only_resolver_with_permission_can_change_ticket_priority()
+    function test_it_can_change_ticket_priority_with_permission()
     {
-        $resolverWithPermission = Resolver::factory(['can_change_priority' => true])->create();
-        $resolverWithoutPermission = Resolver::factory()->create();
+        $resolver = User::factory()->canChangePriority()->create();
 
-        $ticket = Ticket::factory([
-            'resolver_id' => $resolverWithPermission,
-            'priority' => 4,
-        ])->create();
+        $ticket = Ticket::factory(['priority' => 4])->create();
 
-        $this->actingAs($resolverWithPermission);
+        $this->actingAs($resolver);
 
-        $result = $this->patch(route('tickets.setPriority', ['priority' => 2, 'id' => $ticket]));
+        $result = $this->patch(route('tickets.set-priority', $ticket), ['priority' => 2]);
 
-        $result->assertRedirectToRoute('tickets.show', $ticket);
+        $result->assertRedirectToRoute('tickets.edit', $ticket);
 
         $ticket = Ticket::findOrFail($ticket->id);
-
         $this->assertEquals(2, $ticket->priority);
+    }
+
+    function test_it_cannot_change_ticket_priority_without_permission()
+    {
+        $resolver = User::factory()->create();
+
+        $ticket = Ticket::factory(['priority' => 4])->create();
+
+        $this->actingAs($resolver);
+
+        $response = $this->patch(route('tickets.set-priority', $ticket), ['priority' => 2]);
+
+        $response->assertForbidden();
+
+        $ticket = Ticket::findOrFail($ticket->id);
+        $this->assertEquals(4, $ticket->priority);
     }
 }

@@ -32,9 +32,9 @@ class TicketsIndexTest extends TestCase
             'name' => $tested['user_name']
         ])->create();
 
-        $resolver = Resolver::factory([
+        $resolver = User::factory([
             'name' => $tested['resolver_name']
-        ])->create();
+        ])->resolver()->create();
 
         $this->actingAs($user);
 

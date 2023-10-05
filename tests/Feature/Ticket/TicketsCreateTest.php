@@ -13,7 +13,7 @@ class TicketsCreateTest extends TestCase
     use RefreshDatabase;
     function test_it_redirects_guests_to_login_page()
     {
-        $response = $this->get(route('tickets.create', 'incident'));
+        $response = $this->get(route('tickets.create'));
 
         $response->assertRedirectToRoute('login');
     }

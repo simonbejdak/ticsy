@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class TicketsController extends Controller
 {
@@ -23,19 +24,6 @@ class TicketsController extends Controller
             ->simplePaginate(self::DEFAULT_PAGINATION);
 
         return view('tickets.index', ['tickets' => $tickets]);
-    }
-
-    public function show(Ticket $ticket)
-    {
-        $this->authorize('show', $ticket);
-
-        $ticket = Ticket::findOrFail($ticket->id);
-        $resolvers = Resolver::all();
-
-        return view('tickets.show', [
-            'ticket' => $ticket,
-            'resolvers' => $resolvers,
-        ]);
     }
 
     public function create($type = null)
@@ -65,7 +53,6 @@ class TicketsController extends Controller
             'type' => 'numeric|required|min:1|max:' . count(Ticket::TYPES),
             'category' => 'numeric|required|min:1|max:' . count(Ticket::CATEGORIES),
             'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
-            'priority' => 'numeric|required|min:1|max:' . count(Ticket::PRIORITIES),
         ]);
 
         $ticket = new Incident();
@@ -75,7 +62,8 @@ class TicketsController extends Controller
         $ticket->description = $request['description'];
         $ticket->save();
 
-        return redirect()->route('tickets.show', $ticket);
+        Session::flash('success', 'You have successfully created a ticket');
+        return redirect()->route('tickets.edit', $ticket);
     }
 
     public function edit($id)
@@ -96,22 +84,6 @@ class TicketsController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
-    {
-        $ticket = Ticket::findOrFail($id);
-
-        $this->authorize('update', $ticket);
-
-        $request->validate([
-            'priority' => 'numeric|required|min:1|max:' . count(Ticket::PRIORITIES),
-        ]);
-
-        $ticket->priority = $request['priority'];
-        $ticket->save();
-
-        return redirect()->route('tickets.show', $ticket);
-    }
-
     public function destroy($id)
     {
         $ticket = Ticket::findOrFail($id);
@@ -120,18 +92,20 @@ class TicketsController extends Controller
 
         $ticket->delete();
 
+        Session::flash('error', 'You have deleted the ticket');
         return redirect()->route('tickets.index');
     }
 
-    public function setPriority(int $priority, int $id)
+    public function setPriority($id, Request $request)
     {
         $ticket = Ticket::findOrFail($id);
 
         $this->authorize('setPriority', $ticket);
 
-        $ticket->priority = $priority;
+        $ticket->priority = $request['priority'];
         $ticket->save();
 
-        return redirect()->route('tickets.show', $ticket);
+        Session::flash('success', 'You have successfully changed the priority');
+        return redirect()->route('tickets.edit', $ticket);
     }
 }

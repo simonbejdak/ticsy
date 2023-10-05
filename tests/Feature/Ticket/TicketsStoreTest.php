@@ -28,7 +28,7 @@ class TicketsStoreTest extends TestCase
             'priority' => Ticket::DEFAULT_PRIORITY,
         ]));
 
-        $response->assertRedirectToRoute('tickets.show', 1);
+        $response->assertRedirectToRoute('tickets.edit', 1);
 
         $this->assertEquals($tested['description'], $user->tickets()->find(1)->description);
     }
@@ -74,29 +74,6 @@ class TicketsStoreTest extends TestCase
             ]));
 
             $response->assertSessionHasErrors(['description' => $error]);
-        }
-    }
-
-    function test_it_fails_validation_with_invalid_priority(){
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $testedValues = [
-            max(Ticket::PRIORITIES) + 1 => 'The priority field must not be greater than 4.',
-            min(Ticket::PRIORITIES) - 1 => 'The priority field must be at least 1.',
-            'ASAP' => 'The priority field must be a number.',
-            '' => 'The priority field must be a number.',
-        ];
-
-        foreach ($testedValues as $testedValue => $error){
-            $response = $this->post(route('tickets.store', [
-                'type' => Ticket::TYPES['incident'],
-                'category' => Ticket::CATEGORIES['network'],
-                'description' => Str::random(Ticket::MINIMUM_DESCRIPTION_CHARACTERS),
-                'priority' => $testedValue,
-            ]));
-
-            $response->assertSessionHasErrors(['priority' => $error]);
         }
     }
 }

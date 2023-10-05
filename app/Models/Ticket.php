@@ -47,10 +47,10 @@ class Ticket extends Model
 
     public function resolver()
     {
-        return $this->belongsTo(Resolver::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function assign(Resolver $resolver)
+    public function assign(User $resolver)
     {
         $this->resolver = $resolver;
     }

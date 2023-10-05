@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Group;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -26,13 +27,18 @@ class UserFactory extends Factory
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function resolver(): static
     {
         return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+            'is_resolver' => true,
+            'group_id' => Group::factory()->create(),
+        ]);
+    }
+
+    public function canChangePriority(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'can_change_priority' => true,
         ]);
     }
 }

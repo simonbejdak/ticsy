@@ -1,11 +1,9 @@
 <?php
 
 
-namespace Tests\Feature\Ticket;
+namespace Tests\Unit;
 
 use App\Models\Category;
-use App\Models\Group;
-use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\Type;
 use Illuminate\Database\QueryException;

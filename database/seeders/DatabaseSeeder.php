@@ -23,7 +23,10 @@ class DatabaseSeeder extends Seeder
         User::factory([
             'name' => 'Šimon Bejdák',
             'email' => 'bejdakxd@gmail.com',
-        ])->create();
+        ])
+            ->resolver()
+            ->canChangePriority()
+            ->create();
 
         foreach (Ticket::TYPES as $key => $value){
             Type::factory(['name' => $key])->create();
