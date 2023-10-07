@@ -9,6 +9,10 @@ class Comment extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d',
+    ];
+
     const MINIMAL_BODY_CHARACTERS = 3;
     const MAXIMAL_BODY_CHARACTERS = 255;
 

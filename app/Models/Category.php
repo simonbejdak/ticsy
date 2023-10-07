@@ -9,6 +9,11 @@ class Category extends Model
 {
     use HasFactory;
 
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);

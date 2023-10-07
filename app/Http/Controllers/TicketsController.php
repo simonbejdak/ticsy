@@ -83,6 +83,7 @@ class TicketsController extends Controller
             'categories' => Category::all(),
             'priorities' => Ticket::PRIORITIES,
             'resolvers' => User::where('is_resolver', '=', true)->get(),
+            'comments' => $ticket->comments()->orderBy('created_at', 'DESC')->get(),
             'action' => $action,
         ]);
     }

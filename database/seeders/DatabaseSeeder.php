@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Type;
 use App\Models\Ticket;
 use App\Models\User;
@@ -15,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory([
+        $me = User::factory([
             'name' => 'Šimon Bejdák',
             'email' => 'bejdakxd@gmail.com',
         ])
@@ -31,7 +32,11 @@ class DatabaseSeeder extends Seeder
             Category::factory(['name' => $key])->create();
         }
 
-        Ticket::factory(30)->existing()->create();
+        $tickets = Ticket::factory(30)->existing()->create();
+
+        foreach ($tickets as $ticket){
+            Comment::factory(5, ['ticket_id' => $ticket])->create();
+        }
 
         User::factory(5)->resolver()->create();
     }

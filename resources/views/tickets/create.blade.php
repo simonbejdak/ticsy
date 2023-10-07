@@ -4,7 +4,7 @@
             @method('PATCH')
         @endif
         @csrf
-        <x-ticket-form>
+        <x-ticket-grid>
             <div class="font-light text-3xl">{{ $formType }} {{ $type->name ?? '' }}</div>
             <input type="hidden" name="type" value="{{ $type->id }}">
             <div class="flex flex-col space-y-2">
@@ -38,6 +38,6 @@
                     {{ $formType }}
                 </x-secondary-button>
             </div>
-        </x-ticket-form>
+        </x-ticket-grid>
     </form>
 </x-app-layout>
