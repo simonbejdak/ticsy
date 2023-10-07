@@ -61,8 +61,8 @@ class StoreTest extends TestCase
 
         $testedValues = [
             '' => 'The description field is required.',
-            Str::random(Ticket::MINIMUM_DESCRIPTION_CHARACTERS - 1) => 'The description field must be at least 8 characters.',
-            Str::random(Ticket::MAXIMUM_DESCRIPTION_CHARACTERS + 1) => 'The description field must not be greater than 255 characters.',
+            Str::random(Ticket::MINIMUM_DESCRIPTION_CHARACTERS - 1) => 'The description field must be at least '. Ticket::MINIMUM_DESCRIPTION_CHARACTERS .' characters.',
+            Str::random(Ticket::MAXIMUM_DESCRIPTION_CHARACTERS + 1) => 'The description field must not be greater than '. Ticket::MAXIMUM_DESCRIPTION_CHARACTERS .' characters.',
         ];
 
         foreach ($testedValues as $testedValue => $error){

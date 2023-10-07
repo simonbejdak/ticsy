@@ -1,9 +1,9 @@
 <?php
 
-namespace User;
+namespace Tests\Unit;
 
+use App\Models\Comment;
 use App\Models\Group;
-use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,7 +13,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test_it_can_belong_to_multiple_groups()
+    function test_it_has_belongs_to_many_groups_relationship()
     {
         $groupOne = Group::factory(['name' => 'Group 0'])->create();
         $groupTwo = Group::factory(['name' => 'Group 1'])->create();
@@ -26,6 +26,27 @@ class UserTest extends TestCase
 
         for($i = 0; $i <= count($groups) - 1; $i++){
             $this->assertEquals('Group ' . $i, $groups[$i]->name);
+        }
+    }
+
+    function test_it_has_has_many_comments_relationship()
+    {
+        $user = User::factory()->create();
+
+        $commentOne = Comment::factory([
+            'user_id' => $user,
+            'body' => 'Comment Body 1',
+        ])->create();
+
+        $commentTwo = Comment::factory([
+            'user_id' => $user,
+            'body' => 'Comment Body 2',
+        ])->create();
+
+        $i = 1;
+        foreach ($user->comments as $comment){
+            $this->assertEquals('Comment Body ' . $i, $comment->body);
+            $i++;
         }
     }
 

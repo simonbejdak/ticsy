@@ -45,4 +45,9 @@ class TicketPolicy
     {
         return (bool) $user->is_resolver;
     }
+
+    public function addComment(User $user, Ticket $ticket)
+    {
+        return (bool) ($user->id === $ticket->user_id || $user->is_resolver);
+    }
 }

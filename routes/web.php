@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\ChangesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentsController;
@@ -31,6 +32,8 @@ Route::get('/tickets/{id}', [TicketsController::class, 'edit'])->name('tickets.e
 Route::patch('/tickets/{id}/set/priority', [TicketsController::class, 'setPriority'])->name('tickets.set-priority')
     ->middleware(Authenticate::class);
 Route::patch('/tickets/{id}/set/resolver', [TicketsController::class, 'setResolver'])->name('tickets.set-resolver')
+    ->middleware(Authenticate::class);
+Route::patch('/tickets/{id}/add/comment', [TicketsController::class, 'addComment'])->name('tickets.add-comment')
     ->middleware(Authenticate::class);
 
 Route::middleware('auth')->group(function () {

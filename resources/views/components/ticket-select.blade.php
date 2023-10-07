@@ -1,5 +1,4 @@
 @props([
-    'submittable' => false,
     'disabled' => false,
     'name',
 ])
@@ -16,7 +15,7 @@
             <x-ticket-select-option></x-ticket-select-option>
             {{ $slot }}
         </select>
-        @if($submittable)
+        @if(!$disabled)
             <x-secondary-button type="submit">Update</x-secondary-button>
         @endif
     </div>

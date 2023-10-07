@@ -4,6 +4,7 @@
 namespace Tests\Unit;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Ticket;
 use App\Models\Type;
 use App\Models\User;
@@ -36,6 +37,27 @@ class TicketTest extends TestCase
         $ticket = Ticket::factory(['resolver_id' => $resolver])->create();
 
         $this->assertEquals('John Doe', $ticket->resolver->name);
+    }
+
+    public function test_it_has_has_many_comments_relationship()
+    {
+        $ticket = Ticket::factory()->create();
+
+        $commentOne = Comment::factory([
+            'ticket_id' => $ticket,
+            'body' => 'Comment Body 1',
+        ])->create();
+
+        $commentTwo = Comment::factory([
+            'ticket_id' => $ticket,
+            'body' => 'Comment Body 2'
+        ])->create();
+
+        $i = 1;
+        foreach ($ticket->comments as $comment){
+            $this->assertEquals('Comment Body ' . $i, $comment->body);
+            $i++;
+        }
     }
 
     function test_it_has_priority()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Incident;
 use App\Models\Resolver;
 use App\Models\Ticket;
@@ -109,6 +110,26 @@ class TicketsController extends Controller
         $ticket->save();
 
         Session::flash('success', 'You have successfully changed the resolver');
+        return redirect()->route('tickets.edit', $ticket);
+    }
+
+    public function addComment($id, Request $request)
+    {
+        $ticket = Ticket::findOrFail($id);
+
+        $this->authorize('addComment', $ticket);
+
+        $request->validate([
+            'body' => 'min:'. Comment::MINIMAL_BODY_CHARACTERS .'|max:'. Comment::MAXIMAL_BODY_CHARACTERS .'|required',
+        ]);
+
+        $comment = new Comment();
+        $comment->ticket_id = $ticket->id;
+        $comment->user_id = Auth::user()->id;
+        $comment->body = $request['body'];
+        $comment->save();
+
+        Session::flash('success', 'You have successfully added a comment');
         return redirect()->route('tickets.edit', $ticket);
     }
 }

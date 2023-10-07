@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\Feature;
+namespace App;
 
 use App\Http\Controllers\HomeController;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class HomeTest extends TestCase
