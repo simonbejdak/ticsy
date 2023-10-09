@@ -19,8 +19,12 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'ticket_id' => Ticket::factory()->create(),
-            'user_id' => User::factory()->create(),
+            'ticket_id' => function(){
+                Ticket::factory()->create();
+            },
+            'user_id' => function(){
+                User::factory()->create();
+            },
             'body' => fake()->sentence(5),
         ];
     }
