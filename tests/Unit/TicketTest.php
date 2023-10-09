@@ -6,6 +6,7 @@ namespace Tests\Unit;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Ticket;
+use App\Models\TicketConfiguration;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -29,11 +30,11 @@ class TicketTest extends TestCase
         $category = Category::factory(['name' => 'network'])->create();
         $ticket = Ticket::factory(['category_id' => $category])->create();
 
-        $this->assertEquals('network', $ticket->category->name);
+        $this->assertEquals('Network', $ticket->category->name);
     }
 
     function test_it_has_resolver_relationship(){
-        $resolver = User::factory(['name' => 'John Doe'])->resolver()->create();
+        $resolver = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
         $ticket = Ticket::factory(['resolver_id' => $resolver])->create();
 
         $this->assertEquals('John Doe', $ticket->resolver->name);
@@ -48,10 +49,10 @@ class TicketTest extends TestCase
             'body' => 'Comment Body 1',
         ])->create();
 
-        $commentTwo = Comment::factory([
+        $commentTwo = Comment::factory()->create([
             'ticket_id' => $ticket,
             'body' => 'Comment Body 2'
-        ])->create();
+        ]);
 
         $i = 1;
         foreach ($ticket->comments as $comment){
@@ -78,13 +79,13 @@ class TicketTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        Ticket::factory(['priority' => count(Ticket::PRIORITIES) + 1])->create();
+        Ticket::factory(['priority' => count(TicketConfiguration::PRIORITIES) + 1])->create();
     }
 
     function test_it_has_correct_default_priority()
     {
         $ticket = new Ticket();
 
-        $this->assertEquals(Ticket::DEFAULT_PRIORITY, $ticket->priority);
+        $this->assertEquals(TicketConfiguration::DEFAULT_PRIORITY, $ticket->priority);
     }
 }

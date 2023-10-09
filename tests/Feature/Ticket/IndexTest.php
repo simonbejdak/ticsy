@@ -34,7 +34,7 @@ class IndexTest extends TestCase
 
         $resolver = User::factory([
             'name' => $tested['resolver_name']
-        ])->resolver()->create();
+        ])->create()->assignRole('resolver');
 
         $this->actingAs($user);
 

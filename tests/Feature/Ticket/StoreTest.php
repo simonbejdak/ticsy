@@ -5,6 +5,7 @@ namespace Tests\Feature\Ticket;
 
 use App\Models\Incident;
 use App\Models\Ticket;
+use App\Models\TicketConfiguration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Str;
@@ -18,14 +19,14 @@ class StoreTest extends TestCase
         $this->actingAs($user);
 
         $tested = [
-            'description' => Str::random(Ticket::MINIMUM_DESCRIPTION_CHARACTERS + 1),
+            'description' => Str::random(TicketConfiguration::MINIMUM_DESCRIPTION_CHARACTERS + 1),
         ];
 
         $response = $this->post(route('tickets.store', [
-            'type' => Ticket::TYPES['incident'],
-            'category' => Ticket::CATEGORIES['network'],
+            'type' => TicketConfiguration::TYPES['incident'],
+            'category' => TicketConfiguration::CATEGORIES['network'],
             'description' => $tested['description'],
-            'priority' => Ticket::DEFAULT_PRIORITY,
+            'priority' => TicketConfiguration::DEFAULT_PRIORITY,
         ]));
 
         $response->assertRedirectToRoute('tickets.edit', 1);
@@ -38,18 +39,18 @@ class StoreTest extends TestCase
         $this->actingAs($user);
 
         $testedValues = [
-            max(Ticket::CATEGORIES) + 1 => 'The category field must not be greater than 5.',
-            min(Ticket::CATEGORIES) - 1 => 'The category field must be at least 1.',
+            max(TicketConfiguration::CATEGORIES) + 1 => 'The category field must not be greater than 5.',
+            min(TicketConfiguration::CATEGORIES) - 1 => 'The category field must be at least 1.',
             'ASAP' => 'The category field must be a number.',
             '' => 'The category field must be a number.',
         ];
 
         foreach ($testedValues as $testedValue => $error){
             $response = $this->post(route('tickets.store', [
-                'type' => Ticket::TYPES['incident'],
+                'type' => TicketConfiguration::TYPES['incident'],
                 'category' => $testedValue,
-                'description' => Str::random(Ticket::MINIMUM_DESCRIPTION_CHARACTERS),
-                'priority' => Ticket::DEFAULT_PRIORITY,
+                'description' => Str::random(TicketConfiguration::MINIMUM_DESCRIPTION_CHARACTERS),
+                'priority' => TicketConfiguration::DEFAULT_PRIORITY,
             ]));
 
             $response->assertSessionHasErrors(['category' => $error]);
@@ -61,16 +62,16 @@ class StoreTest extends TestCase
 
         $testedValues = [
             '' => 'The description field is required.',
-            Str::random(Ticket::MINIMUM_DESCRIPTION_CHARACTERS - 1) => 'The description field must be at least '. Ticket::MINIMUM_DESCRIPTION_CHARACTERS .' characters.',
-            Str::random(Ticket::MAXIMUM_DESCRIPTION_CHARACTERS + 1) => 'The description field must not be greater than '. Ticket::MAXIMUM_DESCRIPTION_CHARACTERS .' characters.',
+            Str::random(TicketConfiguration::MINIMUM_DESCRIPTION_CHARACTERS - 1) => 'The description field must be at least '. TicketConfiguration::MINIMUM_DESCRIPTION_CHARACTERS .' characters.',
+            Str::random(TicketConfiguration::MAXIMUM_DESCRIPTION_CHARACTERS + 1) => 'The description field must not be greater than '. TicketConfiguration::MAXIMUM_DESCRIPTION_CHARACTERS .' characters.',
         ];
 
         foreach ($testedValues as $testedValue => $error){
             $response = $this->post(route('tickets.store', [
-                'type' => Ticket::TYPES['incident'],
-                'category' => Ticket::CATEGORIES['network'],
+                'type' => TicketConfiguration::TYPES['incident'],
+                'category' => TicketConfiguration::CATEGORIES['network'],
                 'description' => $testedValue,
-                'priority' => Ticket::DEFAULT_PRIORITY,
+                'priority' => TicketConfiguration::DEFAULT_PRIORITY,
             ]));
 
             $response->assertSessionHasErrors(['description' => $error]);

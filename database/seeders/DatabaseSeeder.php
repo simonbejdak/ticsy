@@ -4,12 +4,15 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\TicketConfiguration;
 use App\Models\Type;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,41 +21,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::factory([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-        ])
-            ->resolver()
-            ->canChangePriority()
-            ->create();
-
-        $resolver = User::factory([
-            'name' => 'Resolver',
-            'email' => 'resolver@gmail.com',
-        ])
-            ->resolver()
-            ->create();
+        $this->call([
+            MapSeeder::class,
+            PermissionSeeder::class,
+        ]);
 
         $user = User::factory([
             'name' => 'User',
             'email' => 'user@gmail.com',
-        ])
-            ->resolver()
-            ->create();
+        ])->create();
 
-        foreach (Ticket::TYPES as $key => $value){
-            Type::factory(['name' => $key])->create();
-        }
-
-        foreach (Ticket::CATEGORIES as $key => $value){
-            Category::factory(['name' => $key])->create();
-        }
+        $resolver = User::factory([
+            'name' => 'Resolver',
+            'email' => 'resolver@gmail.com',
+        ])->create()->assignRole('resolver');
 
         foreach (range(1, 30) as $iteration){
             Ticket::factory()->create([
-                'user_id' => $admin,
-                'category_id' => rand(1, count(Ticket::CATEGORIES)),
-                'type_id' => rand(1, count(Ticket::TYPES)),
+                'user_id' => $user,
+                'category_id' => rand(1, count(TicketConfiguration::CATEGORIES)),
+                'type_id' => rand(1, count(TicketConfiguration::TYPES)),
                 'resolver_id' => $resolver,
             ]);
         }
@@ -66,6 +54,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        User::factory(5)->resolver()->create();
+        foreach (range(1, 5) as $iteration){
+            User::factory()->create()->assignRole('resolver');
+        }
+
     }
 }

@@ -52,10 +52,10 @@ class AddCommentTest extends TestCase
 
     public function test_it_allows_to_add_comment_to_resolver()
     {
-        $user = User::factory()->resolver()->create();
+        $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory()->create();
 
-        $this->actingAs($user);
+        $this->actingAs($resolver);
         $response = $this->patch(route('tickets.add-comment', $ticket), [
             'body' => 'Comment Body',
         ]);
@@ -63,7 +63,7 @@ class AddCommentTest extends TestCase
         $response->assertRedirectToRoute('tickets.edit', $ticket);
         $this->assertDatabaseHas('comments', [
             'ticket_id' => $ticket->id,
-            'user_id' => $user->id,
+            'user_id' => $resolver->id,
             'body' => 'Comment Body'
         ]);
     }

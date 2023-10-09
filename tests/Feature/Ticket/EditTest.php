@@ -33,7 +33,7 @@ class EditTest extends TestCase
 
     function test_it_authorizes_caller_and_resolver_to_view(){
         $user = User::factory()->create();
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
         $this->actingAs($user);
@@ -49,7 +49,7 @@ class EditTest extends TestCase
     {
         $type = Type::factory(['name' => 'incident'])->create();
         $category = Category::factory(['name' => 'network'])->create();
-        $resolver = User::factory(['name' => 'John Doe'])->resolver()->create();
+        $resolver = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
 
         $user = User::factory()->create();
         $ticket = Ticket::factory([

@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Incident;
 use App\Models\Resolver;
 use App\Models\Ticket;
+use App\Models\TicketConfiguration;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,34 +31,34 @@ class TicketsController extends Controller
 
     public function create($type = null)
     {
-        $type = ($type === null) ? Type::find(Ticket::DEFAULT_TYPE) : Type::where('name', '=', $type)->firstOrFail();
+        $type = ($type === null) ? Type::find(TicketConfiguration::DEFAULT_TYPE) : Type::where('name', '=', $type)->firstOrFail();
 
         $formType = ucfirst('create');
         $action = route('tickets.store');
-        $priorities = array_reverse(Ticket::PRIORITIES);
+        $priorities = array_reverse(TicketConfiguration::PRIORITIES);
 
         return view('tickets.create', [
             'type' => $type,
             'formType' => $formType,
             'categories' => Category::all(),
             'priorities' => $priorities,
-            'default_priority' => Ticket::DEFAULT_PRIORITY,
+            'default_priority' => TicketConfiguration::DEFAULT_PRIORITY,
             'action' => $action,
         ]);
     }
 
     public function store(Request $request)
     {
-        $min_desc = Ticket::MINIMUM_DESCRIPTION_CHARACTERS;
-        $max_desc = Ticket::MAXIMUM_DESCRIPTION_CHARACTERS;
+        $min_desc = TicketConfiguration::MINIMUM_DESCRIPTION_CHARACTERS;
+        $max_desc = TicketConfiguration::MAXIMUM_DESCRIPTION_CHARACTERS;
 
         $request->validate([
-            'type' => 'numeric|required|min:1|max:' . count(Ticket::TYPES),
-            'category' => 'numeric|required|min:1|max:' . count(Ticket::CATEGORIES),
+            'type' => 'numeric|required|min:1|max:' . count(TicketConfiguration::TYPES),
+            'category' => 'numeric|required|min:1|max:' . count(TicketConfiguration::CATEGORIES),
             'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
         ]);
 
-        $ticket = new Incident();
+        $ticket = new Ticket();
         $ticket->user_id = Auth::user()->id;
         $ticket->type_id = $request['type'];
         $ticket->category_id = $request['category'];
@@ -81,8 +82,8 @@ class TicketsController extends Controller
             'ticket' => $ticket,
             'formType' => $formType,
             'categories' => Category::all(),
-            'priorities' => Ticket::PRIORITIES,
-            'resolvers' => User::where('is_resolver', '=', true)->get(),
+            'priorities' => TicketConfiguration::PRIORITIES,
+            'resolvers' => User::role('resolver')->get(),
             'comments' => $ticket->comments()->orderBy('created_at', 'DESC')->get(),
             'action' => $action,
         ]);

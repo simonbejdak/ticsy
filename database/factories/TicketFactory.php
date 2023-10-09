@@ -29,7 +29,7 @@ class TicketFactory extends Factory
                 return Type::factory()->create();
             },
             'resolver_id' => function (){
-                return User::factory()->resolver()->create();
+                return User::factory()->create()->assignRole('resolver');
             },
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),

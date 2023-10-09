@@ -2,30 +2,33 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Ticket;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Comment>
  */
 class CommentFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $model = Comment::class;
+
+    public function definition()
     {
         return [
-            'ticket_id' => function(){
-                Ticket::factory()->create();
+            'ticket_id' => function (){
+                return Ticket::factory()->create();
             },
-            'user_id' => function(){
-                User::factory()->create();
+            'user_id' => function (){
+                return User::factory()->create();
             },
-            'body' => fake()->sentence(5),
+            'body' => fake()->sentence(10),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ];
     }
 }

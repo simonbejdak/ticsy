@@ -10,7 +10,7 @@ class SetPriorityTest extends TestCase
 {
     function test_user_can_change_priority_with_permission()
     {
-        $resolver = User::factory()->canChangePriority()->create();
+        $resolver = User::factory()->create()->givePermissionTo('set_priority');
 
         $ticket = Ticket::factory(['priority' => 4])->create();
 

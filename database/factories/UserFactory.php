@@ -26,19 +26,4 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
         ];
     }
-
-    public function resolver(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_resolver' => true,
-            'group_id' => Group::factory()->create(),
-        ]);
-    }
-
-    public function canChangePriority(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'can_change_priority' => true,
-        ]);
-    }
 }
