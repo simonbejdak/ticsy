@@ -31,6 +31,6 @@
             </form>
         </x-ticket-grid>
         <x-ticket-field :disabled="true" :name="'description'" :value="$ticket->description" />
-        <x-ticket-comments :comments="$comments" :ticket="$ticket" />
+        <livewire:ticket-comments :ticket="$ticket" />
     </div>
 </x-app-layout>
