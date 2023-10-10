@@ -33,7 +33,7 @@ Route::patch('/tickets/{id}/set/priority', [TicketsController::class, 'setPriori
     ->middleware(Authenticate::class);
 Route::patch('/tickets/{id}/set/resolver', [TicketsController::class, 'setResolver'])->name('tickets.set-resolver')
     ->middleware(Authenticate::class);
-Route::patch('/tickets/{id}/add/comment', [TicketsController::class, 'addComment'])->name('tickets.add-comment')
+Route::patch('/tickets/{id}/set/status', [TicketsController::class, 'setStatus'])->name('tickets.set-status')
     ->middleware(Authenticate::class);
 
 Route::middleware('auth')->group(function () {

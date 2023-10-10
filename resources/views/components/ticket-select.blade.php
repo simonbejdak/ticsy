@@ -1,6 +1,7 @@
 @props([
     'disabled' => false,
     'name',
+    'required' => false,
 ])
 
 <div class="flex flex-col space-y-1">
@@ -11,12 +12,13 @@
             class="w-full rounded-lg border border-gray-300 {{ ($disabled) ? 'bg-gray-200' : 'bg-white hover:cursor-pointer' }} px-1 pt-2 pb-2.5"
             name="{{ $name }}"
             id="{{ $name }}"
+            wire:model="{{$name}}"
         >
-            <x-ticket-select-option></x-ticket-select-option>
+            @if(!$required)
+                <x-ticket-select-option></x-ticket-select-option>
+            @endif
             {{ $slot }}
         </select>
-        @if(!$disabled)
-            <x-secondary-button type="submit">Update</x-secondary-button>
-        @endif
     </div>
+    <x-input-error :messages="$errors->get($name)" class="mt-2" />
 </div>

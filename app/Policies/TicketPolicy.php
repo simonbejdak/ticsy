@@ -45,6 +45,11 @@ class TicketPolicy
     {
         return (bool) $user->can('set_resolver');
     }
+    public function setStatus(User $user, Ticket $ticket)
+    {
+        return (bool) $user->can('set_status');
+    }
+
 
     public function addComment(User $user, Ticket $ticket)
     {

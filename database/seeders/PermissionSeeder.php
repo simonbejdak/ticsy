@@ -22,12 +22,15 @@ class PermissionSeeder extends Seeder
             'name' => 'set_priority'
         ]);
         Permission::create([
+            'name' => 'set_status'
+        ]);
+        Permission::create([
             'name' => 'add_comments_to_all_tickets'
         ]);
         Permission::create([
             'name' => 'view_all_tickets'
         ]);
 
-        $role->givePermissionTo('resolve_ticket', 'set_resolver', 'set_priority', 'add_comments_to_all_tickets', 'view_all_tickets');
+        $role->givePermissionTo('resolve_ticket', 'set_resolver', 'set_priority', 'set_status', 'add_comments_to_all_tickets', 'view_all_tickets');
     }
 }

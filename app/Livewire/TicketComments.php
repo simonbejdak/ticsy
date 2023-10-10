@@ -14,7 +14,7 @@ class TicketComments extends Component
 {
     public Collection $comments;
     public Ticket $ticket;
-    public $body;
+    public $body = "";
 
     public function render()
     {
@@ -23,7 +23,7 @@ class TicketComments extends Component
         return view('livewire.ticket-comments');
     }
 
-    public function addComment(Request $request){
+    public function addComment(){
         $this->authorize('addComment', $this->ticket);
 
         $this->validate([
@@ -36,7 +36,7 @@ class TicketComments extends Component
         $comment->body = $this->body;
         $comment->save();
 
-        $this->body = '';
+        $this->body = "";
         $this->render();
     }
 }

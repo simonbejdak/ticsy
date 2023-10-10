@@ -39,8 +39,6 @@ class DatabaseSeeder extends Seeder
         foreach (range(1, 30) as $iteration){
             Ticket::factory()->create([
                 'user_id' => $user,
-                'category_id' => rand(1, count(TicketConfiguration::CATEGORIES)),
-                'type_id' => rand(1, count(TicketConfiguration::TYPES)),
                 'resolver_id' => $resolver,
             ]);
         }

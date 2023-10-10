@@ -5,6 +5,7 @@ namespace Tests\Unit;
 
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
 use App\Models\Type;
@@ -59,6 +60,14 @@ class TicketTest extends TestCase
             $this->assertEquals('Comment Body ' . $i, $comment->body);
             $i++;
         }
+    }
+
+    public function test_it_has_belongs_to_status_relationship()
+    {
+        $status = Status::factory(['name' => 'open'])->create();
+        $ticket = Ticket::factory(['status_id' => $status])->create();
+
+        $this->assertEquals('Open', $ticket->status->name);
     }
 
     function test_it_has_priority()

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Status;
 use App\Models\TicketConfiguration;
 use App\Models\Type;
 use Illuminate\Database\Seeder;
@@ -17,6 +18,10 @@ class MapSeeder extends Seeder
 
         foreach (TicketConfiguration::CATEGORIES as $key => $value){
             Category::factory(['name' => $key])->create();
+        }
+
+        foreach (TicketConfiguration::STATUSES as $key => $value){
+            Status::factory(['name' => $key])->create();
         }
     }
 }

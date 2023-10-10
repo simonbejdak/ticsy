@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Ticket;
 
+use App\Livewire\TicketForm;
 use App\Models\Ticket;
 use App\Models\User;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class SetResolverTest extends TestCase
@@ -26,12 +28,12 @@ class SetResolverTest extends TestCase
         $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory()->create();
 
-        $this->actingAs($user);
-        $response = $this->patch(route('tickets.set-resolver', $ticket), [
-            'resolver' => $resolver
-        ]);
+        Livewire::actingAs($user);
 
-        $response->assertForbidden();
+        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+            ->set('resolver', $resolver->id)
+            ->call('update')
+            ->assertForbidden();
     }
 
     public function test_resolver_user_can_set_resolver()
@@ -40,11 +42,15 @@ class SetResolverTest extends TestCase
         $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory()->create();
 
-        $this->actingAs($user);
-        $response = $this->patch(route('tickets.set-resolver', $ticket), [
-            'resolver' => $resolver->id
-        ]);
+        Livewire::actingAs($user);
 
-        $response->assertRedirectToRoute('tickets.edit', $ticket);
+        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+            ->set('resolver', $resolver->id)
+            ->call('update');
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'resolver_id' => $resolver->id,
+        ]);
     }
 }

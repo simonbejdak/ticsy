@@ -15,15 +15,6 @@ class AddCommentTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_redirects_guest_to_login()
-    {
-        $ticket = Ticket::factory()->create();
-
-        $response = $this->patch(route('tickets.add-comment', $ticket));
-
-        $response->assertRedirectToRoute('login');
-    }
-
     public function test_it_throws_403_to_user_who_has_not_created_the_ticket()
     {
         $ticket = Ticket::factory()->create();

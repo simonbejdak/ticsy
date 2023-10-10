@@ -13,6 +13,7 @@ class Ticket extends Model
 
     protected $guarded = [];
     protected $attributes = [
+        'status_id' => TicketConfiguration::DEFAULT_STATUS,
         'priority' => TicketConfiguration::DEFAULT_PRIORITY,
     ];
 
@@ -45,5 +46,9 @@ class Ticket extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function status(){
+        return $this->belongsTo(Status::class);
     }
 }

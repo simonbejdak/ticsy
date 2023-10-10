@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Incident;
 use App\Models\Resolver;
+use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
 use App\Models\Type;
@@ -84,34 +85,8 @@ class TicketsController extends Controller
             'categories' => Category::all(),
             'priorities' => TicketConfiguration::PRIORITIES,
             'resolvers' => User::role('resolver')->get(),
+            'statuses' => Status::all(),
             'action' => $action,
         ]);
     }
-
-    public function setPriority($id, Request $request)
-    {
-        $ticket = Ticket::findOrFail($id);
-
-        $this->authorize('setPriority', $ticket);
-
-        $ticket->priority = $request['priority'];
-        $ticket->save();
-
-        Session::flash('success', 'You have successfully changed the priority');
-        return redirect()->route('tickets.edit', $ticket);
-    }
-
-    public function setResolver($id, Request $request)
-    {
-        $ticket = Ticket::findOrFail($id);
-
-        $this->authorize('setResolver', $ticket);
-
-        $ticket->resolver_id = $request['resolver'];
-        $ticket->save();
-
-        Session::flash('success', 'You have successfully changed the resolver');
-        return redirect()->route('tickets.edit', $ticket);
-    }
-
 }

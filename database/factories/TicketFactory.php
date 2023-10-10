@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Incident;
 use App\Models\Resolver;
+use App\Models\Status;
+use App\Models\TicketConfiguration;
 use App\Models\Type;
 use App\Models\Ticket;
 use App\Models\User;
@@ -23,10 +25,13 @@ class TicketFactory extends Factory
                 return User::factory()->create();
             },
             'category_id' => function (){
-                return Category::factory()->create();
+                return rand(1, count(TicketConfiguration::CATEGORIES));
             },
             'type_id' => function (){
-                return Type::factory()->create();
+                return rand(1, count(TicketConfiguration::TYPES));
+            },
+            'status_id' => function (){
+                return TicketConfiguration::DEFAULT_STATUS;
             },
             'resolver_id' => function (){
                 return User::factory()->create()->assignRole('resolver');
