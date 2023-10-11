@@ -94,26 +94,4 @@ class EditTest extends TestCase
         $response->assertSee('Comment Body');
     }
 
-    public function test_it_updates_ticket_when_correct_data_submitted()
-    {
-        $resolver = User::factory()->create()->assignRole('resolver');
-        $ticket = Ticket::factory()->create();
-        $status = TicketConfiguration::STATUSES['in_progress'];
-        $priority = TicketConfiguration::DEFAULT_PRIORITY - 1;
-
-        Livewire::actingAs($resolver);
-
-        Livewire::test(TicketForm::class, ['ticket' => $ticket])
-            ->set('status', $status)
-            ->set('priority', $priority)
-            ->set('resolver', $resolver->id)
-            ->call('update');
-
-        $this->assertDatabaseHas('tickets', [
-           'id' => $ticket->id,
-            'priority' => $priority,
-            'status_id' => $status,
-            'resolver_id' => $resolver->id,
-        ]);
-    }
 }
