@@ -203,4 +203,40 @@ class UpdateTest extends TestCase
             ->call('update')
             ->assertForbidden();
     }
+
+    public function test_ticket_priority_cannot_be_changed_when_status_is_cancelled(){
+        $resolver = User::factory()->create()->assignRole('resolver');
+        $ticket = Ticket::factory(['status_id' => TicketConfiguration::STATUSES['cancelled']])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+            ->set('priority', TicketConfiguration::DEFAULT_PRIORITY - 1)
+            ->call('update')
+            ->assertForbidden();
+    }
+
+    public function test_ticket_status_cannot_be_changed_when_status_is_cancelled(){
+        $resolver = User::factory()->create()->assignRole('resolver');
+        $ticket = Ticket::factory(['status_id' => TicketConfiguration::STATUSES['cancelled']])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+            ->set('status', TicketConfiguration::DEFAULT_STATUS)
+            ->call('update')
+            ->assertForbidden();
+    }
+
+    public function test_ticket_resolver_cannot_be_changed_when_status_is_cancelled(){
+        $resolver = User::factory()->create()->assignRole('resolver');
+        $ticket = Ticket::factory(['status_id' => TicketConfiguration::STATUSES['cancelled']])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+            ->set('resolver', $resolver)
+            ->call('update')
+            ->assertForbidden();
+    }
 }

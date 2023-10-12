@@ -4,7 +4,7 @@
         <form wire:submit.prevent="addComment">
             <div class="flex flex-row mt-2 space-x-2">
                 <label hidden for="body">Comment</label>
-                <input wire:model="body" placeholder="Add a comment" class="w-full p-2 rounded-md border border-gray-300" type="text">
+                <input wire:model="body" placeholder="Add a comment" class="w-full p-2 rounded-md border border-gray-300">
                 <x-secondary-button>Add</x-secondary-button>
             </div>
             <x-input-error :messages="$errors->get('body')" class="mt-2" />

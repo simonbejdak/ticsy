@@ -37,7 +37,7 @@ class TicketForm extends Component
 
     public function update()
     {
-        if($this->ticket->status->id === TicketConfiguration::STATUSES['resolved']){
+        if($this->ticket->archived()){
             abort(403);
         };
 
@@ -46,6 +46,7 @@ class TicketForm extends Component
         $this->updateResolver($this->resolver);
 
         $this->ticket->save();
+        $this->ticket->refresh();
         $this->render();
     }
 

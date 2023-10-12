@@ -51,4 +51,14 @@ class Ticket extends Model
     public function status(){
         return $this->belongsTo(Status::class);
     }
+
+    public function archived(){
+        if($this->status->id === TicketConfiguration::STATUSES['resolved']){
+            return true;
+        };
+        if($this->status->id === TicketConfiguration::STATUSES['cancelled']){
+            return true;
+        };
+        return false;
+    }
 }

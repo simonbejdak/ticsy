@@ -14,7 +14,7 @@ class TicketComments extends Component
 {
     public Collection $comments;
     public Ticket $ticket;
-    public $body = "";
+    public string $body = '';
 
     public function render()
     {
@@ -36,7 +36,6 @@ class TicketComments extends Component
         $comment->body = $this->body;
         $comment->save();
 
-        $this->body = "";
-        $this->render();
+        $this->reset('body');
     }
 }
