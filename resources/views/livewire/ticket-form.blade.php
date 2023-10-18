@@ -7,8 +7,9 @@
             <x-ticket-field :disabled="true" :name="'updated'" :value="$ticket->created_at" />
             <x-ticket-field :disabled="true" :name="'type'" :value="$ticket->type->name" />
             <x-ticket-field :disabled="true" :name="'category'" :value="$ticket->category->name" />
-            <x-ticket-field-status wire:change="updateStatus" :ticket="$ticket" />
+            <x-ticket-field-status :ticket="$ticket" />
             <x-ticket-field-priority :ticket="$ticket" />
+            <x-ticket-field-resolver-group :ticket="$ticket" />
             <x-ticket-field-resolver :ticket="$ticket" />
         </x-ticket-grid>
         <x-ticket-field :disabled="true" :name="'description'" :value="$ticket->description" />

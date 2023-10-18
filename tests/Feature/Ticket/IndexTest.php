@@ -56,12 +56,12 @@ class IndexTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        Ticket::factory(TicketsController::DEFAULT_PAGINATION, [
+        Ticket::factory([
+            'description' => 'This ticket is supposed to be on second pagination page',
             'user_id' => $user,
         ])->create();
 
-        Ticket::factory([
-            'description' => 'This ticket is supposed to be on second pagination page',
+        Ticket::factory(TicketsController::DEFAULT_PAGINATION, [
             'user_id' => $user,
         ])->create();
 

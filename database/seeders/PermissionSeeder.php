@@ -16,6 +16,9 @@ class PermissionSeeder extends Seeder
             'name' => 'resolve_ticket'
         ]);
         Permission::create([
+            'name' => 'set_group'
+        ]);
+        Permission::create([
             'name' => 'set_resolver'
         ]);
         Permission::create([
@@ -31,6 +34,6 @@ class PermissionSeeder extends Seeder
             'name' => 'view_all_tickets'
         ]);
 
-        $role->givePermissionTo('resolve_ticket', 'set_resolver', 'set_priority', 'set_status', 'add_comments_to_all_tickets', 'view_all_tickets');
+        $role->givePermissionTo('resolve_ticket', 'set_group', 'set_resolver', 'set_priority', 'set_status', 'add_comments_to_all_tickets', 'view_all_tickets');
     }
 }

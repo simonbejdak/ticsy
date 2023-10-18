@@ -31,4 +31,5 @@ class TicketConfiguration
     const DEFAULT_PAGINATION = 10;
     const MINIMUM_DESCRIPTION_CHARACTERS = 8;
     const MAXIMUM_DESCRIPTION_CHARACTERS = 255;
+    const ARCHIVE_AFTER_DAYS = 3;
 }

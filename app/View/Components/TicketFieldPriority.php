@@ -37,7 +37,7 @@ class TicketFieldPriority extends Component
         if(auth()->user()->cannot('setPriority', $this->ticket)){
             return true;
         }
-        if($this->ticket->archived()){
+        if($this->ticket->isArchived()){
             return true;
         };
 

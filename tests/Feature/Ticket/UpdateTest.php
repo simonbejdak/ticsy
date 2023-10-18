@@ -3,6 +3,7 @@
 namespace Tests\Feature\Ticket;
 
 use App\Livewire\TicketForm;
+use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
 use App\Models\User;
@@ -150,6 +151,7 @@ class UpdateTest extends TestCase
         $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory()->create();
         $status = TicketConfiguration::STATUSES['in_progress'];
+        $group = Group::GROUPS['LOCAL-6445-NEW-YORK'];
         $priority = TicketConfiguration::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver);
@@ -157,6 +159,7 @@ class UpdateTest extends TestCase
         Livewire::test(TicketForm::class, ['ticket' => $ticket])
             ->set('status', $status)
             ->set('priority', $priority)
+            ->set('group', $group)
             ->set('resolver', $resolver->id)
             ->call('update');
 
@@ -164,23 +167,31 @@ class UpdateTest extends TestCase
             'id' => $ticket->id,
             'priority' => $priority,
             'status_id' => $status,
+            'group_id' => $group,
             'resolver_id' => $resolver->id,
         ]);
     }
 
     public function test_ticket_priority_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->create()->assignRole('resolver');
-        $ticket = Ticket::factory(['status_id' => TicketConfiguration::STATUSES['resolved']])->create();
+        $ticket = Ticket::factory([
+            'priority' => TicketConfiguration::DEFAULT_PRIORITY,
+            'status_id' => TicketConfiguration::STATUSES['resolved']
+        ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(TicketForm::class, ['ticket' => $ticket])
             ->set('priority', TicketConfiguration::DEFAULT_PRIORITY - 1)
-            ->call('update')
-            ->assertForbidden();
+            ->call('update');
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'priority' => TicketConfiguration::DEFAULT_PRIORITY,
+        ]);
     }
 
-    public function test_ticket_status_cannot_be_changed_when_status_is_resolved(){
+    public function test_ticket_status_can_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory(['status_id' => TicketConfiguration::STATUSES['resolved']])->create();
 
@@ -189,19 +200,31 @@ class UpdateTest extends TestCase
         Livewire::test(TicketForm::class, ['ticket' => $ticket])
             ->set('status', TicketConfiguration::DEFAULT_STATUS)
             ->call('update')
-            ->assertForbidden();
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('tickets', [
+           'id' => $ticket->id,
+           'status_id' => TicketConfiguration::DEFAULT_STATUS,
+        ]);
     }
 
     public function test_ticket_resolver_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->create()->assignRole('resolver');
-        $ticket = Ticket::factory(['status_id' => TicketConfiguration::STATUSES['resolved']])->create();
+        $ticket = Ticket::factory([
+            'status_id' => TicketConfiguration::STATUSES['resolved'],
+            'resolver_id' => null,
+        ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(TicketForm::class, ['ticket' => $ticket])
             ->set('resolver', $resolver)
-            ->call('update')
-            ->assertForbidden();
+            ->call('update');
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'resolver_id' => null,
+        ]);
     }
 
     public function test_ticket_priority_cannot_be_changed_when_status_is_cancelled(){
@@ -224,8 +247,12 @@ class UpdateTest extends TestCase
 
         Livewire::test(TicketForm::class, ['ticket' => $ticket])
             ->set('status', TicketConfiguration::DEFAULT_STATUS)
-            ->call('update')
-            ->assertForbidden();
+            ->call('update');
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'status_id' => TicketConfiguration::STATUSES['cancelled'],
+        ]);
     }
 
     public function test_ticket_resolver_cannot_be_changed_when_status_is_cancelled(){

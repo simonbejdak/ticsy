@@ -5,6 +5,7 @@ namespace Tests\Unit;
 
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
@@ -12,6 +13,7 @@ use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class TicketTest extends TestCase
@@ -70,6 +72,14 @@ class TicketTest extends TestCase
         $this->assertEquals('Open', $ticket->status->name);
     }
 
+    public function test_it_has_belongs_to_group_relationship()
+    {
+        $group = Group::factory(['name' => 'LOCAL-6445-NEW-YORK'])->create();
+        $ticket = Ticket::factory(['group_id' => $group])->create();
+
+        $this->assertEquals('LOCAL-6445-NEW-YORK', $ticket->group->name);
+    }
+
     function test_it_has_priority()
     {
         $ticket = Ticket::factory(['priority' => 4])->create();
@@ -96,5 +106,52 @@ class TicketTest extends TestCase
         $ticket = new Ticket();
 
         $this->assertEquals(TicketConfiguration::DEFAULT_PRIORITY, $ticket->priority);
+    }
+
+    function test_it_has_correct_default_group(){
+        $ticket = new Ticket();
+
+        $this->assertEquals(Group::DEFAULT, $ticket->group->id);
+    }
+
+    function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
+        $ticket = Ticket::factory()->create();
+        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->save();
+
+        $ticket->status_id = TicketConfiguration::STATUSES['in_progress'];
+        $ticket->save();
+
+        $this->assertEquals(null, $ticket->resolved_at);
+    }
+
+    function test_it_cannot_have_status_resolved_and_resolved_at_timestamp_null(){
+        $ticket = Ticket::factory()->create();
+        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->save();
+
+        $this->assertNotEquals(null, $ticket->resolved_at);
+    }
+
+    function test_it_is_not_archived_when_resolved_status_does_not_exceed_archival_period(){
+        $ticket = Ticket::factory()->create();
+        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->save();
+
+        $date = Carbon::now()->addDays(TicketConfiguration::ARCHIVE_AFTER_DAYS - 1);
+        Carbon::setTestNow($date);
+
+        $this->assertFalse($ticket->isArchived());
+    }
+
+    function test_it_is_archived_when_resolved_status_exceeds_archival_period(){
+        $ticket = Ticket::factory()->create();
+        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->save();
+
+        $date = Carbon::now()->addDays(TicketConfiguration::ARCHIVE_AFTER_DAYS);
+        Carbon::setTestNow($date);
+
+        $this->assertTrue($ticket->isArchived());
     }
 }

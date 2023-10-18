@@ -1,5 +1,6 @@
 <div class="flex flex-col">
     <hr class="my-4 border-gray-300">
+    <h4>Comments</h4>
     <div>
         <form wire:submit.prevent="addComment">
             <div class="flex flex-row mt-2 space-x-2">

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Group;
 use App\Models\TicketConfiguration;
 use App\Models\Type;
 use App\Models\Ticket;

@@ -40,7 +40,10 @@ class TicketPolicy
     {
         return (bool) $user->can('set_priority');
     }
-
+    public function setGroup(User $user, Ticket $ticket)
+    {
+        return (bool) $user->can('set_group');
+    }
     public function setResolver(User $user, Ticket $ticket)
     {
         return (bool) $user->can('set_resolver');

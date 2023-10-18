@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Comment;
+use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
@@ -13,21 +14,16 @@ use Livewire\Component;
 class TicketForm extends Component
 {
     public Ticket $ticket;
-    public $priority;
-    public $priorities;
     public $status;
-    public $statuses;
+    public $priority;
+    public $group;
     public $resolver;
-    public $resolvers;
 
     public function mount(){
+        $this->status = $this->ticket->status->id;
         $this->priority = $this->ticket->priority;
-        $this->status = $this->ticket->status_id;
+        $this->group = $this->ticket->group_id;
         $this->resolver = $this->ticket->resolver_id;
-
-        $this->priorities = TicketConfiguration::PRIORITIES;
-        $this->statuses = Status::all();
-        $this->resolvers = User::role('resolver')->get();
     }
 
     public function render()
@@ -37,45 +33,70 @@ class TicketForm extends Component
 
     public function update()
     {
-        if($this->ticket->archived()){
+        if($this->ticket->isArchived()){
             abort(403);
-        };
+        }
 
-        $this->updatePriority($this->priority);
-        $this->updateStatus($this->status);
-        $this->updateResolver($this->resolver);
+        $this->updateStatus();
+        $this->updatePriority();
+        $this->updateGroup();
+        $this->updateResolver();
 
         $this->ticket->save();
         $this->ticket->refresh();
         $this->render();
     }
 
-    private function updatePriority($priority){
-        $rules = 'min:1|max:'. count(TicketConfiguration::PRIORITIES).'|required|numeric';
+    private function updateStatus(){
+        $rules = 'min:1|max:'. count(TicketConfiguration::STATUSES).'|numeric';
 
-        if($priority !== $this->ticket->priority){
-            $this->authorize('setPriority', $this->ticket);
-            $this->validate(['priority' => $rules]);
-            $this->ticket->priority = $priority;
-        }
-    }
-
-    private function updateStatus($status){
-        $rules = 'min:1|max:'. count(TicketConfiguration::STATUSES).'|required|numeric';
-
-        if($status !== $this->ticket->status_id){
+        if($this->status !== $this->ticket->status_id){
             $this->authorize('setStatus', $this->ticket);
             $this->validate(['status' => $rules]);
-            $this->ticket->status_id = $status;
+            if(!empty($this->status)){
+                $this->ticket->status_id = $this->status;
+            }
         }
     }
 
-    private function updateResolver($resolver){
-        if($resolver !== $this->ticket->resolver_id){
+    private function updatePriority(){
+        $rules = 'min:1|max:'. count(TicketConfiguration::PRIORITIES).'|required|numeric';
+
+        if($this->priority !== $this->ticket->priority){
+            $this->authorize('setPriority', $this->ticket);
+            $this->validate(['priority' => $rules]);
+            $this->isTicketResolved();
+            $this->ticket->priority = $this->priority;
+        }
+    }
+
+    private function updateGroup(){
+        $rules = 'min:1|max:'. count(Group::GROUPS).'|required|numeric';
+
+        if($this->group !== $this->ticket->group_id){
+            $this->authorize('setGroup', $this->ticket);
+            $this->validate(['group' => $rules]);
+            $this->isTicketResolved();
+            $this->ticket->group_id = $this->group;
+        }
+    }
+
+    private function updateResolver(){
+        $rules = 'min:1|max:'. count(User::role('resolver')->get()).'|numeric';
+
+        if($this->resolver !== $this->ticket->resolver_id){
             $this->authorize('setResolver', $this->ticket);
-            if(!empty($resolver)){
-                $this->ticket->resolver_id = $resolver;
+            $this->validate(['resolver' => $rules]);
+            $this->isTicketResolved();
+            if(!empty($this->resolver)){
+                $this->ticket->resolver_id = $this->resolver;
             }
+        }
+    }
+
+    private function isTicketResolved(): void{
+        if($this->ticket->isStatus('resolved')){
+            abort(403);
         }
     }
 }

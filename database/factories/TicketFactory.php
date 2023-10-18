@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Resolver;
 use App\Models\Status;
@@ -33,6 +34,7 @@ class TicketFactory extends Factory
             'status_id' => function (){
                 return TicketConfiguration::DEFAULT_STATUS;
             },
+            'group_id' => Group::DEFAULT,
             'resolver_id' => function (){
                 return User::factory()->create()->assignRole('resolver');
             },

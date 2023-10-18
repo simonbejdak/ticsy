@@ -6,6 +6,8 @@ namespace Tests\Feature\Ticket;
 use App\Livewire\TicketForm;
 use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Group;
+use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
@@ -93,5 +95,4 @@ class EditTest extends TestCase
         $response->assertSuccessful();
         $response->assertSee('Comment Body');
     }
-
 }
