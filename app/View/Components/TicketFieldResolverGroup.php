@@ -37,6 +37,9 @@ class TicketFieldResolverGroup extends Component
         if(auth()->user()->cannot('setGroup', $this->ticket)){
             return true;
         }
+        if($this->ticket->isResolved()){
+            return true;
+        }
         if($this->ticket->isArchived()){
             return true;
         };

@@ -38,6 +38,9 @@ class TicketFieldResolver extends Component
         if(auth()->user()->cannot('setResolver', $this->ticket)){
             return true;
         }
+        if($this->ticket->isResolved()){
+            return true;
+        }
         if($this->ticket->isArchived()){
             return true;
         };

@@ -4,7 +4,7 @@
     'required' => false,
 ])
 
-<div class="flex flex-col space-y-1">
+<div wire:change="$dispatch('fieldChanged')" class="flex flex-col space-y-1">
     <x-input-label class="font-bold text-lg" for="{{ $name }}">{{ ucfirst($name) }}</x-input-label>
     <div class="flex flex-row space-x-2">
         <select

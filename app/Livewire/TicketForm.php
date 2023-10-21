@@ -19,6 +19,8 @@ class TicketForm extends Component
     public $group;
     public $resolver;
 
+    protected $listeners = ['fieldChanged'];
+
     public function mount(){
         $this->status = $this->ticket->status->id;
         $this->priority = $this->ticket->priority;
@@ -37,14 +39,22 @@ class TicketForm extends Component
             abort(403);
         }
 
+        $this->updateFields();
+        $this->ticket->save();
+        $this->ticket->refresh();
+        $this->render();
+    }
+
+    public function fieldChanged()
+    {
+        $this->updateFields();
+    }
+
+    protected function updateFields(){
         $this->updateStatus();
         $this->updatePriority();
         $this->updateGroup();
         $this->updateResolver();
-
-        $this->ticket->save();
-        $this->ticket->refresh();
-        $this->render();
     }
 
     private function updateStatus(){
