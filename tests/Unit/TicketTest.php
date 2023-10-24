@@ -8,7 +8,7 @@ use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -98,14 +98,14 @@ class TicketTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        Ticket::factory(['priority' => count(TicketConfiguration::PRIORITIES) + 1])->create();
+        Ticket::factory(['priority' => count(TicketConfig::PRIORITIES) + 1])->create();
     }
 
     function test_it_has_correct_default_priority()
     {
         $ticket = new Ticket();
 
-        $this->assertEquals(TicketConfiguration::DEFAULT_PRIORITY, $ticket->priority);
+        $this->assertEquals(TicketConfig::DEFAULT_PRIORITY, $ticket->priority);
     }
 
     function test_it_has_correct_default_group(){
@@ -116,10 +116,10 @@ class TicketTest extends TestCase
 
     function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->status_id = TicketConfig::STATUSES['resolved'];
         $ticket->save();
 
-        $ticket->status_id = TicketConfiguration::STATUSES['in_progress'];
+        $ticket->status_id = TicketConfig::STATUSES['in_progress'];
         $ticket->save();
 
         $this->assertEquals(null, $ticket->resolved_at);
@@ -127,7 +127,7 @@ class TicketTest extends TestCase
 
     function test_it_cannot_have_status_resolved_and_resolved_at_timestamp_null(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->status_id = TicketConfig::STATUSES['resolved'];
         $ticket->save();
 
         $this->assertNotEquals(null, $ticket->resolved_at);
@@ -135,10 +135,10 @@ class TicketTest extends TestCase
 
     function test_it_is_not_archived_when_resolved_status_does_not_exceed_archival_period(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->status_id = TicketConfig::STATUSES['resolved'];
         $ticket->save();
 
-        $date = Carbon::now()->addDays(TicketConfiguration::ARCHIVE_AFTER_DAYS - 1);
+        $date = Carbon::now()->addDays(TicketConfig::ARCHIVE_AFTER_DAYS - 1);
         Carbon::setTestNow($date);
 
         $this->assertFalse($ticket->isArchived());
@@ -146,10 +146,10 @@ class TicketTest extends TestCase
 
     function test_it_is_archived_when_resolved_status_exceeds_archival_period(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfiguration::STATUSES['resolved'];
+        $ticket->status_id = TicketConfig::STATUSES['resolved'];
         $ticket->save();
 
-        $date = Carbon::now()->addDays(TicketConfiguration::ARCHIVE_AFTER_DAYS);
+        $date = Carbon::now()->addDays(TicketConfig::ARCHIVE_AFTER_DAYS);
         Carbon::setTestNow($date);
 
         $this->assertTrue($ticket->isArchived());

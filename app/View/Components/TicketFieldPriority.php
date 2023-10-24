@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,7 +20,7 @@ class TicketFieldPriority extends Component
     public function __construct(Ticket $ticket){
         $this->ticket = $ticket;
         $this->name = 'priority';
-        $this->priorities = TicketConfiguration::PRIORITIES;
+        $this->priorities = TicketConfig::PRIORITIES;
         $this->required = true;
         $this->disabled = $this->isDisabled();
     }

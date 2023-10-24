@@ -6,7 +6,7 @@ use App\Helpers\Config;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\Ticket;
 use App\Models\User;
@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         ])->create()->assignRole('resolver');
 
         foreach (range(1, 5) as $iteration){
-            $resolver = User::factory()->create()->assignRole('resolver');
+            $resolver = User::factory()->resolver()->create();
         }
 
         foreach (User::role('resolver')->get() as $resolver){

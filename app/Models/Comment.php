@@ -13,8 +13,8 @@ class Comment extends Model
         'created_at' => 'datetime:Y-m-d',
     ];
 
-    const MINIMAL_BODY_CHARACTERS = 3;
-    const MAXIMAL_BODY_CHARACTERS = 255;
+    const MIN_BODY_CHARS = 3;
+    const MAX_BODY_CHARS = 255;
 
     public function ticket()
     {

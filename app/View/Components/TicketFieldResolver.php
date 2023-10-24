@@ -5,7 +5,7 @@ namespace App\View\Components;
 use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\View\View;

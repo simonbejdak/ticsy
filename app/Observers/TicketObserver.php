@@ -3,14 +3,14 @@
 namespace App\Observers;
 
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use Illuminate\Support\Carbon;
 
 class TicketObserver
 {
     public function creating(Ticket $ticket): void
     {
-        if($ticket->status_id == TicketConfiguration::STATUSES['resolved']){
+        if($ticket->status_id == TicketConfig::STATUSES['resolved']){
             $ticket->resolved_at = Carbon::now();
         }
     }

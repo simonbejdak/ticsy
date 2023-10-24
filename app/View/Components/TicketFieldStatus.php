@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;

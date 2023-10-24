@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignId('status_id')->constrained();
             $table->foreignId('group_id')->constrained();
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
-            $table->enum('priority', TicketConfiguration::PRIORITIES)->default(TicketConfiguration::DEFAULT_PRIORITY);
+            $table->enum('priority', TicketConfig::PRIORITIES)->default(TicketConfig::DEFAULT_PRIORITY);
             $table->text('description');
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();

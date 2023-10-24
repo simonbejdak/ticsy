@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class TicketConfiguration
+class TicketConfig
 {
     const TYPES = [
         'incident' => 1,
@@ -29,7 +29,7 @@ class TicketConfiguration
     const PRIORITIES = [1, 2, 3, 4];
     const DEFAULT_PRIORITY = 4;
     const DEFAULT_PAGINATION = 10;
-    const MINIMUM_DESCRIPTION_CHARACTERS = 8;
-    const MAXIMUM_DESCRIPTION_CHARACTERS = 255;
+    const MIN_DESCRIPTION_CHARS = 8;
+    const MAX_DESCRIPTION_CHARS = 255;
     const ARCHIVE_AFTER_DAYS = 3;
 }

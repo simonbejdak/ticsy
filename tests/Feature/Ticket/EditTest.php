@@ -10,7 +10,7 @@ use App\Models\Group;
 use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -37,14 +37,18 @@ class EditTest extends TestCase
         $response->assertForbidden();
     }
 
-    function test_it_authorizes_caller_and_resolver_to_view(){
+    function test_it_authorizes_caller_to_view(){
         $user = User::factory()->create();
-        $resolver = User::factory()->create()->assignRole('resolver');
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
         $this->actingAs($user);
         $response = $this->get(route('tickets.edit', $ticket));
         $response->assertSuccessful();
+    }
+
+    function test_it_authorizes_resolver_to_view(){
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
 
         $this->actingAs($resolver);
         $response = $this->get(route('tickets.edit', $ticket));
@@ -55,8 +59,8 @@ class EditTest extends TestCase
     {
         $type = Type::factory(['name' => 'incident'])->create();
         $category = Category::factory(['name' => 'network'])->create();
-        $group = Group::factory()->create();
-        $resolver = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
+        $group = Group::factory(['name' => 'LOCAL-6380-NEW-JERSEY'])->create();
+        $resolver = User::factory(['name' => 'John Doe'])->resolver()->create();
         $resolver->groups()->attach($group);
         $status = Status::factory(['name' => 'open'])->create();
 
@@ -77,6 +81,7 @@ class EditTest extends TestCase
         $response->assertSuccessful();
         $response->assertSee($type->name);
         $response->assertSee($category->name);
+        $response->assertSee($group->name);
         $response->assertSee($resolver->name);
         $response->assertSee($status->name);
     }
@@ -85,16 +90,15 @@ class EditTest extends TestCase
     {
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
-
-        $comment = Comment::factory([
+        Comment::factory([
             'body' => 'Comment Body',
             'ticket_id' => $ticket,
             'user_id' => $user,
         ])->create();
 
         $this->actingAs($user);
-
         $response = $this->get(route('tickets.edit', $ticket));
+
         $response->assertSuccessful();
         $response->assertSee('Comment Body');
     }

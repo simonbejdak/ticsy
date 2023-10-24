@@ -17,7 +17,7 @@ class UserTest extends TestCase
     {
         $groupOne = Group::factory(['name' => 'Group 0'])->create();
         $groupTwo = Group::factory(['name' => 'Group 1'])->create();
-        $resolver = User::factory()->create()->assignRole('resolver');
+        $resolver = User::factory()->resolver()->create();
 
         $resolver->groups()->attach($groupOne);
         $resolver->groups()->attach($groupTwo);
@@ -53,8 +53,8 @@ class UserTest extends TestCase
     function test_only_one_resolver_can_be_assigned_to_ticket()
     {
         $ticket = Ticket::factory()->create();
-        $resolverOne = User::factory()->create()->assignRole('resolver');
-        $resolverTwo = User::factory()->create()->assignRole('resolver');
+        $resolverOne = User::factory()->resolver()->create();
+        $resolverTwo = User::factory()->resolver()->create();
 
         $ticket->assign($resolverOne);
 

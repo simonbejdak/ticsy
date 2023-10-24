@@ -27,7 +27,7 @@ class TicketComments extends Component
         $this->authorize('addComment', $this->ticket);
 
         $this->validate([
-            'body' => 'min:'. Comment::MINIMAL_BODY_CHARACTERS .'|max:'. Comment::MAXIMAL_BODY_CHARACTERS .'|required',
+            'body' => 'min:'. Comment::MIN_BODY_CHARS .'|max:'. Comment::MAX_BODY_CHARS .'|required',
         ]);
 
         $comment = new Comment();

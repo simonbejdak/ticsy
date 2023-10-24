@@ -8,7 +8,7 @@ use App\Models\Incident;
 use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -32,30 +32,30 @@ class TicketsController extends Controller
 
     public function create($type = null)
     {
-        $type = ($type === null) ? Type::find(TicketConfiguration::DEFAULT_TYPE) : Type::where('name', '=', $type)->firstOrFail();
+        $type = ($type === null) ? Type::find(TicketConfig::DEFAULT_TYPE) : Type::where('name', '=', $type)->firstOrFail();
 
         $formType = ucfirst('create');
         $action = route('tickets.store');
-        $priorities = array_reverse(TicketConfiguration::PRIORITIES);
+        $priorities = array_reverse(TicketConfig::PRIORITIES);
 
         return view('tickets.create', [
             'type' => $type,
             'formType' => $formType,
             'categories' => Category::all(),
             'priorities' => $priorities,
-            'default_priority' => TicketConfiguration::DEFAULT_PRIORITY,
+            'default_priority' => TicketConfig::DEFAULT_PRIORITY,
             'action' => $action,
         ]);
     }
 
     public function store(Request $request)
     {
-        $min_desc = TicketConfiguration::MINIMUM_DESCRIPTION_CHARACTERS;
-        $max_desc = TicketConfiguration::MAXIMUM_DESCRIPTION_CHARACTERS;
+        $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
+        $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
 
         $request->validate([
-            'type' => 'numeric|required|min:1|max:' . count(TicketConfiguration::TYPES),
-            'category' => 'numeric|required|min:1|max:' . count(TicketConfiguration::CATEGORIES),
+            'type' => 'numeric|required|min:1|max:' . count(TicketConfig::TYPES),
+            'category' => 'numeric|required|min:1|max:' . count(TicketConfig::CATEGORIES),
             'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
         ]);
 
@@ -83,7 +83,7 @@ class TicketsController extends Controller
             'ticket' => $ticket,
             'formType' => $formType,
             'categories' => Category::all(),
-            'priorities' => TicketConfiguration::PRIORITIES,
+            'priorities' => TicketConfig::PRIORITIES,
             'resolvers' => User::role('resolver')->get(),
             'statuses' => Status::all(),
             'action' => $action,

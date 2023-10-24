@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Group;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use App\Models\User;
 use Livewire\Component;
 
@@ -72,8 +72,8 @@ class TicketForm extends Component
     public function save()
     {
         $this->validate([
-            'status' => 'min:1|max:'. count(TicketConfiguration::STATUSES).'|numeric',
-            'priority' => 'min:1|max:'. count(TicketConfiguration::PRIORITIES).'|required|numeric',
+            'status' => 'min:1|max:'. count(TicketConfig::STATUSES).'|numeric',
+            'priority' => 'min:1|max:'. count(TicketConfig::PRIORITIES).'|required|numeric',
             'group' => 'min:1|max:'. count(Group::GROUPS).'|required|numeric',
             'resolver' => 'min:1|max:'. User::max('id') .'|nullable|numeric',
         ]);

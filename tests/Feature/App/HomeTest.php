@@ -31,8 +31,8 @@ class HomeTest extends TestCase
     public function test_it_does_not_display_recent_tickets_when_user_has_no_tickets()
     {
         $this->actingAs(User::factory()->create());
-
         $response = $this->get(route('home'));
+
         $response->assertSuccessful();
         $response->assertDontSee('Recent tickets you have already created:');
     }
@@ -40,28 +40,21 @@ class HomeTest extends TestCase
     public function test_it_displays_recent_tickets_when_user_has_tickets()
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $tested = [
-            'html_text' => 'Recent tickets you have already created',
-            'description' => 'Ticket Description',
-        ];
-
         Ticket::factory(HomeController::RECENT_TICKETS_COUNT, [
             'user_id' => $user,
-            'description' => $tested['description'],
+            'description' => 'Ticket Description',
         ])->create();
 
+        $this->actingAs($user);
         $response = $this->get(route('home'));
-        $response->assertSee($tested['html_text']);
-        $response->assertSee($tested['description']);
+
+        $response->assertSee('Recent tickets you have already created');
+        $response->assertSee('Ticket Description');
     }
 
     public function test_it_displays_correct_number_of_recent_tickets()
     {
         $user = User::factory()->create();
-
-        $this->actingAs($user);
 
         for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT + 1; $i++){
             Ticket::factory([
@@ -70,6 +63,7 @@ class HomeTest extends TestCase
             ])->create();
         }
 
+        $this->actingAs($user);
         $response = $this->get(route('home'));
 
         for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT; $i++){

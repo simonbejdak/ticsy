@@ -20,9 +20,8 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory()->create();
         $user = User::factory()->create();
 
-        Livewire::actingAs($user);
-
-        Livewire::test(TicketComments::class, ['ticket' => $ticket])
+        Livewire::actingAs($user)
+            ->test(TicketComments::class, ['ticket' => $ticket])
             ->call('addComment', ['body' => 'Comment Body',])
             ->assertForbidden();
     }
@@ -32,9 +31,8 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
-        Livewire::actingAs($user);
-
-        Livewire::test(TicketComments::class, ['ticket' => $ticket])
+        Livewire::actingAs($user)
+            ->test(TicketComments::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
             ->call('addComment')
             ->assertSee('Comment Body');
@@ -48,12 +46,11 @@ class AddCommentTest extends TestCase
 
     public function test_it_allows_to_add_comment_to_resolver()
     {
-        $resolver = User::factory()->create()->assignRole('resolver');
+        $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory()->create();
 
-        Livewire::actingAs($resolver);
-
-        Livewire::test(TicketComments::class, ['ticket' => $ticket])
+        Livewire::actingAs($resolver)
+            ->test(TicketComments::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
             ->call('addComment')
             ->assertSee('Comment Body');
@@ -70,9 +67,8 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
-        Livewire::actingAs($user);
-
-        Livewire::test(TicketComments::class, ['ticket' => $ticket])
+        Livewire::actingAs($user)
+            ->test(TicketComments::class, ['ticket' => $ticket])
             ->set('body', '')
             ->call('addComment')
             ->assertHasErrors(['body' => 'required']);
@@ -83,10 +79,9 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
-        Livewire::actingAs($user);
-
-        Livewire::test(TicketComments::class, ['ticket' => $ticket])
-            ->set('body', Str::random(Comment::MINIMAL_BODY_CHARACTERS - 1))
+        Livewire::actingAs($user)
+            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->set('body', Str::random(Comment::MIN_BODY_CHARS - 1))
             ->call('addComment')
             ->assertHasErrors(['body' => 'min']);
     }
@@ -96,10 +91,9 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
-        Livewire::actingAs($user);
-
-        Livewire::test(TicketComments::class, ['ticket' => $ticket])
-            ->set('body', Str::random(Comment::MAXIMAL_BODY_CHARACTERS + 1))
+        Livewire::actingAs($user)
+            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->set('body', Str::random(Comment::MAX_BODY_CHARS + 1))
             ->call('addComment')
             ->assertHasErrors(['body' => 'max']);
     }

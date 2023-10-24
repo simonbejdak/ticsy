@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfiguration;
+use App\Models\TicketConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,6 +29,6 @@ class StatusTest extends TestCase
     public function test_it_has_correct_default_status(){
         $ticket = new Ticket();
 
-        $this->assertEquals(TicketConfiguration::DEFAULT_STATUS, $ticket->status->id);
+        $this->assertEquals(TicketConfig::DEFAULT_STATUS, $ticket->status->id);
     }
 }

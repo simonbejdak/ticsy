@@ -22,42 +22,29 @@ class IndexTest extends TestCase
 
     function testTicketsIndexDisplaysTicketsCorrectly()
     {
-        $tested = [
-            'user_name' => 'John',
-            'resolver_name' => 'Thomas',
-            'description' => 'Ticket 1 description',
-        ];
-
-        $user = User::factory([
-            'name' => $tested['user_name']
-        ])->create();
-
-        $resolver = User::factory([
-            'name' => $tested['resolver_name']
-        ])->create()->assignRole('resolver');
-
-        $this->actingAs($user);
-
+        $user = User::factory(['name' => 'John Doe'])->create();
+        $resolver = User::factory(['name' => 'Jeff Wing'])->resolver()->create();
         Ticket::factory([
-            'description' => $tested['description'],
+            'description' => 'Ticket Description',
             'user_id' => $user,
             'resolver_id' => $resolver,
         ])->create();
 
+        $this->actingAs($user);
         $response = $this->get(route('tickets.index'));
+
         $response->assertSuccessful();
-        $response->assertSee($tested['description']);
-        $response->assertSee($tested['user_name']);
-        $response->assertSee($tested['resolver_name']);
+        $response->assertSee('John Doe');
+        $response->assertSee('Jeff Wing');
+        $response->assertSee('Ticket Description');
     }
 
     function test_tickets_index_pagination_displays_correct_number_of_tickets()
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
 
         Ticket::factory([
-            'description' => 'This ticket is supposed to be on second pagination page',
+            'description' => 'This ticket is supposed to be on the second pagination page',
             'user_id' => $user,
         ])->create();
 
@@ -65,12 +52,14 @@ class IndexTest extends TestCase
             'user_id' => $user,
         ])->create();
 
+        $this->actingAs($user);
+
         $response = $this->get(route('tickets.index', ['page' => 1]));
         $response->assertSuccessful();
-        $response->assertDontSee('This ticket is supposed to be on second pagination page');
+        $response->assertDontSee('This ticket is supposed to be on the second pagination page');
 
         $response = $this->get(route('tickets.index', ['page' => 2]));
         $response->assertSuccessful();
-        $response->assertSee('This ticket is supposed to be on second pagination page');
+        $response->assertSee('This ticket is supposed to be on the second pagination page');
     }
 }

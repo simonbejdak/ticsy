@@ -17,8 +17,8 @@ class Ticket extends Model
 
     protected $guarded = [];
     protected $attributes = [
-        'status_id' => TicketConfiguration::DEFAULT_STATUS,
-        'priority' => TicketConfiguration::DEFAULT_PRIORITY,
+        'status_id' => TicketConfig::DEFAULT_STATUS,
+        'priority' => TicketConfig::DEFAULT_PRIORITY,
         'group_id' => Group::DEFAULT,
     ];
 
@@ -66,20 +66,20 @@ class Ticket extends Model
 
     public function isResolved(): bool
     {
-        return $this->status_id == TicketConfiguration::STATUSES['resolved'];
+        return $this->status_id == TicketConfig::STATUSES['resolved'];
     }
 
     public function isArchived(): bool{
-        if($this->status_id == TicketConfiguration::STATUSES['resolved']){
+        if($this->status_id == TicketConfig::STATUSES['resolved']){
 
-            $expireDate = Carbon::now()->subDays(TicketConfiguration::ARCHIVE_AFTER_DAYS);
+            $expireDate = Carbon::now()->subDays(TicketConfig::ARCHIVE_AFTER_DAYS);
 
             if(isset($this->resolved_at) && $this->resolved_at->lessThan($expireDate)){
                 return true;
             }
         };
 
-        if($this->status_id == TicketConfiguration::STATUSES['cancelled']){
+        if($this->status_id == TicketConfig::STATUSES['cancelled']){
             return true;
         };
 
@@ -88,7 +88,7 @@ class Ticket extends Model
 
     public function isStatus(...$statuses): bool{
         foreach ($statuses as $status){
-            if($this->status_id == TicketConfiguration::STATUSES[$status]){
+            if($this->status_id == TicketConfig::STATUSES[$status]){
                 return true;
             }
         }
