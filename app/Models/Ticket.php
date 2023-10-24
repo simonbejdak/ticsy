@@ -70,7 +70,7 @@ class Ticket extends Model
     }
 
     public function isArchived(): bool{
-        if($this->status->id == TicketConfiguration::STATUSES['resolved']){
+        if($this->status_id == TicketConfiguration::STATUSES['resolved']){
 
             $expireDate = Carbon::now()->subDays(TicketConfiguration::ARCHIVE_AFTER_DAYS);
 
@@ -79,7 +79,7 @@ class Ticket extends Model
             }
         };
 
-        if($this->status->id === TicketConfiguration::STATUSES['cancelled']){
+        if($this->status_id == TicketConfiguration::STATUSES['cancelled']){
             return true;
         };
 

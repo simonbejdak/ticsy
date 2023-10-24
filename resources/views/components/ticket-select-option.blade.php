@@ -4,4 +4,4 @@
     'selected' => '',
   ])
 
-<option {{ ($text == $selected) ? 'selected' : '' }} value="{{ $value }}">{{ $text }}</option>
+<option value="{{ $value }}">{{ $text }}</option>

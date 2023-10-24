@@ -55,13 +55,16 @@ class EditTest extends TestCase
     {
         $type = Type::factory(['name' => 'incident'])->create();
         $category = Category::factory(['name' => 'network'])->create();
+        $group = Group::factory()->create();
         $resolver = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
+        $resolver->groups()->attach($group);
         $status = Status::factory(['name' => 'open'])->create();
 
         $user = User::factory()->create();
         $ticket = Ticket::factory([
             'type_id' => $type,
             'category_id' => $category,
+            'group_id' => $group,
             'resolver_id' => $resolver,
             'status_id' => $status,
             'user_id' => $user,

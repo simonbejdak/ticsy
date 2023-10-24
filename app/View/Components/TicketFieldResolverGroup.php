@@ -14,14 +14,12 @@ class TicketFieldResolverGroup extends Component
 {
     public Ticket $ticket;
     public string $name;
-    public string $selected;
     public Collection $groups;
     public bool $required;
     public bool $disabled;
     public function __construct(Ticket $ticket){
         $this->ticket = $ticket;
         $this->name = 'group';
-        $this->selected = $this->ticket->group->name;
         $this->groups = Group::all();
         $this->required = true;
         $this->disabled = $this->isDisabled();

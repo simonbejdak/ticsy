@@ -14,14 +14,12 @@ class TicketFieldStatus extends Component
 {
     public Ticket $ticket;
     public string $name;
-    public string $selected;
     public Collection $statuses;
     public bool $required;
     public bool $disabled;
     public function __construct(Ticket $ticket){
         $this->ticket = $ticket;
         $this->name = 'status';
-        $this->selected = $this->ticket->status->name;
         $this->statuses = Status::all();
         $this->required = true;
         $this->disabled = $this->isDisabled();

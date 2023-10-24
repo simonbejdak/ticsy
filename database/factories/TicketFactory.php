@@ -35,9 +35,6 @@ class TicketFactory extends Factory
                 return TicketConfiguration::DEFAULT_STATUS;
             },
             'group_id' => Group::DEFAULT,
-            'resolver_id' => function (){
-                return User::factory()->create()->assignRole('resolver');
-            },
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

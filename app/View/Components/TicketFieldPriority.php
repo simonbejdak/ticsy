@@ -14,14 +14,12 @@ class TicketFieldPriority extends Component
 {
     public Ticket $ticket;
     public string $name;
-    public string $selected;
     public array $priorities;
     public bool $required;
     public bool $disabled;
     public function __construct(Ticket $ticket){
         $this->ticket = $ticket;
         $this->name = 'priority';
-        $this->selected = $this->ticket->priority;
         $this->priorities = TicketConfiguration::PRIORITIES;
         $this->required = true;
         $this->disabled = $this->isDisabled();

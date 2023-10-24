@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Config;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
@@ -37,6 +38,14 @@ class DatabaseSeeder extends Seeder
             'email' => 'resolver@gmail.com',
         ])->create()->assignRole('resolver');
 
+        foreach (range(1, 5) as $iteration){
+            $resolver = User::factory()->create()->assignRole('resolver');
+        }
+
+        foreach (User::role('resolver')->get() as $resolver){
+            $user->groups()->attach(Group::find(rand(1, count(Group::GROUPS))));
+        }
+
         foreach (range(1, 30) as $iteration){
             Ticket::factory()->create([
                 'user_id' => $user,
@@ -51,10 +60,6 @@ class DatabaseSeeder extends Seeder
                 'ticket_id' => $ticket,
                 'user_id' => $user,
             ]);
-        }
-
-        foreach (range(1, 5) as $iteration){
-            User::factory()->create()->assignRole('resolver');
         }
 
     }

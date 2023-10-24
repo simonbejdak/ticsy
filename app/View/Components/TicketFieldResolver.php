@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfiguration;
@@ -14,16 +15,16 @@ use Illuminate\View\Component;
 class TicketFieldResolver extends Component
 {
     public Ticket $ticket;
+    public Group $group;
     public string $name;
-    public string $selected;
-    public Collection $resolvers;
+    public $resolvers;
     public bool $required;
     public bool $disabled;
-    public function __construct(Ticket $ticket){
+    public function __construct(Ticket $ticket, int $group){
         $this->ticket = $ticket;
+        $this->group = Group::findOrFail($group);
         $this->name = 'resolver';
-        $this->selected = ($this->ticket->resolver->name) ?? '';
-        $this->resolvers = User::role('resolver')->get();
+        $this->resolvers = $this->group->resolvers->all();
         $this->required = false;
         $this->disabled = $this->isDisabled();
     }
