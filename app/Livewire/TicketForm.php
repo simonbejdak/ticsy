@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\User;
+use Illuminate\Contracts\Session\Session;
 use Livewire\Component;
 
 class TicketForm extends Component
@@ -15,6 +16,16 @@ class TicketForm extends Component
     public $priority;
     public $group;
     public $resolver;
+
+    public function rules()
+    {
+        return [
+            'status' => 'min:1|max:'. count(TicketConfig::STATUSES).'|numeric',
+            'priority' => 'min:1|max:'. count(TicketConfig::PRIORITIES).'|required|numeric',
+            'group' => 'min:1|max:'. count(Group::GROUPS).'|required|numeric',
+            'resolver' => 'min:1|max:'. User::max('id') .'|nullable|numeric',
+        ];
+    }
 
     public function mount(Ticket $ticket){
         $this->ticket = $ticket;
@@ -34,6 +45,7 @@ class TicketForm extends Component
         if($this->ticket->isArchived()){
             abort(403);
         }
+
         if($property === 'status'){
             $this->authorize('setStatus', $this->ticket);
         }
@@ -53,8 +65,9 @@ class TicketForm extends Component
         }
     }
 
-    public function updated($property)
+    public function updated()
     {
+        $this->validate();
         $this->ticket->status_id = $this->status;
         $this->ticket->priority = $this->priority;
         $this->ticket->group_id = $this->group;
@@ -63,12 +76,7 @@ class TicketForm extends Component
 
     public function save()
     {
-        $this->validate([
-            'status' => 'min:1|max:'. count(TicketConfig::STATUSES).'|numeric',
-            'priority' => 'min:1|max:'. count(TicketConfig::PRIORITIES).'|required|numeric',
-            'group' => 'min:1|max:'. count(Group::GROUPS).'|required|numeric',
-            'resolver' => 'min:1|max:'. User::max('id') .'|nullable|numeric',
-        ]);
+        $this->validate();
         $this->ticket->status_id = $this->status;
         $this->ticket->priority = $this->priority;
         $this->ticket->group_id = $this->group;

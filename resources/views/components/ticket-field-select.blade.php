@@ -5,4 +5,8 @@
             :text="$option['name']"
         />
     @endforeach
+        <x-ticket-select-option
+            :value="10"
+            :text="'whatever'"
+        />
 </x-ticket-select>

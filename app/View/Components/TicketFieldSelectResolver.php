@@ -14,14 +14,14 @@ use Illuminate\View\Component;
 
 class TicketFieldSelectResolver extends TicketFieldSelect
 {
-    public Group $group;
+    public Group|null $group;
     public function __construct(Ticket $ticket, int $group){
         parent::__construct();
 
         $this->ticket = $ticket;
         $this->name = 'resolver';
-        $this->group = Group::findOrFail($group);
-        $this->options = $this->toIterable($this->group->resolvers()->get());
+        $this->group = Group::find($group) ?? null;
+        $this->options = ($this->group !== null) ? $this->toIterable($this->group->resolvers()->get()) : [] ;
         $this->required = false;
         $this->disabled = $this->isDisabled();
     }

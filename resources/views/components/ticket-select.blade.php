@@ -11,7 +11,7 @@
             {{ ($disabled) ? 'disabled' : '' }}
             class="w-full rounded-lg border border-gray-300 {{ ($disabled) ? 'bg-gray-200' : 'bg-white hover:cursor-pointer' }} px-1 pt-2 pb-2.5"
             id="{{ $name }}"
-            wire:model.live="{{  $name }}"
+            wire:model.blur="{{ $name }}"
         >
             @if(!$required)
                 <x-ticket-select-option></x-ticket-select-option>

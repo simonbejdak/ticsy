@@ -68,6 +68,42 @@ class UpdateTest extends TestCase
             ->assertHasErrors(['status' => 'max']);
     }
 
+    public function test_it_fails_validation_when_unknown_priority_is_set()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->set('priority', count(TicketConfig::PRIORITIES) + 1)
+            ->call('save')
+            ->assertHasErrors(['priority' => 'max']);
+    }
+
+    public function test_it_fails_validation_when_unknown_group_is_set()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->set('group', count(Group::GROUPS) + 1)
+            ->call('save')
+            ->assertHasErrors(['group' => 'max']);
+    }
+
+    public function test_it_fails_validation_when_unknown_resolver_is_set()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->set('resolver', User::max('id') + 1)
+            ->call('save')
+            ->assertHasErrors(['resolver' => 'max']);
+    }
+
     public function test_guest_is_redirected_to_login_page()
     {
         $resolver = User::factory()->resolver()->create();

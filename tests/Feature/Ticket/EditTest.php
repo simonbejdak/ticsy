@@ -102,4 +102,15 @@ class EditTest extends TestCase
         $response->assertSuccessful();
         $response->assertSee('Comment Body');
     }
+
+    public function test_it_shows_validation_error_when_unknown_group_is_selected()
+    {
+        $ticket = Ticket::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->set('group', count(Group::GROUPS) + 1)
+            ->assertSee('The group field must not be greater than '. count(Group::GROUPS) .'.');
+    }
 }
