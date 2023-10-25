@@ -10,29 +10,29 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 
-class TicketFieldStatus extends Component
+class TicketFieldSelectPriority extends TicketFieldSelect
 {
-    public Ticket $ticket;
-    public string $name;
-    public Collection $statuses;
-    public bool $required;
-    public bool $disabled;
     public function __construct(Ticket $ticket){
+        parent::__construct();
+
         $this->ticket = $ticket;
-        $this->name = 'status';
-        $this->statuses = Status::all();
+        $this->name = 'priority';
+        $this->options = $this->toIterable(TicketConfig::PRIORITIES);
         $this->required = true;
         $this->disabled = $this->isDisabled();
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.ticket-field-status');
+        return view('components.ticket-field-select');
     }
 
     public function isDisabled(): bool
     {
-        if(auth()->user()->cannot('setStatus', $this->ticket)){
+        if(auth()->user()->cannot('setPriority', $this->ticket)){
+            return true;
+        }
+        if($this->ticket->isResolved()){
             return true;
         }
         if($this->ticket->isArchived()){

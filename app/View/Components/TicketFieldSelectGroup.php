@@ -10,24 +10,21 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 
-class TicketFieldResolverGroup extends Component
+class TicketFieldSelectGroup extends TicketFieldSelect
 {
-    public Ticket $ticket;
-    public string $name;
-    public Collection $groups;
-    public bool $required;
-    public bool $disabled;
     public function __construct(Ticket $ticket){
+        parent::__construct();
+
         $this->ticket = $ticket;
         $this->name = 'group';
-        $this->groups = Group::all();
+        $this->options = $this->toIterable(Group::all());
         $this->required = true;
         $this->disabled = $this->isDisabled();
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.ticket-field-resolver-group');
+        return view('components.ticket-field-select');
     }
 
     public function isDisabled(): bool

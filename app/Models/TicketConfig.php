@@ -9,7 +9,10 @@ class TicketConfig
         'request' => 2,
         'change' => 3,
     ];
-    const DEFAULT_TYPE = self::TYPES['incident'];
+    const DEFAULT_TYPE = [
+        'id' => self::TYPES['incident'],
+        'name' => 'incident',
+    ];
     const CATEGORIES = [
         'network' => 1,
         'server' => 2,

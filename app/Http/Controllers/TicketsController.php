@@ -30,21 +30,16 @@ class TicketsController extends Controller
         return view('tickets.index', ['tickets' => $tickets]);
     }
 
-    public function create($type = null)
+    public function create($type = TicketConfig::DEFAULT_TYPE['name'])
     {
-        $type = ($type === null) ? Type::find(TicketConfig::DEFAULT_TYPE) : Type::where('name', '=', $type)->firstOrFail();
-
-        $formType = ucfirst('create');
-        $action = route('tickets.store');
+        $type = Type::where('name', '=', $type)->firstOrFail();
         $priorities = array_reverse(TicketConfig::PRIORITIES);
 
         return view('tickets.create', [
             'type' => $type,
-            'formType' => $formType,
             'categories' => Category::all(),
             'priorities' => $priorities,
             'default_priority' => TicketConfig::DEFAULT_PRIORITY,
-            'action' => $action,
         ]);
     }
 
@@ -53,7 +48,7 @@ class TicketsController extends Controller
         $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
         $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
 
-        $request->validate([
+        $validated = $request->validate([
             'type' => 'numeric|required|min:1|max:' . count(TicketConfig::TYPES),
             'category' => 'numeric|required|min:1|max:' . count(TicketConfig::CATEGORIES),
             'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
@@ -61,9 +56,9 @@ class TicketsController extends Controller
 
         $ticket = new Ticket();
         $ticket->user_id = Auth::user()->id;
-        $ticket->type_id = $request['type'];
-        $ticket->category_id = $request['category'];
-        $ticket->description = $request['description'];
+        $ticket->type_id = $validated['type'];
+        $ticket->category_id = $validated['category'];
+        $ticket->description = $validated['description'];
         $ticket->save();
 
         Session::flash('success', 'You have successfully created a ticket');
@@ -76,17 +71,8 @@ class TicketsController extends Controller
 
         $this->authorize('edit', $ticket);
 
-        $formType = ucfirst('edit');
-        $action = route('tickets.update', ['ticket' => $ticket]);
-
         return view('tickets.edit', [
             'ticket' => $ticket,
-            'formType' => $formType,
-            'categories' => Category::all(),
-            'priorities' => TicketConfig::PRIORITIES,
-            'resolvers' => User::role('resolver')->get(),
-            'statuses' => Status::all(),
-            'action' => $action,
         ]);
     }
 }

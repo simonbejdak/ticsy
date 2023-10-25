@@ -1,8 +1,8 @@
 <x-ticket-select :required="$required" :disabled="$disabled" :name="$name">
-    @foreach($statuses as $status)
+    @foreach($options as $option)
         <x-ticket-select-option
-            :value="$status->id"
-            :text="$status->name"
+            :value="$option['id']"
+            :text="$option['name']"
         />
     @endforeach
 </x-ticket-select>

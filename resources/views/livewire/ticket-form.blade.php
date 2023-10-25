@@ -7,10 +7,10 @@
             <x-ticket-field :disabled="true" :name="'updated'" :value="$ticket->created_at" />
             <x-ticket-field :disabled="true" :name="'type'" :value="$ticket->type->name" />
             <x-ticket-field :disabled="true" :name="'category'" :value="$ticket->category->name" />
-            <x-ticket-field-status :ticket="$ticket" />
-            <x-ticket-field-priority :ticket="$ticket" />
-            <x-ticket-field-resolver-group :ticket="$ticket" />
-            <x-ticket-field-resolver :ticket="$ticket" :group="$group" />
+            <x-ticket-field-select-status :ticket="$ticket" />
+            <x-ticket-field-select-priority :ticket="$ticket" />
+            <x-ticket-field-select-group :ticket="$ticket" />
+            <x-ticket-field-select-resolver :ticket="$ticket" :group="$group" />
         </x-ticket-grid>
         <x-ticket-field :disabled="true" :name="'description'" :value="$ticket->description" />
         <div class="flex flex-row justify-end">

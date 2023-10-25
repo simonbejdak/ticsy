@@ -12,26 +12,23 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 
-class TicketFieldResolver extends Component
+class TicketFieldSelectResolver extends TicketFieldSelect
 {
-    public Ticket $ticket;
     public Group $group;
-    public string $name;
-    public $resolvers;
-    public bool $required;
-    public bool $disabled;
     public function __construct(Ticket $ticket, int $group){
+        parent::__construct();
+
         $this->ticket = $ticket;
-        $this->group = Group::findOrFail($group);
         $this->name = 'resolver';
-        $this->resolvers = $this->group->resolvers->all();
+        $this->group = Group::findOrFail($group);
+        $this->options = $this->toIterable($this->group->resolvers()->get());
         $this->required = false;
         $this->disabled = $this->isDisabled();
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.ticket-field-resolver');
+        return view('components.ticket-field-select');
     }
 
     public function isDisabled(): bool

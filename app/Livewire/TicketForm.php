@@ -16,6 +16,19 @@ class TicketForm extends Component
     public $group;
     public $resolver;
 
+    public function mount(Ticket $ticket){
+        $this->ticket = $ticket;
+        $this->status = $this->ticket->status->id;
+        $this->priority = $this->ticket->priority;
+        $this->group = $this->ticket->group_id;
+        $this->resolver = $this->ticket->resolver_id;
+    }
+
+    public function render()
+    {
+        return view('livewire.ticket-form');
+    }
+
     public function updating($property, $value)
     {
         if($this->ticket->isArchived()){
@@ -42,31 +55,10 @@ class TicketForm extends Component
 
     public function updated($property)
     {
-        if($property === 'status'){
-            $this->ticket->status_id = $this->status;
-        }
-        if($property === 'priority'){
-            $this->ticket->priority = $this->priority;
-        }
-        if($property === 'group'){
-            $this->ticket->group_id = $this->group;
-        }
-        if($property === 'resolver'){
-            $this->ticket->resolver_id = $this->resolver;
-        }
-    }
-
-    public function mount(Ticket $ticket){
-        $this->ticket = $ticket;
-        $this->status = $this->ticket->status->id;
-        $this->priority = $this->ticket->priority;
-        $this->group = $this->ticket->group_id;
-        $this->resolver = $this->ticket->resolver_id;
-    }
-
-    public function render()
-    {
-        return view('livewire.ticket-form');
+        $this->ticket->status_id = $this->status;
+        $this->ticket->priority = $this->priority;
+        $this->ticket->group_id = $this->group;
+        $this->ticket->resolver_id = $this->resolver;
     }
 
     public function save()
@@ -87,7 +79,7 @@ class TicketForm extends Component
     }
 
     private function isTicketResolved(): void{
-        if($this->ticket->isStatus('resolved')){
+        if($this->ticket->isResolved()){
             abort(403);
         }
     }

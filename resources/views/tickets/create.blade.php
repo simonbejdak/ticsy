@@ -1,11 +1,8 @@
 <x-app-layout>
-    <form action="{{ $action }}" method="POST">
-        @if($action === 'update')
-            @method('PATCH')
-        @endif
+    <form action="{{ route('tickets.store') }}" method="POST">
         @csrf
         <x-ticket-grid>
-            <div class="font-light text-3xl">{{ $formType }} {{ $type->name ?? '' }}</div>
+            <div class="font-light text-3xl">Create {{ $type->name ?? '' }}</div>
             <input type="hidden" name="type" value="{{ $type->id }}">
             <div class="flex flex-col space-y-2">
                 <x-input-label for="category">Category</x-input-label>
@@ -35,7 +32,7 @@
                     class="rounded-lg py-2 bg-slate-800 text-white hover:bg-slate-600 shadow-md"
                     type="submit"
                 >
-                    {{ $formType }}
+                    Create
                 </x-secondary-button>
             </div>
         </x-ticket-grid>

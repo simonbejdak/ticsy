@@ -9,33 +9,28 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
+use function PHPUnit\Framework\isInstanceOf;
 
-class TicketFieldPriority extends Component
+class TicketFieldSelectStatus extends TicketFieldSelect
 {
-    public Ticket $ticket;
-    public string $name;
-    public array $priorities;
-    public bool $required;
-    public bool $disabled;
     public function __construct(Ticket $ticket){
+        parent::__construct();
+
         $this->ticket = $ticket;
-        $this->name = 'priority';
-        $this->priorities = TicketConfig::PRIORITIES;
+        $this->name = 'status';
+        $this->options = $this->toIterable(Status::all());
         $this->required = true;
         $this->disabled = $this->isDisabled();
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.ticket-field-priority');
+        return view('components.ticket-field-select');
     }
 
     public function isDisabled(): bool
     {
-        if(auth()->user()->cannot('setPriority', $this->ticket)){
-            return true;
-        }
-        if($this->ticket->isResolved()){
+        if(auth()->user()->cannot('setStatus', $this->ticket)){
             return true;
         }
         if($this->ticket->isArchived()){
