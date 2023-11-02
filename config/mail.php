@@ -26,7 +26,7 @@ return [
     |
     | Laravel supports a variety of mail "transport" drivers to be used while
     | sending an e-mail. You will specify which one you are using for your
-    | mailers below. You are free to add additional mailers as required.
+    | mailers below. You are free to add additional mailers as blank.
     |
     | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
     |            "postmark", "log", "array", "failover"

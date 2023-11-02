@@ -22,7 +22,7 @@ class TicketFieldSelectResolver extends TicketFieldSelect
         $this->name = 'resolver';
         $this->group = Group::find($group) ?? null;
         $this->options = ($this->group !== null) ? $this->toIterable($this->group->resolvers()->get()) : [] ;
-        $this->required = false;
+        $this->blank = true;
         $this->disabled = $this->isDisabled();
     }
 

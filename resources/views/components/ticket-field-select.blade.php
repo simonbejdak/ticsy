@@ -1,4 +1,4 @@
-<x-ticket-select :required="$required" :disabled="$disabled" :name="$name">
+<x-ticket-select :blank="$blank" :disabled="$disabled" :name="$name">
     @foreach($options as $option)
         <x-ticket-select-option
             :value="$option['id']"

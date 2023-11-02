@@ -18,7 +18,7 @@ class TicketFieldSelectPriority extends TicketFieldSelect
         $this->ticket = $ticket;
         $this->name = 'priority';
         $this->options = $this->toIterable(TicketConfig::PRIORITIES);
-        $this->required = true;
+        $this->blank = false;
         $this->disabled = $this->isDisabled();
     }
 

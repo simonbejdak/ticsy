@@ -14,6 +14,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 
 class TicketsController extends Controller
 {
@@ -48,16 +50,25 @@ class TicketsController extends Controller
         $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
         $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
 
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'type' => 'numeric|required|min:1|max:' . count(TicketConfig::TYPES),
             'category' => 'numeric|required|min:1|max:' . count(TicketConfig::CATEGORIES),
+            'item' => 'numeric|required|min:1|max:' . count(TicketConfig::ITEMS),
             'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
         ]);
+
+        $validated = $validator->validated();
+
+        if(count(Category::findOrFail($validated['category'])->items()->where('id', '=', $validated['item'])->get()) === 0){
+            $validator->errors()->add('item', 'The item field must belong to the selected category');
+            return back()->withErrors($validator)->withInput();
+        }
 
         $ticket = new Ticket();
         $ticket->user_id = Auth::user()->id;
         $ticket->type_id = $validated['type'];
         $ticket->category_id = $validated['category'];
+        $ticket->item_id = $validated['item'];
         $ticket->description = $validated['description'];
         $ticket->save();
 

@@ -6,11 +6,13 @@ namespace Tests\Unit;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
+use App\Models\Item;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -30,7 +32,7 @@ class TicketTest extends TestCase
 
     function test_it_has_category_relationship()
     {
-        $category = Category::factory(['name' => 'network'])->create();
+        $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
         $ticket = Ticket::factory(['category_id' => $category])->create();
 
         $this->assertEquals('Network', $ticket->category->name);
@@ -78,6 +80,15 @@ class TicketTest extends TestCase
         $ticket = Ticket::factory(['group_id' => $group])->create();
 
         $this->assertEquals('LOCAL-6445-NEW-YORK', $ticket->group->name);
+    }
+
+    public function test_it_belongs_to_item()
+    {
+        $category = Category::firstOrFail();
+        $item = $category->items()->inRandomOrder()->first();
+        $ticket = Ticket::factory(['category_id' => $category, 'item_id' => $item])->create();
+
+        $this->assertEquals($item->name, $ticket->item->name);
     }
 
     function test_it_has_priority()
@@ -153,5 +164,18 @@ class TicketTest extends TestCase
         Carbon::setTestNow($date);
 
         $this->assertTrue($ticket->isArchived());
+    }
+
+    public function test_query_exception_thrown_if_item_does_not_match_category()
+    {
+        // I'm not attaching below models together, so they do not match
+        $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
+        $item = Item::findOrFail(TicketConfig::ITEMS['issue']);
+
+        $this->withoutExceptionHandling();
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Item cannot be assigned to Ticket if it does not match Category');
+
+        Ticket::factory(['category_id' => $category, 'item_id' => $item])->create();
     }
 }

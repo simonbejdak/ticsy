@@ -7,6 +7,7 @@ use App\Livewire\TicketForm;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
+use App\Models\Item;
 use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
@@ -58,7 +59,9 @@ class EditTest extends TestCase
     public function test_it_displays_ticket_data()
     {
         $type = Type::factory(['name' => 'incident'])->create();
-        $category = Category::factory(['name' => 'network'])->create();
+        $category = Category::firstOrFail();
+        $item = Item::factory(['name' => 'problem_with_json'])->create();
+        $item->categories()->attach($category);
         $group = Group::factory(['name' => 'LOCAL-6380-NEW-JERSEY'])->create();
         $resolver = User::factory(['name' => 'John Doe'])->resolver()->create();
         $resolver->groups()->attach($group);
@@ -68,6 +71,7 @@ class EditTest extends TestCase
         $ticket = Ticket::factory([
             'type_id' => $type,
             'category_id' => $category,
+            'item_id' => $item,
             'group_id' => $group,
             'resolver_id' => $resolver,
             'status_id' => $status,
@@ -81,6 +85,7 @@ class EditTest extends TestCase
         $response->assertSuccessful();
         $response->assertSee($type->name);
         $response->assertSee($category->name);
+        $response->assertSee($item->name);
         $response->assertSee($group->name);
         $response->assertSee($resolver->name);
         $response->assertSee($status->name);

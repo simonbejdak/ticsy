@@ -19,13 +19,8 @@ class TicketFieldSelectStatus extends TicketFieldSelect
         $this->ticket = $ticket;
         $this->name = 'status';
         $this->options = $this->toIterable(Status::all());
-        $this->required = true;
+        $this->blank = false;
         $this->disabled = $this->isDisabled();
-    }
-
-    public function render(): View|Closure|string
-    {
-        return view('components.ticket-field-select');
     }
 
     public function isDisabled(): bool

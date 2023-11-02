@@ -18,7 +18,7 @@ class TicketFieldSelectGroup extends TicketFieldSelect
         $this->ticket = $ticket;
         $this->name = 'group';
         $this->options = $this->toIterable(Group::all());
-        $this->required = true;
+        $this->blank = false;
         $this->disabled = $this->isDisabled();
     }
 

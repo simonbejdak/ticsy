@@ -11,11 +11,10 @@ use InvalidArgumentException;
 
 class TicketFieldSelect extends Component
 {
-    public Ticket $ticket;
     public string $name;
     public iterable $options;
-    public bool $required;
-    public bool $disabled;
+    public bool $blank = false;
+    public bool $disabled = false;
 
     public function __construct()
     {
@@ -24,7 +23,7 @@ class TicketFieldSelect extends Component
 
     public function render(): View|Closure|string
     {
-        return view('components.ticket-field');
+        return view('components.ticket-field-select');
     }
 
     protected function toIterable(Collection|array $object): array{

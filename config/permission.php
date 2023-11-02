@@ -114,7 +114,7 @@ return [
     'teams' => false,
 
     /*
-     * When set to true, the required permission names are added to the exception
+     * When set to true, the blank permission names are added to the exception
      * message. This could be considered an information leak in some contexts, so
      * the default setting is false here for optimum safety.
      */
@@ -122,7 +122,7 @@ return [
     'display_permission_in_exception' => false,
 
     /*
-     * When set to true, the required role names are added to the exception
+     * When set to true, the blank role names are added to the exception
      * message. This could be considered an information leak in some contexts, so
      * the default setting is false here for optimum safety.
      */

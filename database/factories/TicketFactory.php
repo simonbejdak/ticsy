@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Incident;
+use App\Models\Item;
 use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\TicketConfig;
@@ -28,6 +29,9 @@ class TicketFactory extends Factory
             'category_id' => function (){
                 return rand(1, count(TicketConfig::CATEGORIES));
             },
+//            'item_id' => function (){
+//                return rand(1, count(TicketConfig::ITEMS));
+//            },
             'type_id' => function (){
                 return rand(1, count(TicketConfig::TYPES));
             },
@@ -39,5 +43,16 @@ class TicketFactory extends Factory
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterMaking(function (Ticket $ticket) {
+            if($ticket->item_id === null){
+                $ticket->item_id = $ticket->category->items()->inRandomOrder()->first()->id;
+            }
+        })->afterCreating(function (Ticket $ticket) {
+            //
+        });
     }
 }

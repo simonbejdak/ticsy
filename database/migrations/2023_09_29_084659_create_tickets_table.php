@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->foreignId('type_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
+            $table->foreignId('item_id')->constrained();
             $table->foreignId('status_id')->constrained();
             $table->foreignId('group_id')->constrained();
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');

@@ -18,4 +18,14 @@ class Category extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+
+    public function items()
+    {
+        return $this->belongsToMany(Item::class);
+    }
+
+    public function randItem()
+    {
+        return $this->items()->inRandomOrder()->first();
+    }
 }

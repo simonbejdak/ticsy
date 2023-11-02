@@ -20,6 +20,36 @@ class TicketConfig
         'application' => 4,
         'email' => 5,
     ];
+
+    const ITEMS = [
+        'issue' => 1,
+        'computer_is_too_slow' => 2,
+        'application_error' => 3,
+        'backup' => 4,
+        'failed_node' => 5,
+        'failure' => 6,
+    ];
+
+    const CATEGORY_ITEM = [
+        [self::CATEGORIES['network'], self::ITEMS['issue']],
+        [self::CATEGORIES['network'], self::ITEMS['failed_node']],
+
+        [self::CATEGORIES['server'], self::ITEMS['issue']],
+        [self::CATEGORIES['server'], self::ITEMS['backup']],
+        [self::CATEGORIES['server'], self::ITEMS['failure']],
+
+        [self::CATEGORIES['computer'], self::ITEMS['issue']],
+        [self::CATEGORIES['computer'], self::ITEMS['computer_is_too_slow']],
+        [self::CATEGORIES['computer'], self::ITEMS['application_error']],
+        [self::CATEGORIES['computer'], self::ITEMS['failure']],
+
+        [self::CATEGORIES['application'], self::ITEMS['issue']],
+        [self::CATEGORIES['application'], self::ITEMS['application_error']],
+
+        [self::CATEGORIES['email'], self::ITEMS['issue']],
+        [self::CATEGORIES['email'], self::ITEMS['backup']],
+    ];
+
     const STATUSES = [
         'open' => 1,
         'in_progress' => 2,

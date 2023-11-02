@@ -1,7 +1,7 @@
 @props([
     'disabled' => false,
     'name',
-    'required' => false,
+    'blank' => false,
 ])
 
 <div class="flex flex-col space-y-1">
@@ -13,7 +13,7 @@
             id="{{ $name }}"
             wire:model.blur="{{ $name }}"
         >
-            @if(!$required)
+            @if($blank)
                 <x-ticket-select-option></x-ticket-select-option>
             @endif
             {{ $slot }}

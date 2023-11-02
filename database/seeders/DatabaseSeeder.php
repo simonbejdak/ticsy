@@ -43,11 +43,11 @@ class DatabaseSeeder extends Seeder
         }
 
         foreach (User::role('resolver')->get() as $resolver){
-            $user->groups()->attach(Group::find(rand(1, count(Group::GROUPS))));
+            $resolver->groups()->attach(Group::find(rand(1, count(Group::GROUPS))));
         }
 
         foreach (range(1, 30) as $iteration){
-            Ticket::factory()->create([
+            Ticket::factory(30)->create([
                 'user_id' => $user,
                 'resolver_id' => $resolver,
             ]);
