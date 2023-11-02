@@ -1,4 +1,5 @@
 <form wire:submit="create">
+    <div class="font-light text-3xl">Create {{ $type->name }}</div>
     <x-ticket-grid>
         <x-ticket-field-select-category />
         <x-ticket-field-select-item :category="$category" />

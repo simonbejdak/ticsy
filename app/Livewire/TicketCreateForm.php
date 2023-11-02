@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Category;
 use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
@@ -9,7 +10,7 @@ use App\Models\Type;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class TicketCreateForm extends Component
@@ -46,6 +47,9 @@ class TicketCreateForm extends Component
 
     public function create()
     {
+        $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
+        $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
+
         $this->validate();
 
         $ticket = new Ticket();

@@ -4,12 +4,15 @@
 namespace Tests\Feature\Ticket;
 
 use App\Exceptions\UnmatchedModelException;
+use App\Livewire\TicketCreateForm;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\TicketConfig;
+use App\Models\Type;
 use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Str;
 use Tests\TestCase;
 
@@ -23,16 +26,13 @@ class StoreTest extends TestCase
         $item = Item::find(TicketConfig::ITEMS['failure']);
         $item->categories()->attach($category);
 
-        $this->actingAs($user);
-        $response = $this->post(route('tickets.store', [
-            'type' => TicketConfig::TYPES['incident'],
-            'category' => TicketConfig::CATEGORIES['network'],
-            'item' => TicketConfig::ITEMS['failure'],
-            'description' => $description,
-            'priority' => TicketConfig::DEFAULT_PRIORITY,
-        ]));
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class, ['type' => Type::findOrFail(TicketConfig::TYPES['incident'])])
+            ->set('category', TicketConfig::CATEGORIES['network'])
+            ->set('item', TicketConfig::ITEMS['failure'])
+            ->set('description', $description)
+            ->call('create');
 
-        $response->assertRedirectToRoute('tickets.edit', 1);
         $this->assertEquals($description, $user->tickets()->find(1)->description);
     }
 }

@@ -170,7 +170,7 @@ class TicketTest extends TestCase
     {
         // I'm not attaching below models together, so they do not match
         $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
-        $item = Item::findOrFail(TicketConfig::ITEMS['issue']);
+        $item = Item::findOrFail(TicketConfig::ITEMS['application_error']);
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);

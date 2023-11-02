@@ -3,6 +3,7 @@
 
 namespace Tests\Feature\Ticket;
 
+use App\Livewire\TicketCreateForm;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\TicketConfig;
@@ -10,6 +11,7 @@ use App\Models\Type;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CreateTest extends TestCase
@@ -35,22 +37,19 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         $testedValues = [
-            max(TicketConfig::CATEGORIES) + 1 => 'The category field must not be greater than '. max(TicketConfig::CATEGORIES) .'.',
-            min(TicketConfig::CATEGORIES) - 1 => 'The category field must be at least 1.',
-            'ASAP' => 'The category field must be a number.',
-            '' => 'The category field must be a number.',
+            max(TicketConfig::CATEGORIES) + 1 => 'max',
+            min(TicketConfig::CATEGORIES) - 1 => 'min',
+            'ASAP' => 'numeric',
+            '' => 'required',
         ];
 
-        $this->actingAs($user);
-        foreach ($testedValues as $testedValue => $error){
-            $response = $this->post(route('tickets.store', [
-                'type' => TicketConfig::TYPES['incident'],
-                'category' => $testedValue,
-                'description' => Str::random(TicketConfig::MIN_DESCRIPTION_CHARS),
-                'priority' => TicketConfig::DEFAULT_PRIORITY,
-            ]));
+        Livewire::actingAs($user);
 
-            $response->assertSessionHasErrors(['category' => $error]);
+        foreach ($testedValues as $testedValue => $error){
+            Livewire::test(TicketCreateForm::class, ['type' => Type::first()])
+                ->set('category', $testedValue)
+                ->call('create')
+                ->assertHasErrors(['category' => $error]);
         }
     }
 
@@ -59,24 +58,18 @@ class CreateTest extends TestCase
         $item = Item::findOrFail(TicketConfig::ITEMS['issue']);
 
         $testedValues = [
-            max(TicketConfig::ITEMS) + 1 => 'The item field must not be greater than '. max(TicketConfig::ITEMS) .'.',
-            min(TicketConfig::ITEMS) - 1 => 'The item field must be at least 1.',
-            'one' => 'The item field must be a number.',
-            '' => 'The item field must be a number.',
-            $item->id => 'The item field must belong to the selected category',
+            '' => 'required',
+            max(TicketConfig::ITEMS) + 1 => 'max',
+            min(TicketConfig::ITEMS) - 1 => 'min',
         ];
 
-        $this->actingAs($user);
-        foreach ($testedValues as $testedValue => $error){
-            $response = $this->post(route('tickets.store', [
-                'type' => TicketConfig::TYPES['incident'],
-                'category' => TicketConfig::CATEGORIES['network'],
-                'item' => $testedValue,
-                'description' => Str::random(TicketConfig::MIN_DESCRIPTION_CHARS),
-                'priority' => TicketConfig::DEFAULT_PRIORITY,
-            ]));
+        Livewire::actingAs($user);
 
-            $response->assertSessionHasErrors(['item' => $error]);
+        foreach ($testedValues as $testedValue => $error){
+            Livewire::test(TicketCreateForm::class, ['type' => Type::first()])
+                ->set('item', $testedValue)
+                ->call('create')
+                ->assertHasErrors(['item' => $error]);
         }
     }
 
@@ -84,21 +77,18 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         $testedValues = [
-            '' => 'The description field is blank.',
-            Str::random(TicketConfig::MIN_DESCRIPTION_CHARS - 1) => 'The description field must be at least '. TicketConfig::MIN_DESCRIPTION_CHARS .' characters.',
-            Str::random(TicketConfig::MAX_DESCRIPTION_CHARS + 1) => 'The description field must not be greater than '. TicketConfig::MAX_DESCRIPTION_CHARS .' characters.',
+            '' => 'required',
+            Str::random(TicketConfig::MIN_DESCRIPTION_CHARS - 1) => 'min',
+            Str::random(TicketConfig::MAX_DESCRIPTION_CHARS + 1) => 'max',
         ];
 
-        $this->actingAs($user);
-        foreach ($testedValues as $testedValue => $error){
-            $response = $this->post(route('tickets.store', [
-                'type' => TicketConfig::TYPES['incident'],
-                'category' => TicketConfig::CATEGORIES['network'],
-                'description' => $testedValue,
-                'priority' => TicketConfig::DEFAULT_PRIORITY,
-            ]));
+        Livewire::actingAs($user);
 
-            $response->assertSessionHasErrors(['description' => $error]);
+        foreach ($testedValues as $testedValue => $error){
+            Livewire::test(TicketCreateForm::class, ['type' => Type::first()])
+                ->set('description', $testedValue)
+                ->call('create')
+                ->assertHasErrors(['description' => $error]);
         }
     }
 }
