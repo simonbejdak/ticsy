@@ -11,7 +11,7 @@ use Tests\TestCase;
 class CommentTest extends TestCase
 {
     use RefreshDatabase;
-    public function test_it_has_ticket_relationship()
+    public function test_it_has_ticket()
     {
         $ticket = Ticket::factory(['description' => 'Ticket Description'])->create();
         $comment = Comment::factory(['ticket_id' => $ticket])->create();
@@ -19,7 +19,7 @@ class CommentTest extends TestCase
         $this->assertEquals('Ticket Description', $comment->ticket->description);
     }
 
-    public function test_it_has_belongs_to_user_relationship()
+    public function test_it_belongs_to_user()
     {
         $user = User::factory(['name' => 'John Doe'])->create();
         $comment = Comment::factory(['user_id' => $user])->create();

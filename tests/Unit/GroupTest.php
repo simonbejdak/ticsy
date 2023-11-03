@@ -9,22 +9,19 @@ use Tests\TestCase;
 
 class GroupTest extends TestCase
 {
-    public function test_it_has_belongs_to_many_resolvers()
+    public function test_it_belongs_to_many_resolvers()
     {
-        $group = Group::factory()->create();
+        $group = Group::firstOrFail();
 
-        $resolverOne = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
-        $group->resolvers()->attach($resolverOne);
-
-        $resolverTwo = User::factory(['name' => 'Frank Loew'])->create()->assignRole('resolver');
-        $group->resolvers()->attach($resolverTwo);
+        $resolverOne = User::factory(['name' => 'John Doe'])->hasAttached($group)->create()->assignRole('resolver');
+        $resolverTwo = User::factory(['name' => 'Frank Loew'])->hasAttached($group)->create()->assignRole('resolver');
 
         $this->assertEquals('John Doe', $group->resolvers()->first()->name);
         $this->assertEquals('Frank Loew', $group->resolvers()->orderByDesc('id')->first()->name);
     }
 
-    public function test_it_has_has_many_tickets_relationship(){
-        $group = Group::factory()->create();
+    public function test_it_has_many_tickets(){
+        $group = Group::firstOrFail();
 
         $ticketOne = Ticket::factory([
             'group_id' => $group,
@@ -36,10 +33,7 @@ class GroupTest extends TestCase
             'description' => 'Ticket 2 description'
         ])->create();
 
-        $i = 1;
-        foreach ($group->tickets as $ticket){
-            $this->assertEquals('Ticket ' . $i . ' description', $ticket->description);
-            $i++;
-        }
+        $this->assertEquals('Ticket 1 description', $group->tickets()->first()->description);
+        $this->assertEquals('Ticket 2 description', $group->tickets()->orderByDesc('id')->first()->description);
     }
 }

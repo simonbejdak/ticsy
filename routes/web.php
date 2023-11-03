@@ -23,18 +23,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::resource('/tickets', TicketsController::class)->middleware(Authenticate::class)->only(['index', 'store', 'update']);
+Route::middleware('auth')->group(function (){
 
-Route::get('/tickets/create/{type?}', [TicketsController::class, 'create'])->name('tickets.create')
-    ->middleware(Authenticate::class);
-Route::get('/tickets/{id}', [TicketsController::class, 'edit'])->name('tickets.edit')
-    ->middleware(Authenticate::class);
-Route::patch('/tickets/{id}/set/priority', [TicketsController::class, 'setPriority'])->name('tickets.set-priority')
-    ->middleware(Authenticate::class);
-Route::patch('/tickets/{id}/set/resolver', [TicketsController::class, 'setResolver'])->name('tickets.set-resolver')
-    ->middleware(Authenticate::class);
-Route::patch('/tickets/{id}/set/status', [TicketsController::class, 'setStatus'])->name('tickets.set-status')
-    ->middleware(Authenticate::class);
+    Route::controller(TicketsController::class)->group(function (){
+        Route::resource('/tickets', TicketsController::class)->only(['index', 'store', 'update']);
+        Route::get('/tickets/create/{type?}', 'create')->name('tickets.create')->middleware(Authenticate::class);
+        Route::get('/tickets/{id}', 'edit')->name('tickets.edit')->middleware(Authenticate::class);
+    });
+
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -22,14 +22,13 @@ class StoreTest extends TestCase
     function test_it_permits_authenticated_user_to_store_ticket(){
         $user = User::factory()->create();
         $description = Str::random(TicketConfig::MIN_DESCRIPTION_CHARS + 1);
-        $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
-        $item = Item::find(TicketConfig::ITEMS['failure']);
-        $item->categories()->attach($category);
+        $category = Category::firstOrFail();
+        $item = Item::firstOrFail();
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class, ['type' => Type::findOrFail(TicketConfig::TYPES['incident'])])
-            ->set('category', TicketConfig::CATEGORIES['network'])
-            ->set('item', TicketConfig::ITEMS['failure'])
+            ->set('category', $category->id)
+            ->set('item', $item->id)
             ->set('description', $description)
             ->call('create');
 

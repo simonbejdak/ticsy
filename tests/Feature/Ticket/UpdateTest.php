@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Ticket;
 
+use App\Livewire\TicketCreateForm;
 use App\Livewire\TicketForm;
 use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -15,17 +17,6 @@ use Tests\TestCase;
 class UpdateTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function test_it_redirects_guest_to_login_page()
-    {
-        $ticket = Ticket::factory()->create();
-
-        $response = $this->patch(route('tickets.set-status', $ticket), [
-            'status' => TicketConfig::STATUSES['in_progress'],
-        ]);
-
-        $response->assertRedirectToRoute('login');
-    }
 
     public function test_non_resolver_user_cannot_set_status()
     {
@@ -104,18 +95,6 @@ class UpdateTest extends TestCase
             ->assertHasErrors(['resolver' => 'max']);
     }
 
-    public function test_guest_is_redirected_to_login_page()
-    {
-        $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
-
-        $response = $this->patch(route('tickets.set-resolver', $ticket), [
-            'resolver' => $resolver
-        ]);
-
-        $response->assertRedirectToRoute('login');
-    }
-
     public function test_non_resolver_user_cannot_set_resolver()
     {
         $user = User::factory()->create();
@@ -131,7 +110,7 @@ class UpdateTest extends TestCase
     public function test_resolver_user_can_set_resolver()
     {
         $user = User::factory()->resolver()->create();
-        $group = Group::findOrFail(Group::DEFAULT);
+        $group = Group::firstOrFail();
         $resolver = User::factory()->hasAttached($group)->create()->assignRole('resolver');
         $ticket = Ticket::factory()->create();
 
@@ -180,11 +159,10 @@ class UpdateTest extends TestCase
 
     public function test_it_updates_ticket_when_correct_data_submitted()
     {
-        $resolver = User::factory()->resolver()->create();
-        $group = Group::find(Group::GROUPS['LOCAL-6445-NEW-YORK']);
-        $group->resolvers()->attach($resolver);
+        $group = Group::firstOrFail();
+        $resolver = User::factory()->hasAttached($group)->resolver()->create();
         $ticket = Ticket::factory()->create();
-        $status = Status::findOrFail(TicketConfig::STATUSES['in_progress']);
+        $status = Status::findOrFail(TicketConfig::DEFAULT_STATUS + 1);
         $priority = TicketConfig::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)

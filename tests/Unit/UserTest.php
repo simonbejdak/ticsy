@@ -13,7 +13,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test_it_has_belongs_to_many_groups_relationship()
+    function test_it_belongs_to_many_groups()
     {
         $groupOne = Group::factory(['name' => 'Group 0'])->create();
         $groupTwo = Group::factory(['name' => 'Group 1'])->create();
@@ -29,7 +29,7 @@ class UserTest extends TestCase
         }
     }
 
-    function test_it_has_has_many_comments_relationship()
+    function test_it_has_many_comments()
     {
         $user = User::factory()->create();
 

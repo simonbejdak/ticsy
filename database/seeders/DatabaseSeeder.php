@@ -38,24 +38,18 @@ class DatabaseSeeder extends Seeder
             'email' => 'resolver@gmail.com',
         ])->create()->assignRole('resolver');
 
-        foreach (range(1, 5) as $iteration){
-            $resolver = User::factory()->resolver()->create();
-        }
+        Ticket::factory(30)->create([
+            'user_id' => $user,
+            'resolver_id' => $resolver,
+        ]);
+
+        User::factory(5)->resolver()->create();
 
         foreach (User::role('resolver')->get() as $resolver){
             $resolver->groups()->attach(Group::find(rand(1, count(Group::GROUPS))));
         }
 
-        foreach (range(1, 30) as $iteration){
-            Ticket::factory(30)->create([
-                'user_id' => $user,
-                'resolver_id' => $resolver,
-            ]);
-        }
-
-        $tickets = Ticket::all();
-
-        foreach ($tickets as $ticket){
+        foreach (Ticket::all() as $ticket){
             Comment::factory(5)->create([
                 'ticket_id' => $ticket,
                 'user_id' => $user,

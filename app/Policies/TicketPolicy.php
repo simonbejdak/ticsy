@@ -36,6 +36,21 @@ class TicketPolicy
         return $user->id === $ticket->user_id;
     }
 
+    public function setCategory(User $user)
+    {
+        return (bool) $user->can('set_category');
+    }
+
+    public function setItem(User $user)
+    {
+        return (bool) $user->can('set_item');
+    }
+
+    public function setDescription(User $user)
+    {
+        return (bool) $user->can('set_description');
+    }
+
     public function setPriority(User $user, Ticket $ticket)
     {
         return (bool) $user->can('set_priority');

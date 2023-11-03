@@ -15,10 +15,10 @@ class TicketField extends Component
     public $value;
     public bool $disabled = false;
 
-    public function __construct(bool $disabled = false, string $name = '', $value = '')
+    public function __construct(string $name, bool $disabled = false, $value = '')
     {
-        $this->disabled = $disabled;
         $this->name = $name;
+        $this->disabled = $disabled;
         $this->value = $value;
     }
 

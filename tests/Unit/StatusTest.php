@@ -11,7 +11,7 @@ use Tests\TestCase;
 class StatusTest extends TestCase
 {
     use RefreshDatabase;
-    public function test_it_has_has_many_tickets_relationship()
+    public function test_it_has_many_tickets()
     {
         $status = Status::factory(['name' => 'Open'])->create();
         Ticket::factory(['description' => 'Ticket Description 1', 'status_id' => $status])->create();

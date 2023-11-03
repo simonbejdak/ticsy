@@ -13,14 +13,8 @@ use function PHPUnit\Framework\isInstanceOf;
 
 class TicketFieldSelectStatus extends TicketFieldSelect
 {
-    public function __construct(Ticket $ticket){
-        parent::__construct();
-
-        $this->ticket = $ticket;
-        $this->name = 'status';
-        $this->options = $this->toIterable(Status::all());
-        $this->blank = false;
-        $this->disabled = $this->isDisabled();
+    public function __construct(Ticket $ticket, Collection $options){
+        parent::__construct('status', $options, $ticket);
     }
 
     public function isDisabled(): bool

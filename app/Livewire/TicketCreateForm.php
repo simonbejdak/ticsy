@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +20,8 @@ class TicketCreateForm extends Component
     public $category;
     public $item;
     public $description;
+    public Collection $categories;
+    public Collection $items;
 
     public function rules()
     {
@@ -38,6 +41,27 @@ class TicketCreateForm extends Component
         $this->category = null;
         $this->item = null;
         $this->description = null;
+        $this->categories = Category::all();
+        $this->items = collect([]);
+    }
+
+    public function updating($property)
+    {
+        if($property === 'category'){
+            $this->authorize('setCategory', Ticket::class);
+        }
+        if($property === 'item'){
+            $this->authorize('setItem', Ticket::class);
+        }
+        if($property === 'description'){
+            $this->authorize('setDescription', Ticket::class);
+        }
+    }
+
+    public function updated()
+    {
+        $this->validateOnly('category');
+        $this->items = $this->category ? Category::findOrFail($this->category)->items()->get() : collect([]);
     }
 
     public function render()

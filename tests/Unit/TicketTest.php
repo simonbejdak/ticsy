@@ -22,7 +22,7 @@ class TicketTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test_it_has_type_relationship()
+    function test_it_has_one_type()
     {
         $type = Type::factory(['name' => 'incident'])->create();
         $ticket = Ticket::factory(['type_id' => $type])->create();
@@ -30,7 +30,7 @@ class TicketTest extends TestCase
         $this->assertEquals('Incident', $ticket->type->name);
     }
 
-    function test_it_has_category_relationship()
+    function test_it_has_one_category()
     {
         $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
         $ticket = Ticket::factory(['category_id' => $category])->create();
@@ -38,14 +38,14 @@ class TicketTest extends TestCase
         $this->assertEquals('Network', $ticket->category->name);
     }
 
-    function test_it_has_resolver_relationship(){
+    function test_it_has_one_resolver(){
         $resolver = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
         $ticket = Ticket::factory(['resolver_id' => $resolver])->create();
 
         $this->assertEquals('John Doe', $ticket->resolver->name);
     }
 
-    public function test_it_has_has_many_comments_relationship()
+    public function test_it_has_many_comments()
     {
         $ticket = Ticket::factory()->create();
 
@@ -66,7 +66,7 @@ class TicketTest extends TestCase
         }
     }
 
-    public function test_it_has_belongs_to_status_relationship()
+    public function test_it_belongs_to_status()
     {
         $status = Status::factory(['name' => 'open'])->create();
         $ticket = Ticket::factory(['status_id' => $status])->create();
@@ -74,7 +74,7 @@ class TicketTest extends TestCase
         $this->assertEquals('Open', $ticket->status->name);
     }
 
-    public function test_it_has_belongs_to_group_relationship()
+    public function test_it_belongs_to_group()
     {
         $group = Group::factory(['name' => 'LOCAL-6445-NEW-YORK'])->create();
         $ticket = Ticket::factory(['group_id' => $group])->create();

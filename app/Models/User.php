@@ -18,15 +18,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'is_resolver' => 'boolean',
-        'can_change_priority' => 'boolean',
     ];
 
     protected $table = 'users';
-    protected $attributes = [
-        'is_resolver' => false,
-        'can_change_priority' => false,
-    ];
 
     public function groups()
     {

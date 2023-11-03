@@ -3,10 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Group;
+use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\User;
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class TicketForm extends Component
@@ -16,6 +18,11 @@ class TicketForm extends Component
     public $priority;
     public $group;
     public $resolver;
+
+    public Collection $statuses;
+    public array $priorities;
+    public Collection $groups;
+    public Collection $resolvers;
 
     public function rules()
     {
@@ -33,6 +40,11 @@ class TicketForm extends Component
         $this->priority = $this->ticket->priority;
         $this->group = $this->ticket->group_id;
         $this->resolver = $this->ticket->resolver_id;
+
+        $this->statuses = Status::all();
+        $this->priorities = TicketConfig::PRIORITIES;
+        $this->groups = Group::all();
+        $this->resolvers = Group::find($this->group)->resolvers()->get();
     }
 
     public function render()
@@ -72,6 +84,7 @@ class TicketForm extends Component
         $this->ticket->priority = $this->priority;
         $this->ticket->group_id = $this->group;
         $this->ticket->resolver_id = $this->resolver;
+        $this->resolvers = Group::find($this->group)->resolvers()->get();
     }
 
     public function save()

@@ -8,10 +8,10 @@
             <x-ticket-field :disabled="true" :name="'type'" :value="$ticket->type->name" />
             <x-ticket-field :disabled="true" :name="'category'" :value="$ticket->category->name" />
             <x-ticket-field :disabled="true" :name="'item'" :value="$ticket->item->name" />
-            <x-ticket-field-select-status :ticket="$ticket" />
-            <x-ticket-field-select-priority :ticket="$ticket" />
-            <x-ticket-field-select-group :ticket="$ticket" />
-            <x-ticket-field-select-resolver :ticket="$ticket" :group="$group" />
+            <x-ticket-field-select-status :options="$statuses" :ticket="$ticket" />
+            <x-ticket-field-select :name="'priority'" :options="$priorities" :ticket="$ticket" />
+            <x-ticket-field-select :name="'group'" :options="$groups" :ticket="$ticket" />
+            <x-ticket-field-select :name="'resolver'" :options="$resolvers" :ticket="$ticket" :blank="true" />
         </x-ticket-grid>
         <x-ticket-field :disabled="true" :name="'description'" :value="$ticket->description" />
         <div class="flex flex-row justify-end">

@@ -35,22 +35,10 @@ class CategoryTest extends TestCase
 
     public function test_it_belongs_to_many_items()
     {
-        $itemOne = Item::factory([
-            'name' => 'Item 1',
-        ])->create();
+        // items are being assigned in MapSeeder
+        $category = Category::firstOrFail();
 
-        $itemTwo = Item::factory([
-            'name' => 'Item 2',
-        ])->create();
-
-        $category = Category::factory()->create();
-        $category->items()->attach($itemOne);
-        $category->items()->attach($itemTwo);
-
-        $i = 1;
-        foreach ($category->items as $item){
-            $this->assertEquals('Item ' . $i, $item->name);
-            $i++;
-        }
+        $this->assertEquals('Issue', $category->items()->findOrFail(1)->name);
+        $this->assertEquals('Failed Node', $category->items()->findOrFail(5)->name);
     }
 }

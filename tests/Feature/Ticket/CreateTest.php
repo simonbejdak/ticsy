@@ -55,7 +55,6 @@ class CreateTest extends TestCase
 
     function test_it_fails_validation_with_invalid_item(){
         $user = User::factory()->create();
-        $item = Item::findOrFail(TicketConfig::ITEMS['issue']);
 
         $testedValues = [
             '' => 'required',
@@ -90,5 +89,35 @@ class CreateTest extends TestCase
                 ->call('create')
                 ->assertHasErrors(['description' => $error]);
         }
+    }
+
+    function test_user_can_set_category(){
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class)
+            ->set('category', TicketConfig::CATEGORIES['email'])
+            ->call('create')
+            ->assertHasNoErrors(['category' => 'required']);
+    }
+
+    function test_user_can_set_item(){
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class)
+            ->set('item', TicketConfig::ITEMS['issue'])
+            ->call('create')
+            ->assertHasNoErrors(['item' => 'required']);
+    }
+
+    function test_user_can_set_description(){
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class)
+            ->set('description', Str::random(TicketConfig::MIN_DESCRIPTION_CHARS + 1))
+            ->call('create')
+            ->assertHasNoErrors(['description' => 'required']);
     }
 }

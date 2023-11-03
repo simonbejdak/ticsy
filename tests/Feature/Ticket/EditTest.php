@@ -31,8 +31,8 @@ class EditTest extends TestCase
     function test_it_errors_to_403_to_unauthorized_users()
     {
         $ticket = Ticket::factory()->create();
-        $this->actingAs(User::factory()->create());
 
+        $this->actingAs(User::factory()->create());
         $response = $this->get(route('tickets.edit', $ticket));
 
         $response->assertForbidden();
@@ -58,14 +58,14 @@ class EditTest extends TestCase
 
     public function test_it_displays_ticket_data()
     {
-        $type = Type::factory(['name' => 'incident'])->create();
+        $type = Type::firstOrFail();
         $category = Category::firstOrFail();
-        $item = Item::factory(['name' => 'problem_with_json'])->create();
-        $item->categories()->attach($category);
-        $group = Group::factory(['name' => 'LOCAL-6380-NEW-JERSEY'])->create();
+        $item = Item::firstOrFail();
+        $group = Group::firstOrFail();
+        $status = Status::firstOrFail();
+
         $resolver = User::factory(['name' => 'John Doe'])->resolver()->create();
         $resolver->groups()->attach($group);
-        $status = Status::factory(['name' => 'open'])->create();
 
         $user = User::factory()->create();
         $ticket = Ticket::factory([
