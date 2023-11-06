@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Ticket;
+use App\Models\TicketConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,24 +15,19 @@ class ItemTest extends TestCase
 
     public function test_it_belongs_to_many_categories()
     {
-        $categoryOne = Category::factory(['name' => 'Category 1'])->create();
-        $categoryTwo = Category::factory(['name' => 'Category 2'])->create();
+        $item = Item::firstOrFail();
 
-        $item = Item::factory()->create();
-        $item->categories()->attach($categoryOne);
-        $item->categories()->attach($categoryTwo);
-
-        $i = 1;
-        foreach ($item->categories as $category) {
-            $this->assertEquals('Category ' . $i, $category->name);
-            $i++;
-        }
+        $this->assertEquals('Network', $item->categories()->findOrFail(TicketConfig::CATEGORIES['network'])->name);
+        $this->assertEquals(
+            'Application',
+            $item->categories()->findOrFail(TicketConfig::CATEGORIES['application'])->name
+        );
     }
 
     public function test_it_has_many_tickets()
     {
+        $item = Item::firstOrFail();
         $category = Category::firstOrFail();
-        $item = $category->items()->inRandomOrder()->first();
 
         Ticket::factory(['description' => 'Ticket Description 1',
             'category_id' => $category,
@@ -44,17 +40,15 @@ class ItemTest extends TestCase
             'item_id' => $item,
         ])->create();
 
-        $i = 1;
-        foreach ($item->tickets as $ticket) {
-            $this->assertEquals('Ticket Description ' . $i, $ticket->description);
-            $i++;
-        }
+        $this->assertEquals('Ticket Description 1', $item->tickets()->findOrFail(1)->description);
+        $this->assertEquals('Ticket Description 2', $item->tickets()->findOrFail(2)->description);
     }
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-        $item = Item::factory(['name' => 'item_name'])->create();
+        $item = Item::findOrFail(TicketConfig::ITEMS['failed_node']);
 
-        $this->assertEquals('Item Name', $item->name);
+        $this->assertEquals('Failed Node', $item->name);
     }
+
 }

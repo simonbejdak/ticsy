@@ -68,10 +68,18 @@ class TicketTest extends TestCase
 
     public function test_it_belongs_to_status()
     {
-        $status = Status::factory(['name' => 'open'])->create();
+        $status = Status::findOrFail(TicketConfig::STATUSES['open']);
         $ticket = Ticket::factory(['status_id' => $status])->create();
 
         $this->assertEquals('Open', $ticket->status->name);
+    }
+
+    public function test_it_belongs_to_status_on_hold_reason()
+    {
+        $ticket = Ticket::factory(['on_hold_reason_id' => TicketConfig::STATUS_ON_HOLD_REASONS['caller_response']])
+            ->onHold()->create();
+
+        $this->assertEquals('Caller Response', $ticket->onHoldReason->name);
     }
 
     public function test_it_belongs_to_group()
@@ -122,7 +130,7 @@ class TicketTest extends TestCase
     function test_it_has_correct_default_group(){
         $ticket = new Ticket();
 
-        $this->assertEquals(Group::DEFAULT, $ticket->group->id);
+        $this->assertEquals(TicketConfig::DEFAULT, $ticket->group->id);
     }
 
     function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
@@ -166,11 +174,12 @@ class TicketTest extends TestCase
         $this->assertTrue($ticket->isArchived());
     }
 
-    public function test_query_exception_thrown_if_item_does_not_match_category()
+    public function test_exception_thrown_if_item_does_not_match_category()
     {
-        // I'm not attaching below models together, so they do not match
+        // I'm detaching below models together, so they do not match
         $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
         $item = Item::findOrFail(TicketConfig::ITEMS['application_error']);
+        $category->items()->detach($item);
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);

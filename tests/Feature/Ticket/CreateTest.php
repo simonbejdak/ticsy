@@ -43,10 +43,9 @@ class CreateTest extends TestCase
             '' => 'required',
         ];
 
-        Livewire::actingAs($user);
-
         foreach ($testedValues as $testedValue => $error){
-            Livewire::test(TicketCreateForm::class, ['type' => Type::first()])
+            Livewire::actingAs($user)
+                ->test(TicketCreateForm::class, ['type' => Type::first()])
                 ->set('category', $testedValue)
                 ->call('create')
                 ->assertHasErrors(['category' => $error]);
@@ -62,10 +61,9 @@ class CreateTest extends TestCase
             min(TicketConfig::ITEMS) - 1 => 'min',
         ];
 
-        Livewire::actingAs($user);
-
         foreach ($testedValues as $testedValue => $error){
-            Livewire::test(TicketCreateForm::class, ['type' => Type::first()])
+            Livewire::actingAs($user)
+                ->test(TicketCreateForm::class, ['type' => Type::first()])
                 ->set('item', $testedValue)
                 ->call('create')
                 ->assertHasErrors(['item' => $error]);
@@ -81,10 +79,9 @@ class CreateTest extends TestCase
             Str::random(TicketConfig::MAX_DESCRIPTION_CHARS + 1) => 'max',
         ];
 
-        Livewire::actingAs($user);
-
         foreach ($testedValues as $testedValue => $error){
-            Livewire::test(TicketCreateForm::class, ['type' => Type::first()])
+            Livewire::actingAs($user)
+                ->test(TicketCreateForm::class, ['type' => Type::first()])
                 ->set('description', $testedValue)
                 ->call('create')
                 ->assertHasErrors(['description' => $error]);

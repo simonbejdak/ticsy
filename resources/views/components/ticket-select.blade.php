@@ -1,17 +1,18 @@
 @props([
     'disabled' => false,
-    'name',
+    'name' => '',
+    'display-name' => '',
+    'styling' => '',
     'blank' => false,
 ])
-
 <div class="flex flex-col space-y-1">
-    <x-input-label class="font-bold text-lg" for="{{ $name }}">{{ ucfirst($name) }}</x-input-label>
+    <x-ticket-field-label class="font-bold text-lg" :value="$displayName"/>
     <div class="flex flex-row space-x-2">
         <select
+            wire:model.live="{{$name}}"
+            id="{{$name}}"
             {{ ($disabled) ? 'disabled' : '' }}
-            class="w-full rounded-lg border border-gray-300 {{ ($disabled) ? 'bg-gray-200' : 'bg-white hover:cursor-pointer' }} px-1 pt-2 pb-2.5"
-            id="{{ $name }}"
-            wire:model.blur="{{ $name }}"
+            {!! $attributes->merge(['class' => $styling . ((!$disabled) ? 'hover:cursor-pointer' : '') . ' px-1 pt-2 pb-2.5 "']) !!}
         >
             @if($blank)
                 <x-ticket-select-option></x-ticket-select-option>

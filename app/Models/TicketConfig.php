@@ -59,8 +59,19 @@ class TicketConfig
         'cancelled' => 6,
     ];
     const DEFAULT_STATUS = self::STATUSES['open'];
+    const STATUS_ON_HOLD_REASONS = [
+        'caller_response' => 1,
+        'monitoring' => 2,
+        'waiting_for_vendor' => 3,
+        'change' => 4,
+    ];
     const PRIORITIES = [1, 2, 3, 4];
     const DEFAULT_PRIORITY = 4;
+    const GROUPS = [
+        'SERVICE-DESK' => 1,
+        'LOCAL-6445-NEW-YORK' => 2,
+    ];
+    const DEFAULT = self::GROUPS['SERVICE-DESK'];
     const DEFAULT_PAGINATION = 10;
     const MIN_DESCRIPTION_CHARS = 8;
     const MAX_DESCRIPTION_CHARS = 255;

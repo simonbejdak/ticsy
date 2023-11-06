@@ -6,6 +6,7 @@ use App\Helpers\Config;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
+use App\Models\Item;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\Ticket;
@@ -25,8 +26,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             MapSeeder::class,
+            CategoryItemSeeder::class,
             PermissionSeeder::class,
-        ]);
+        ]);;
 
         $user = User::factory([
             'name' => 'User',
@@ -36,7 +38,7 @@ class DatabaseSeeder extends Seeder
         $resolver = User::factory([
             'name' => 'Resolver',
             'email' => 'resolver@gmail.com',
-        ])->create()->assignRole('resolver');
+        ])->resolver()->create();
 
         Ticket::factory(30)->create([
             'user_id' => $user,
@@ -46,7 +48,7 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->resolver()->create();
 
         foreach (User::role('resolver')->get() as $resolver){
-            $resolver->groups()->attach(Group::find(rand(1, count(Group::GROUPS))));
+            $resolver->groups()->attach(Group::find(rand(1, count(TicketConfig::GROUPS))));
         }
 
         foreach (Ticket::all() as $ticket){

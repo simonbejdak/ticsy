@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
-class TicketCreateForm extends Component
+class TicketCreateForm extends TicketForm
 {
+    public Ticket|null $ticket = null;
     public Type $type;
     public $category;
     public $item;
@@ -35,8 +36,9 @@ class TicketCreateForm extends Component
         ];
     }
 
-    public function mount(Type $type)
+    public function mount(Type $type, Ticket|null $ticket = null)
     {
+        $this->ticket = $ticket;
         $this->type = $type;
         $this->category = null;
         $this->item = null;
@@ -45,20 +47,7 @@ class TicketCreateForm extends Component
         $this->items = collect([]);
     }
 
-    public function updating($property)
-    {
-        if($property === 'category'){
-            $this->authorize('setCategory', Ticket::class);
-        }
-        if($property === 'item'){
-            $this->authorize('setItem', Ticket::class);
-        }
-        if($property === 'description'){
-            $this->authorize('setDescription', Ticket::class);
-        }
-    }
-
-    public function updated()
+    public function updated($property): void
     {
         $this->validateOnly('category');
         $this->items = $this->category ? Category::findOrFail($this->category)->items()->get() : collect([]);

@@ -3,7 +3,7 @@
 
 namespace Tests\Feature\Ticket;
 
-use App\Livewire\TicketForm;
+use App\Livewire\TicketEditForm;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
@@ -114,8 +114,46 @@ class EditTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
-            ->set('group', count(Group::GROUPS) + 1)
-            ->assertSee('The group field must not be greater than '. count(Group::GROUPS) .'.');
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('group', count(TicketConfig::GROUPS) + 1)
+            ->call('save')
+            ->assertSee('The group field must not be greater than '. count(TicketConfig::GROUPS) .'.');
+    }
+
+    public function test_on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory(['status_id' => TicketConfig::STATUSES['in_progress']])->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->assertDontSee('On hold reason');
+    }
+    public function test_on_hold_reason_field_is_shown_when_status_is_on_hold()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory(['on_hold_reason_id' => TicketConfig::STATUS_ON_HOLD_REASONS['waiting_for_vendor']])
+            ->onHold()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->assertSee('On hold reason');
+    }
+
+    public function test_status_can_be_set_to_cancelled_if_previous_status_is_different()
+    {
+        $ticket = Ticket::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', TicketConfig::STATUSES['cancelled'])
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'status_id' => TicketConfig::STATUSES['cancelled'],
+        ]);
     }
 }

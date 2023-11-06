@@ -16,16 +16,4 @@ class TicketFieldSelectStatus extends TicketFieldSelect
     public function __construct(Ticket $ticket, Collection $options){
         parent::__construct('status', $options, $ticket);
     }
-
-    public function isDisabled(): bool
-    {
-        if(auth()->user()->cannot('setStatus', $this->ticket)){
-            return true;
-        }
-        if($this->ticket->isArchived()){
-            return true;
-        };
-
-        return false;
-    }
 }

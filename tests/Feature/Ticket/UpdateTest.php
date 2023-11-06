@@ -3,7 +3,7 @@
 namespace Tests\Feature\Ticket;
 
 use App\Livewire\TicketCreateForm;
-use App\Livewire\TicketForm;
+use App\Livewire\TicketEditForm;
 use App\Models\Group;
 use App\Models\Status;
 use App\Models\Ticket;
@@ -23,9 +23,8 @@ class UpdateTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory()->create();
 
-        Livewire::actingAs($user);
-
-        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+        Livewire::actingAs($user)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', TicketConfig::STATUSES['in_progress'])
             ->assertForbidden();
     }
@@ -35,9 +34,8 @@ class UpdateTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory()->create();
 
-        Livewire::actingAs($resolver);
-
-        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', TicketConfig::STATUSES['in_progress'])
             ->call('save');
 
@@ -53,10 +51,60 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', count(TicketConfig::STATUSES) + 1)
             ->call('save')
             ->assertHasErrors(['status' => 'max']);
+    }
+
+    public function test_it_forbids_to_save_ticket_if_status_on_hold_and_on_hold_reason_empty()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', TicketConfig::STATUSES['on_hold'])
+            ->call('save')
+            ->assertHasErrors(['onHoldReason' => 'required_if:status,'.TicketConfig::STATUSES['on_hold']]);
+    }
+
+    public function test_it_fails_validation_when_invalid_on_hold_reason_set()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+        $testedValues = [
+            'min' => 0,
+            'max' => count(TicketConfig::STATUS_ON_HOLD_REASONS) + 1,
+            'numeric' => 'word',
+        ];
+
+        foreach ($testedValues as $key => $value){
+            Livewire::actingAs($resolver)
+                ->test(TicketEditForm::class, ['ticket' => $ticket])
+                ->set('status', TicketConfig::STATUSES['on_hold'])
+                ->set('onHoldReason', $value)
+                ->call('save')
+                ->assertHasErrors(['onHoldReason' => $key]);
+        }
+    }
+
+    public function test_resolver_is_able_to_set_on_hold_reason()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', TicketConfig::STATUSES['on_hold'])
+            ->set('onHoldReason', TicketConfig::STATUS_ON_HOLD_REASONS['waiting_for_vendor'])
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'on_hold_reason_id' => TicketConfig::STATUS_ON_HOLD_REASONS['waiting_for_vendor'],
+        ]);
     }
 
     public function test_it_fails_validation_when_unknown_priority_is_set()
@@ -65,7 +113,7 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', count(TicketConfig::PRIORITIES) + 1)
             ->call('save')
             ->assertHasErrors(['priority' => 'max']);
@@ -77,8 +125,8 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
-            ->set('group', count(Group::GROUPS) + 1)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('group', count(TicketConfig::GROUPS) + 1)
             ->call('save')
             ->assertHasErrors(['group' => 'max']);
     }
@@ -89,7 +137,7 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('resolver', User::max('id') + 1)
             ->call('save')
             ->assertHasErrors(['resolver' => 'max']);
@@ -102,7 +150,7 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('resolver', $resolver->id)
             ->assertForbidden();
     }
@@ -115,7 +163,7 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('resolver', $resolver->id)
             ->call('save');
 
@@ -131,7 +179,7 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory(['priority' => 4])->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 2)
             ->call('save');
 
@@ -147,7 +195,7 @@ class UpdateTest extends TestCase
         $ticket = Ticket::factory(['priority' => 4])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 2)
             ->assertForbidden();
 
@@ -166,7 +214,7 @@ class UpdateTest extends TestCase
         $priority = TicketConfig::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', $status->id)
             ->set('priority', $priority)
             ->set('group', $group->id)
@@ -184,13 +232,10 @@ class UpdateTest extends TestCase
 
     public function test_ticket_priority_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory([
-            'priority' => TicketConfig::DEFAULT_PRIORITY,
-            'status_id' => TicketConfig::STATUSES['resolved']
-        ])->create();
+        $ticket = Ticket::factory(['priority' => TicketConfig::DEFAULT_PRIORITY])->resolved()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', TicketConfig::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
 
@@ -202,10 +247,10 @@ class UpdateTest extends TestCase
 
     public function test_ticket_status_can_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => TicketConfig::STATUSES['resolved']])->create();
+        $ticket = Ticket::factory()->resolved()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', TicketConfig::DEFAULT_STATUS)
             ->call('save')
             ->assertSuccessful();
@@ -224,7 +269,7 @@ class UpdateTest extends TestCase
         ])->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('resolver', $resolver->id)
             ->assertForbidden();
 
@@ -236,20 +281,20 @@ class UpdateTest extends TestCase
 
     public function test_ticket_priority_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => TicketConfig::STATUSES['cancelled']])->create();
+        $ticket = Ticket::factory()->cancelled()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', TicketConfig::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
     }
 
     public function test_ticket_status_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => TicketConfig::STATUSES['cancelled']])->create();
+        $ticket = Ticket::factory()->cancelled()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', TicketConfig::DEFAULT_STATUS)
             ->assertForbidden();
 
@@ -261,10 +306,10 @@ class UpdateTest extends TestCase
 
     public function test_ticket_resolver_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => TicketConfig::STATUSES['cancelled']])->create();
+        $ticket = Ticket::factory()->cancelled()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('resolver', $resolver->id)
             ->assertForbidden();
     }
@@ -275,23 +320,23 @@ class UpdateTest extends TestCase
         $resolverTwo = User::factory(['name' => 'Joe Rogan'])->create()->assignRole('resolver');
         $resolverThree = User::factory(['name' => 'Fred Flinstone'])->create()->assignRole('resolver');
 
-        $groupOne = Group::findOrFail(Group::GROUPS['SERVICE-DESK']);
+        $groupOne = Group::findOrFail(TicketConfig::GROUPS['SERVICE-DESK']);
         $groupOne->resolvers()->attach($resolverOne);
         $groupOne->resolvers()->attach($resolverTwo);
 
-        $groupTwo = Group::findOrFail(Group::GROUPS['LOCAL-6445-NEW-YORK']);
+        $groupTwo = Group::findOrFail(TicketConfig::GROUPS['LOCAL-6445-NEW-YORK']);
         $groupTwo->resolvers()->attach($resolverThree);
 
         $ticket = Ticket::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolverOne)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('group', $groupOne->id)
             ->assertSee('John Doe')
             ->assertSee('Joe Rogan')
             ->assertDontSee('Fred Flinstone');
 
-        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('group', $groupTwo->id)
             ->assertDontSee('John Doe')
             ->assertDontSee('Joe Rogan')
@@ -303,16 +348,16 @@ class UpdateTest extends TestCase
         $resolverOne = User::factory()->resolver()->create();
         $resolverTwo = User::factory()->resolver()->create();
 
-        $groupOne = Group::findOrFail(Group::GROUPS['SERVICE-DESK']);
+        $groupOne = Group::findOrFail(TicketConfig::GROUPS['SERVICE-DESK']);
         $groupOne->resolvers()->attach($resolverOne);
 
-        $groupTwo = Group::findOrFail(Group::GROUPS['LOCAL-6445-NEW-YORK']);
+        $groupTwo = Group::findOrFail(TicketConfig::GROUPS['LOCAL-6445-NEW-YORK']);
         $groupTwo->resolvers()->attach($resolverTwo);
 
         $ticket = Ticket::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolverOne)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->set('resolver', $resolverTwo->id)
             ->assertForbidden();
@@ -323,16 +368,16 @@ class UpdateTest extends TestCase
         $resolverOne = User::factory()->resolver()->create();
         $resolverTwo = User::factory()->resolver()->create();
 
-        $groupOne = Group::findOrFail(Group::GROUPS['SERVICE-DESK']);
+        $groupOne = Group::findOrFail(TicketConfig::GROUPS['SERVICE-DESK']);
         $groupOne->resolvers()->attach($resolverOne);
 
-        $groupTwo = Group::findOrFail(Group::GROUPS['LOCAL-6445-NEW-YORK']);
+        $groupTwo = Group::findOrFail(TicketConfig::GROUPS['LOCAL-6445-NEW-YORK']);
         $groupTwo->resolvers()->attach($resolverTwo);
 
         $ticket = Ticket::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolverOne)
-            ->test(TicketForm::class, ['ticket' => $ticket])
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('resolver', $resolverOne->id)
             ->call('save');
 
@@ -342,7 +387,7 @@ class UpdateTest extends TestCase
             'resolver_id' => $resolverOne->id,
         ]);
 
-        Livewire::test(TicketForm::class, ['ticket' => $ticket])
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('group', $groupTwo->id)
             ->call('save');
 

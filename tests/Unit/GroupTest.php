@@ -13,8 +13,15 @@ class GroupTest extends TestCase
     {
         $group = Group::firstOrFail();
 
-        $resolverOne = User::factory(['name' => 'John Doe'])->hasAttached($group)->create()->assignRole('resolver');
-        $resolverTwo = User::factory(['name' => 'Frank Loew'])->hasAttached($group)->create()->assignRole('resolver');
+        User::factory(['name' => 'John Doe'])
+            ->hasAttached($group)
+            ->create()
+            ->assignRole('resolver');
+
+        User::factory(['name' => 'Frank Loew'])
+            ->hasAttached($group)
+            ->create()
+            ->assignRole('resolver');
 
         $this->assertEquals('John Doe', $group->resolvers()->first()->name);
         $this->assertEquals('Frank Loew', $group->resolvers()->orderByDesc('id')->first()->name);
@@ -23,12 +30,12 @@ class GroupTest extends TestCase
     public function test_it_has_many_tickets(){
         $group = Group::firstOrFail();
 
-        $ticketOne = Ticket::factory([
+        Ticket::factory([
             'group_id' => $group,
             'description' => 'Ticket 1 description'
         ])->create();
 
-        $ticketTwo = Ticket::factory([
+        Ticket::factory([
             'group_id' => $group,
             'description' => 'Ticket 2 description'
         ])->create();

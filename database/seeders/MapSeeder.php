@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Group;
 use App\Models\Item;
 use App\Models\Status;
+use App\Models\OnHoldReason;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use Illuminate\Database\Seeder;
@@ -27,17 +28,15 @@ class MapSeeder extends Seeder
             Item::factory(['name' => $key])->create();
         }
 
-        foreach (TicketConfig::CATEGORY_ITEM as $value){
-            $category = Category::findOrFail($value[0]);
-            $item = Item::findOrFail($value[1]);
-            $category->items()->attach($item);
-        }
-
         foreach (TicketConfig::STATUSES as $key => $value){
             Status::factory(['name' => $key])->create();
         }
 
-        foreach (Group::GROUPS as $key => $value){
+        foreach (TicketConfig::STATUS_ON_HOLD_REASONS as $key => $value){
+            OnHoldReason::factory(['name' => $key])->create();
+        }
+
+        foreach (TicketConfig::GROUPS as $key => $value){
             Group::factory(['name' => $key])->create();
         }
     }

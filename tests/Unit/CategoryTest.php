@@ -1,13 +1,10 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use App\Models\Category;
-use App\Models\Item;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -35,7 +32,7 @@ class CategoryTest extends TestCase
 
     public function test_it_belongs_to_many_items()
     {
-        // items are being assigned in MapSeeder
+        // Items are being attached to all Categories in TestDatabaseSeeder
         $category = Category::firstOrFail();
 
         $this->assertEquals('Issue', $category->items()->findOrFail(1)->name);
