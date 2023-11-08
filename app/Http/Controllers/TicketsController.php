@@ -32,49 +32,18 @@ class TicketsController extends Controller
         return view('tickets.index', ['tickets' => $tickets]);
     }
 
-    public function create($type = TicketConfig::DEFAULT_TYPE['name'])
+    public function create($type = null)
     {
-        $type = Type::where('name', '=', $type)->firstOrFail();
-        $priorities = array_reverse(TicketConfig::PRIORITIES);
+        $type = $type ? Type::MAP[$type] : Type::DEFAULT;
+        $priorities = array_reverse(Ticket::PRIORITIES);
 
         return view('tickets.create', [
             'type' => $type,
             'categories' => Category::all(),
             'priorities' => $priorities,
-            'default_priority' => TicketConfig::DEFAULT_PRIORITY,
+            'default_priority' => Ticket::DEFAULT_PRIORITY,
         ]);
     }
-
-//    public function store(Request $request)
-//    {
-//        $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
-//        $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
-//
-//        $validator = Validator::make($request->all(), [
-//            'type' => 'numeric|required|min:1|max:' . count(TicketConfig::TYPES),
-//            'category' => 'numeric|required|min:1|max:' . count(TicketConfig::CATEGORIES),
-//            'item' => 'numeric|required|min:1|max:' . count(TicketConfig::ITEMS),
-//            'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
-//        ]);
-//
-//        $validated = $validator->validated();
-//
-//        if(count(Category::findOrFail($validated['category'])->items()->where('id', '=', $validated['item'])->get()) === 0){
-//            $validator->errors()->add('item', 'The item field must belong to the selected category');
-//            return back()->withErrors($validator)->withInput();
-//        }
-//
-//        $ticket = new Ticket();
-//        $ticket->user_id = Auth::user()->id;
-//        $ticket->type_id = $validated['type'];
-//        $ticket->category_id = $validated['category'];
-//        $ticket->item_id = $validated['item'];
-//        $ticket->description = $validated['description'];
-//        $ticket->save();
-//
-//        Session::flash('success', 'You have successfully created a ticket');
-//        return redirect()->route('tickets.edit', $ticket);
-//    }
 
     public function edit($id)
     {

@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Item;
+use App\Models\OnHoldReason;
 use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
@@ -64,8 +65,7 @@ class EditTest extends TestCase
         $group = Group::firstOrFail();
         $status = Status::firstOrFail();
 
-        $resolver = User::factory(['name' => 'John Doe'])->resolver()->create();
-        $resolver->groups()->attach($group);
+        $resolver = User::factory(['name' => 'John Doe'])->resolver(true)->create();
 
         $user = User::factory()->create();
         $ticket = Ticket::factory([
@@ -115,15 +115,15 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('group', count(TicketConfig::GROUPS) + 1)
+            ->set('group', Group::count() + 1)
             ->call('save')
-            ->assertSee('The group field must not be greater than '. count(TicketConfig::GROUPS) .'.');
+            ->assertSee('The group field must not be greater than '. Group::count() .'.');
     }
 
     public function test_on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => TicketConfig::STATUSES['in_progress']])->create();
+        $ticket = Ticket::factory()->inProgress()->create();
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
@@ -132,7 +132,7 @@ class EditTest extends TestCase
     public function test_on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['on_hold_reason_id' => TicketConfig::STATUS_ON_HOLD_REASONS['waiting_for_vendor']])
+        $ticket = Ticket::factory(['on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR])
             ->onHold()->create();
 
         Livewire::actingAs($resolver)
@@ -147,13 +147,13 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', TicketConfig::STATUSES['cancelled'])
+            ->set('status', Status::CANCELLED)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('tickets', [
             'id' => $ticket->id,
-            'status_id' => TicketConfig::STATUSES['cancelled'],
+            'status_id' => Status::CANCELLED,
         ]);
     }
 }

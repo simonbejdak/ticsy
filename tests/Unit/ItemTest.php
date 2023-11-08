@@ -17,10 +17,10 @@ class ItemTest extends TestCase
     {
         $item = Item::firstOrFail();
 
-        $this->assertEquals('Network', $item->categories()->findOrFail(TicketConfig::CATEGORIES['network'])->name);
+        $this->assertEquals('Network', $item->categories()->findOrFail(Category::NETWORK)->name);
         $this->assertEquals(
             'Application',
-            $item->categories()->findOrFail(TicketConfig::CATEGORIES['application'])->name
+            $item->categories()->findOrFail(Category::APPLICATION)->name
         );
     }
 
@@ -46,7 +46,7 @@ class ItemTest extends TestCase
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-        $item = Item::findOrFail(TicketConfig::ITEMS['failed_node']);
+        $item = Item::findOrFail(Item::FAILED_NODE);
 
         $this->assertEquals('Failed Node', $item->name);
     }

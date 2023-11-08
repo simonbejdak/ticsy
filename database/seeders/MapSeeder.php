@@ -16,27 +16,27 @@ class MapSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (TicketConfig::TYPES as $key => $value){
+        foreach (Type::MAP as $key => $value){
             Type::factory(['name' => $key])->create();
         }
 
-        foreach (TicketConfig::CATEGORIES as $key => $value){
+        foreach (Category::MAP as $key => $value){
             Category::factory(['name' => $key])->create();
         }
 
-        foreach (TicketConfig::ITEMS as $key => $value){
+        foreach (Item::MAP as $key => $value){
             Item::factory(['name' => $key])->create();
         }
 
-        foreach (TicketConfig::STATUSES as $key => $value){
+        foreach (Status::MAP as $key => $value){
             Status::factory(['name' => $key])->create();
         }
 
-        foreach (TicketConfig::STATUS_ON_HOLD_REASONS as $key => $value){
+        foreach (OnHoldReason::MAP as $key => $value){
             OnHoldReason::factory(['name' => $key])->create();
         }
 
-        foreach (TicketConfig::GROUPS as $key => $value){
+        foreach (Group::MAP as $key => $value){
             Group::factory(['name' => $key])->create();
         }
     }

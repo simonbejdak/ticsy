@@ -15,18 +15,12 @@ class UserTest extends TestCase
 
     function test_it_belongs_to_many_groups()
     {
-        $groupOne = Group::factory(['name' => 'Group 0'])->create();
-        $groupTwo = Group::factory(['name' => 'Group 1'])->create();
-        $resolver = User::factory()->resolver()->create();
+        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $resolver = User::factory()->resolver(true)->create();
 
-        $resolver->groups()->attach($groupOne);
-        $resolver->groups()->attach($groupTwo);
-
-        $groups = $resolver->groups;
-
-        for($i = 0; $i <= count($groups) - 1; $i++){
-            $this->assertEquals('Group ' . $i, $groups[$i]->name);
-        }
+        // by default resolver in tests always belongs to the default group
+        $this->assertEquals(Group::DEFAULT, $resolver->groups()->findOrFail(1)->id);
+        $this->assertEquals(Group::LOCAL_6445_NEW_YORK, $resolver->groups()->findOrFail(2)->id);
     }
 
     function test_it_has_many_comments()

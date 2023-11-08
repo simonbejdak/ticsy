@@ -7,6 +7,7 @@ use App\Exceptions\UnmatchedModelException;
 use App\Livewire\TicketCreateForm;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
@@ -21,12 +22,12 @@ class StoreTest extends TestCase
     use RefreshDatabase;
     function test_it_permits_authenticated_user_to_store_ticket(){
         $user = User::factory()->create();
-        $description = Str::random(TicketConfig::MIN_DESCRIPTION_CHARS + 1);
+        $description = Str::random(Ticket::MIN_DESCRIPTION_CHARS + 1);
         $category = Category::firstOrFail();
         $item = Item::firstOrFail();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class, ['type' => Type::findOrFail(TicketConfig::TYPES['incident'])])
+            ->test(TicketCreateForm::class)
             ->set('category', $category->id)
             ->set('item', $item->id)
             ->set('description', $description)

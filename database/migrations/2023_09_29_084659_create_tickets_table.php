@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->foreignId('on_hold_reason_id')->nullable()->constrained();
             $table->foreignId('group_id')->constrained();
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
-            $table->enum('priority', TicketConfig::PRIORITIES)->default(TicketConfig::DEFAULT_PRIORITY);
+            $table->enum('priority', Ticket::PRIORITIES)->default(Ticket::DEFAULT_PRIORITY);
             $table->text('description');
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();

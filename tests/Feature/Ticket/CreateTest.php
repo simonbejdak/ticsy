@@ -6,6 +6,7 @@ namespace Tests\Feature\Ticket;
 use App\Livewire\TicketCreateForm;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
@@ -33,59 +34,43 @@ class CreateTest extends TestCase
         $response->assertSee('Create Incident');
     }
 
-    function test_it_fails_validation_with_invalid_category(){
+    /**
+     * @dataProvider invalidCategories
+     */
+    function test_it_fails_validation_with_invalid_category($value, $error){
         $user = User::factory()->create();
 
-        $testedValues = [
-            max(TicketConfig::CATEGORIES) + 1 => 'max',
-            min(TicketConfig::CATEGORIES) - 1 => 'min',
-            'ASAP' => 'numeric',
-            '' => 'required',
-        ];
-
-        foreach ($testedValues as $testedValue => $error){
-            Livewire::actingAs($user)
-                ->test(TicketCreateForm::class, ['type' => Type::first()])
-                ->set('category', $testedValue)
-                ->call('create')
-                ->assertHasErrors(['category' => $error]);
-        }
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class)
+            ->set('category', $value)
+            ->call('create')
+            ->assertHasErrors(['category' => $error]);
     }
 
-    function test_it_fails_validation_with_invalid_item(){
+    /**
+     * @dataProvider invalidItems
+     */
+    function test_it_fails_validation_with_invalid_item($value, $error){
         $user = User::factory()->create();
 
-        $testedValues = [
-            '' => 'required',
-            max(TicketConfig::ITEMS) + 1 => 'max',
-            min(TicketConfig::ITEMS) - 1 => 'min',
-        ];
-
-        foreach ($testedValues as $testedValue => $error){
-            Livewire::actingAs($user)
-                ->test(TicketCreateForm::class, ['type' => Type::first()])
-                ->set('item', $testedValue)
-                ->call('create')
-                ->assertHasErrors(['item' => $error]);
-        }
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class)
+            ->set('item', $value)
+            ->call('create')
+            ->assertHasErrors(['item' => $error]);
     }
 
-    function test_it_fails_validation_with_invalid_description(){
+    /**
+     * @dataProvider invalidDescription
+     */
+    function test_it_fails_validation_with_invalid_description($value, $error){
         $user = User::factory()->create();
 
-        $testedValues = [
-            '' => 'required',
-            Str::random(TicketConfig::MIN_DESCRIPTION_CHARS - 1) => 'min',
-            Str::random(TicketConfig::MAX_DESCRIPTION_CHARS + 1) => 'max',
-        ];
-
-        foreach ($testedValues as $testedValue => $error){
-            Livewire::actingAs($user)
-                ->test(TicketCreateForm::class, ['type' => Type::first()])
-                ->set('description', $testedValue)
-                ->call('create')
-                ->assertHasErrors(['description' => $error]);
-        }
+        Livewire::actingAs($user)
+            ->test(TicketCreateForm::class)
+            ->set('description', $value)
+            ->call('create')
+            ->assertHasErrors(['description' => $error]);
     }
 
     function test_user_can_set_category(){
@@ -93,7 +78,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class)
-            ->set('category', TicketConfig::CATEGORIES['email'])
+            ->set('category', Category::EMAIL)
             ->call('create')
             ->assertHasNoErrors(['category' => 'required']);
     }
@@ -103,7 +88,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class)
-            ->set('item', TicketConfig::ITEMS['issue'])
+            ->set('item', Item::ISSUE)
             ->call('create')
             ->assertHasNoErrors(['item' => 'required']);
     }
@@ -113,8 +98,35 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class)
-            ->set('description', Str::random(TicketConfig::MIN_DESCRIPTION_CHARS + 1))
+            ->set('description', Str::random(Ticket::MIN_DESCRIPTION_CHARS + 1))
             ->call('create')
             ->assertHasNoErrors(['description' => 'required']);
     }
+
+    static function invalidCategories(){
+        return [
+            [Category::count() + 1, 'max'],
+            [0, 'min'],
+            ['ASAP', 'numeric'],
+            ['', 'required'],
+        ];
+    }
+
+    static function invalidItems(){
+        return [
+            ['', 'required'],
+            [Item::count() + 1, 'max'],
+            ['ASAP', 'numeric'],
+            [0, 'min'],
+        ];
+    }
+
+    static function invalidDescription(){
+        return [
+            ['', 'required'],
+            [Str::random(Ticket::MIN_DESCRIPTION_CHARS - 1), 'min'],
+            [Str::random(Ticket::MAX_DESCRIPTION_CHARS + 1), 'max'],
+        ];
+    }
 }
+

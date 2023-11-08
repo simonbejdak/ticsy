@@ -37,14 +37,19 @@ class UserFactory extends Factory
         });
     }
 
-    public function resolver(): Factory
+    public function resolver(bool $allGroups = false): Factory
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes){
             return [
                 //
             ];
-        })->afterCreating(function (User $user) {
+        })->afterCreating(function (User $user) use ($allGroups) {
             $user->assignRole('resolver');
+            if($allGroups){
+                foreach (Group::all() as $group){
+                    $group->resolvers()->attach($user);
+                }
+            }
         });
     }
 }

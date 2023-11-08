@@ -5,9 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Category extends MappableModel
 {
     use HasFactory;
+
+    const MAP = [
+        'network' => 1,
+        'server' => 2,
+        'computer' => 3,
+        'application' => 4,
+        'email' => 5,
+    ];
+
+    const NETWORK = self::MAP['network'];
+    const SERVER = self::MAP['server'];
+    const COMPUTER = self::MAP['computer'];
+    const APPLICATION = self::MAP['application'];
+    const EMAIL = self::MAP['email'];
 
     public function getNameAttribute($value)
     {
@@ -24,7 +38,7 @@ class Category extends Model
         return $this->belongsToMany(Item::class);
     }
 
-    public function randItem()
+    public function randomItem()
     {
         return $this->items()->inRandomOrder()->first();
     }

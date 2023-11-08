@@ -6,12 +6,8 @@ use App\Models\Group;
 use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfig;
 use App\Models\User;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
-use Livewire\Component;
 
 class TicketEditForm extends TicketForm
 {
@@ -31,11 +27,18 @@ class TicketEditForm extends TicketForm
     public function rules()
     {
         return [
-            'status' => 'min:1|max:'. count(TicketConfig::STATUSES).'|numeric',
-            'onHoldReason' => 'min:1|max:'. count(TicketConfig::STATUS_ON_HOLD_REASONS).'|required_if:status,'.TicketConfig::STATUSES['on_hold'].'|nullable|numeric',
-            'priority' => 'min:1|max:'. count(TicketConfig::PRIORITIES).'|required|numeric',
-            'group' => 'min:1|max:'. count(TicketConfig::GROUPS).'|required|numeric',
-            'resolver' => 'min:1|max:'. User::max('id') .'|nullable|numeric',
+            'status' => 'min:1|max:'. Status::count() . '|required|numeric',
+            'onHoldReason' => 'min:1|max:'. OnHoldReason::count() . '|required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
+            'priority' => 'min:1|max:'. count(Ticket::PRIORITIES) . '|required|numeric',
+            'group' => 'min:1|max:'. Group::count() . '|required|numeric',
+            'resolver' => 'min:1|max:'. User::max('id') . '|nullable|numeric',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'onHoldReason.required_if' => 'On hold reason is required',
         ];
     }
 
@@ -49,7 +52,7 @@ class TicketEditForm extends TicketForm
 
         $this->statuses = Status::all();
         $this->onHoldReasons = OnHoldReason::all();
-        $this->priorities = TicketConfig::PRIORITIES;
+        $this->priorities = Ticket::PRIORITIES;
         $this->groups = Group::all();
         $this->resolvers = Group::find($this->group)->resolvers()->get();
     }

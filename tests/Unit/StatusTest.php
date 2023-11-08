@@ -29,6 +29,6 @@ class StatusTest extends TestCase
     public function test_it_has_correct_default_status(){
         $ticket = new Ticket();
 
-        $this->assertEquals(TicketConfig::DEFAULT_STATUS, $ticket->status->id);
+        $this->assertEquals(Status::DEFAULT, $ticket->status->id);
     }
 }

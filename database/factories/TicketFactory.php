@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Item;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\TicketConfig;
 use App\Models\Type;
@@ -25,15 +26,12 @@ class TicketFactory extends Factory
                 return User::factory()->create();
             },
             'category_id' => function (){
-                return rand(1, count(TicketConfig::CATEGORIES));
+                return rand(1, Category::count());
             },
             'type_id' => function (){
-                return rand(1, count(TicketConfig::TYPES));
+                return rand(1, Type::count());
             },
-            'status_id' => function (){
-                return TicketConfig::DEFAULT_STATUS;
-            },
-            'group_id' => TicketConfig::DEFAULT,
+            'group_id' => Group::DEFAULT,
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -44,10 +42,19 @@ class TicketFactory extends Factory
     {
         return $this->afterMaking(function (Ticket $ticket) {
             if($ticket->item_id === null){
-                $ticket->item_id = $ticket->category->items()->inRandomOrder()->first()->id;
+                $ticket->item_id = $ticket->category->randomItem()->id;
             }
         })->afterCreating(function (Ticket $ticket) {
             //
+        });
+    }
+
+    public function inProgress(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status_id' => Status::IN_PROGRESS,
+            ];
         });
     }
 
@@ -55,7 +62,7 @@ class TicketFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => TicketConfig::STATUSES['on_hold'],
+                'status_id' => Status::ON_HOLD,
             ];
         });
     }
@@ -64,7 +71,7 @@ class TicketFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => TicketConfig::STATUSES['resolved'],
+                'status_id' => Status::RESOLVED,
             ];
         });
     }
@@ -73,7 +80,7 @@ class TicketFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => TicketConfig::STATUSES['cancelled'],
+                'status_id' => Status::CANCELLED,
             ];
         });
     }

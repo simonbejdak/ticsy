@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Group;
+use App\Models\Item;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
@@ -17,7 +18,8 @@ use Livewire\Component;
 class TicketCreateForm extends TicketForm
 {
     public Ticket|null $ticket = null;
-    public Type $type;
+    public Type|int $type;
+    public string $typeName;
     public $category;
     public $item;
     public $description;
@@ -26,20 +28,20 @@ class TicketCreateForm extends TicketForm
 
     public function rules()
     {
-        $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
-        $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
+        $min_desc = Ticket::MIN_DESCRIPTION_CHARS;
+        $max_desc = Ticket::MAX_DESCRIPTION_CHARS;
 
         return [
-            'category' => 'numeric|required|min:1|max:' . count(TicketConfig::CATEGORIES),
-            'item' => 'numeric|required|min:1|max:' . count(TicketConfig::ITEMS),
+            'category' => 'numeric|required|min:1|max:' . Category::count(),
+            'item' => 'numeric|required|min:1|max:' . Item::count(),
             'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
         ];
     }
 
-    public function mount(Type $type, Ticket|null $ticket = null)
+    public function mount(int $type = Type::DEFAULT, Ticket|null $ticket = null)
     {
         $this->ticket = $ticket;
-        $this->type = $type;
+        $this->type = Type::findOrFail($type);
         $this->category = null;
         $this->item = null;
         $this->description = null;
@@ -60,8 +62,8 @@ class TicketCreateForm extends TicketForm
 
     public function create()
     {
-        $min_desc = TicketConfig::MIN_DESCRIPTION_CHARS;
-        $max_desc = TicketConfig::MAX_DESCRIPTION_CHARS;
+        $min_desc = Ticket::MIN_DESCRIPTION_CHARS;
+        $max_desc = Ticket::MAX_DESCRIPTION_CHARS;
 
         $this->validate();
 

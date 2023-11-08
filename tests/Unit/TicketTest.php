@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Item;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
@@ -32,7 +33,7 @@ class TicketTest extends TestCase
 
     function test_it_has_one_category()
     {
-        $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
+        $category = Category::findOrFail(Category::NETWORK);
         $ticket = Ticket::factory(['category_id' => $category])->create();
 
         $this->assertEquals('Network', $ticket->category->name);
@@ -68,7 +69,7 @@ class TicketTest extends TestCase
 
     public function test_it_belongs_to_status()
     {
-        $status = Status::findOrFail(TicketConfig::STATUSES['open']);
+        $status = Status::findOrFail(Status::OPEN);
         $ticket = Ticket::factory(['status_id' => $status])->create();
 
         $this->assertEquals('Open', $ticket->status->name);
@@ -76,7 +77,7 @@ class TicketTest extends TestCase
 
     public function test_it_belongs_to_status_on_hold_reason()
     {
-        $ticket = Ticket::factory(['on_hold_reason_id' => TicketConfig::STATUS_ON_HOLD_REASONS['caller_response']])
+        $ticket = Ticket::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])
             ->onHold()->create();
 
         $this->assertEquals('Caller Response', $ticket->onHoldReason->name);
@@ -117,28 +118,28 @@ class TicketTest extends TestCase
     {
         $this->expectException(QueryException::class);
 
-        Ticket::factory(['priority' => count(TicketConfig::PRIORITIES) + 1])->create();
+        Ticket::factory(['priority' => count(Ticket::PRIORITIES) + 1])->create();
     }
 
     function test_it_has_correct_default_priority()
     {
         $ticket = new Ticket();
 
-        $this->assertEquals(TicketConfig::DEFAULT_PRIORITY, $ticket->priority);
+        $this->assertEquals(Ticket::DEFAULT_PRIORITY, $ticket->priority);
     }
 
     function test_it_has_correct_default_group(){
         $ticket = new Ticket();
 
-        $this->assertEquals(TicketConfig::DEFAULT, $ticket->group->id);
+        $this->assertEquals(Group::DEFAULT, $ticket->group->id);
     }
 
     function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfig::STATUSES['resolved'];
+        $ticket->status_id = Status::RESOLVED;
         $ticket->save();
 
-        $ticket->status_id = TicketConfig::STATUSES['in_progress'];
+        $ticket->status_id = Status::IN_PROGRESS;
         $ticket->save();
 
         $this->assertEquals(null, $ticket->resolved_at);
@@ -146,7 +147,7 @@ class TicketTest extends TestCase
 
     function test_it_cannot_have_status_resolved_and_resolved_at_timestamp_null(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfig::STATUSES['resolved'];
+        $ticket->status_id = Status::RESOLVED;
         $ticket->save();
 
         $this->assertNotEquals(null, $ticket->resolved_at);
@@ -154,10 +155,10 @@ class TicketTest extends TestCase
 
     function test_it_is_not_archived_when_resolved_status_does_not_exceed_archival_period(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfig::STATUSES['resolved'];
+        $ticket->status_id = Status::RESOLVED;
         $ticket->save();
 
-        $date = Carbon::now()->addDays(TicketConfig::ARCHIVE_AFTER_DAYS - 1);
+        $date = Carbon::now()->addDays(Ticket::ARCHIVE_AFTER_DAYS - 1);
         Carbon::setTestNow($date);
 
         $this->assertFalse($ticket->isArchived());
@@ -165,10 +166,10 @@ class TicketTest extends TestCase
 
     function test_it_is_archived_when_resolved_status_exceeds_archival_period(){
         $ticket = Ticket::factory()->create();
-        $ticket->status_id = TicketConfig::STATUSES['resolved'];
+        $ticket->status_id = Status::RESOLVED;
         $ticket->save();
 
-        $date = Carbon::now()->addDays(TicketConfig::ARCHIVE_AFTER_DAYS);
+        $date = Carbon::now()->addDays(Ticket::ARCHIVE_AFTER_DAYS);
         Carbon::setTestNow($date);
 
         $this->assertTrue($ticket->isArchived());
@@ -177,8 +178,8 @@ class TicketTest extends TestCase
     public function test_exception_thrown_if_item_does_not_match_category()
     {
         // I'm detaching below models together, so they do not match
-        $category = Category::findOrFail(TicketConfig::CATEGORIES['network']);
-        $item = Item::findOrFail(TicketConfig::ITEMS['application_error']);
+        $category = Category::findOrFail(Category::NETWORK);
+        $item = Item::findOrFail(Item::APPLICATION_ERROR);
         $category->items()->detach($item);
 
         $this->withoutExceptionHandling();

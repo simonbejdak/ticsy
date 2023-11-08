@@ -33,20 +33,20 @@ class OnHoldReasonTest extends TestCase
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-        $onHoldReason = OnHoldReason::findOrFail(TicketConfig::STATUS_ON_HOLD_REASONS['waiting_for_vendor']);
+        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::WAITING_FOR_VENDOR);
 
         $this->assertEquals('Waiting For Vendor', $onHoldReason->name);
     }
 
     public function test_exception_thrown_if_status_on_hold_reason_assigned_but_status_different_than_on_hold()
     {
-        $onHoldReason = OnHoldReason::findOrFail(TicketConfig::STATUS_ON_HOLD_REASONS['caller_response']);
+        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::CALLER_RESPONSE);
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Status on hold reason cannot be assigned to Ticket if Status is different than on hold');
 
-        Ticket::factory(['status_id' => TicketConfig::STATUSES['open'],
+        Ticket::factory(['status_id' => Status::OPEN,
             'on_hold_reason_id' => $onHoldReason
         ])->create();
     }
@@ -57,7 +57,7 @@ class OnHoldReasonTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Status on hold reason must be assigned to Ticket if Status is on hold');
 
-        Ticket::factory(['status_id' => TicketConfig::STATUSES['on_hold']])->create();
+        Ticket::factory()->onHold()->create();
     }
 
     public function test_resolver_is_able_to_set_on_hold_reason()

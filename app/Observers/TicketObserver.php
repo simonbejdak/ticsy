@@ -11,7 +11,9 @@ class TicketObserver
 {
     public function creating(Ticket $ticket): void
     {
-        if(count($ticket->category->items()->where('id', '=', $ticket->item->id)->get()) === 0){
+        $category = $ticket->category;
+        $categoryItems = $category->items()->where('id', '=', $ticket->item->id)->get();
+        if(count($categoryItems) == 0){
             throw new Exception('Item cannot be assigned to Ticket if it does not match Category');
         }
 

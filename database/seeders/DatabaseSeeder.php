@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->resolver()->create();
 
         foreach (User::role('resolver')->get() as $resolver){
-            $resolver->groups()->attach(Group::find(rand(1, count(TicketConfig::GROUPS))));
+            $resolver->groups()->attach(Group::find(rand(1, Group::count())));
         }
 
         foreach (Ticket::all() as $ticket){

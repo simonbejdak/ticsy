@@ -15,11 +15,17 @@ class Ticket extends Model
     use Timestamp;
     use HasFactory;
 
+    const ARCHIVE_AFTER_DAYS = 3;
+    const PRIORITIES = [1, 2, 3, 4];
+    const DEFAULT_PRIORITY = 4;
+    const MIN_DESCRIPTION_CHARS = 8;
+    const MAX_DESCRIPTION_CHARS = 255;
+
     protected $guarded = [];
     protected $attributes = [
-        'status_id' => TicketConfig::DEFAULT_STATUS,
-        'priority' => TicketConfig::DEFAULT_PRIORITY,
-        'group_id' => TicketConfig::DEFAULT,
+        'status_id' => Status::DEFAULT,
+        'priority' => self::DEFAULT_PRIORITY,
+        'group_id' => Group::DEFAULT,
     ];
 
     protected $casts = [
@@ -76,18 +82,18 @@ class Ticket extends Model
 
     public function isResolved(): bool
     {
-        return $this->getOriginal('status_id') == TicketConfig::STATUSES['resolved'];
+        return $this->getOriginal('status_id') == Status::RESOLVED;
     }
 
     public function isCancelled(): bool
     {
-        return $this->getOriginal('status_id') == TicketConfig::STATUSES['cancelled'];
+        return $this->getOriginal('status_id') == Status::CANCELLED;
     }
 
     public function isArchived(): bool{
         if($this->isResolved()){
 
-            $expireDate = Carbon::now()->subDays(TicketConfig::ARCHIVE_AFTER_DAYS);
+            $expireDate = Carbon::now()->subDays(Ticket::ARCHIVE_AFTER_DAYS);
 
             if(isset($this->resolved_at) && $this->resolved_at->lessThan($expireDate)){
                 return true;
@@ -99,7 +105,7 @@ class Ticket extends Model
 
     public function isStatus(...$statuses): bool{
         foreach ($statuses as $status){
-            if($this->status_id == TicketConfig::STATUSES[$status]){
+            if($this->status_id == Status::MAP[$status]){
                 return true;
             }
         }
