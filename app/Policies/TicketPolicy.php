@@ -64,9 +64,14 @@ class TicketPolicy
         );
     }
 
+    public function setPriorityOne(User $user, Ticket $ticket): bool
+    {
+        return ($user->hasPermissionTo('set_priority_one') && !$ticket->isResolved() && !$ticket->isArchived());
+    }
+
     public function setPriority(User $user, Ticket $ticket): bool
     {
-        return ($user->hasPermissionTo('set_priority') && !$ticket->isResolved() && !$ticket->isArchived());
+        return (($user->hasPermissionTo('set_priority') || ($user->hasPermissionTo('set_priority_one'))) && !$ticket->isResolved() && !$ticket->isArchived());
     }
 
     public function setGroup(User $user, Ticket $ticket): bool

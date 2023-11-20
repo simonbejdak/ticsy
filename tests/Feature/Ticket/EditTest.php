@@ -156,4 +156,53 @@ class EditTest extends TestCase
             'status_id' => Status::CANCELLED,
         ]);
     }
+
+    public function test_it_returns_validation_error_if_user_with_no_permission_assigns_priority_one_to_a_ticket()
+    {
+        // resolver does not have a permisssion to set priority one
+        $user = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('priority', 1)
+            ->call('save')
+            ->assertHasErrors(['priority' => 'min']);
+    }
+
+    public function test_it_does_not_return_validation_error_if_user_with_permission_assigns_priority_one_to_a_ticket()
+    {
+        // manager has a permisssion to set priority one
+        $user = User::factory()->manager()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('priority', 1)
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('tickets', [
+           'id' => $ticket->id,
+           'priority' => 1,
+        ]);
+    }
+
+    public function test_it_allows_user_with_permission_to_set_priority_one_to_also_set_lower_priorities()
+    {
+        // manager has a permisssion to set priority one
+        $user = User::factory()->manager()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('priority', 2)
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'priority' => 2,
+        ]);
+    }
 }

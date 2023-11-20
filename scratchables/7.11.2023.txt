@@ -10,10 +10,10 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 8. Items -- done
 9. Resolver group support -- done
 10. On hold status needs reason -- done
+11. Priority 1 can be assigned only by a person with necessary permission -- done
+12. Activities
 
-11. Activities merged with comments
-12. SLAs
-13. Priority 1 approval required
+13. SLAs
 14. Implement multiple tasks support for requests
 15. E-mail notifcation on ticket update
 16. Watch list for tickets
@@ -23,26 +23,4 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 20. Change templates
 21. Subcategories
 22. Resolver required_if Status in_progress
-
-Refactor ideas:
-
-- We should create more clear constants in TicketConfig, we should do smth like TicketConfig::STATUS_OPEN instead TicketConfig::STATUS['open'] -- done
-- use test data providers -- done
-- make tests for invalid fields in TicketEditForm -- done
-- statusOnHoldReason should be IMO renamed, too many characters.. -- done
-- refactor TicketObserver creating, too verbose call -- done
-- instead of checking for status like "$ticket->status_id(TicketConfig::STATUSES['open'])" we should use model function isStatus() -- done
-- delete unnecessary map factories -- cancelled, they are necessary
-- onHold() state should also assign on hold reason -- cancelled, it does not make sense
-- put addSpaceBeforeUppercase in TicketField class to some ServiceFile, or helper file.. -- done
-- do the same for setDisplayName -- done
-- make custom validation message instead of "The on hold reason field is blank when status is 3." -- done
-- put into dataProviders also required_if tests -- done
-- maybe we should make resolvers also part of all groups for tests -- done
-- share the code "@if(!$hidden) <div class="space-y-1">" between ticket field and ticket field select components -- done
-- make ticket-field and ticket-field-select as pure as possible -- cancelled, the names themselves imply they cannot be decoupled
-- make count() method on models not duplicated on each of them.. -- done
-
-Bugs:
-
-- investigate, why when I modify TicketEditForm, and then I randomly click anywhere on TicketEditForm it resets to unwanted state, when field that should not show actually show.. -- done
+23. Make TicketEditForm be synchronized in real time between browsers

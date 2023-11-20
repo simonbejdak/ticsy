@@ -29,7 +29,7 @@ class TicketEditForm extends TicketForm
         return [
             'status' => 'min:1|max:'. Status::count() . '|required|numeric',
             'onHoldReason' => 'min:1|max:'. OnHoldReason::count() . '|required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
-            'priority' => 'min:1|max:'. count(Ticket::PRIORITIES) . '|required|numeric',
+            'priority' => 'min:'. (auth()->user()->can('setPriorityOne', $this->ticket) ? '1' : '2') . '|max:'. count(Ticket::PRIORITIES) . '|required|numeric',
             'group' => 'min:1|max:'. Group::count() . '|required|numeric',
             'resolver' => 'min:1|max:'. User::max('id') . '|nullable|numeric',
         ];
@@ -37,9 +37,13 @@ class TicketEditForm extends TicketForm
 
     public function messages()
     {
-        return [
-            'onHoldReason.required_if' => 'On hold reason is required',
-        ];
+        $messages = ['onHoldReason.required_if' => 'On hold reason is required'];
+
+        if(auth()->user()->cannot('setPriorityOne')){
+            $messages['priority.min'] = 'You cannot set priority 1 to a ticket';
+        }
+
+        return $messages;
     }
 
     public function mount(Ticket $ticket){

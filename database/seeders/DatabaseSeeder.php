@@ -40,6 +40,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'resolver@gmail.com',
         ])->resolver()->create();
 
+        $manager = User::factory([
+            'name' => 'Manager',
+            'email' => 'manager@gmail.com',
+        ])->manager()->create();
+
         Ticket::factory(30)->create([
             'user_id' => $user,
             'resolver_id' => $resolver,
