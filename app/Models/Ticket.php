@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use App\Helpers\Config;
-use App\Observers\TicketObserver;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Ticket extends Model
 {
     use Timestamp;
     use HasFactory;
+    use LogsActivity;
 
     const ARCHIVE_AFTER_DAYS = 3;
     const PRIORITIES = [1, 2, 3, 4];
@@ -26,6 +26,10 @@ class Ticket extends Model
         'status_id' => Status::DEFAULT,
         'priority' => self::DEFAULT_PRIORITY,
         'group_id' => Group::DEFAULT,
+    ];
+
+    public $loggableAttributes = [
+        'status', 'onHoldReason', 'priority', 'group', 'resolver',
     ];
 
     protected $casts = [
@@ -110,5 +114,21 @@ class Ticket extends Model
             }
         }
         return false;
+    }
+
+    public function addComment($body)
+    {
+        activity()
+            ->performedOn($this)
+            ->causedBy(auth()->user())
+            ->event('comment')
+            ->log($body);
+    }
+
+    public function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->loggableAttributes)
+            ->logOnlyDirty();
     }
 }

@@ -41,7 +41,8 @@ class PermissionSeeder extends Seeder
             'set_status',
             'set_on_hold_reason',
             'add_comments_to_all_tickets',
-            'view_all_tickets');
+            'view_all_tickets',
+        );
 
         $roleManager = Role::create(['name' => 'manager']);
         $roleManager->givePermissionTo('set_priority_one');

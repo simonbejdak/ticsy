@@ -55,7 +55,7 @@ class TicketObserver
 
     public function updated(Ticket $ticket): void
     {
-        //
+        //        
     }
 
     public function deleted(Ticket $ticket): void

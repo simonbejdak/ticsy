@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             MapSeeder::class,
             CategoryItemSeeder::class,
             PermissionSeeder::class,
+            UserSeeder::class,
         ]);;
 
         $user = User::factory([

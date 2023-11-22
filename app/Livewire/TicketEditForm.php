@@ -8,10 +8,12 @@ use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\Models\Activity;
 
 class TicketEditForm extends TicketForm
 {
     public Ticket $ticket;
+    public Collection $activities;
     public $status;
     public $onHoldReason;
     public $priority;
@@ -48,6 +50,7 @@ class TicketEditForm extends TicketForm
 
     public function mount(Ticket $ticket){
         $this->ticket = $ticket;
+        $this->activities = $this->ticket->activities;
         $this->status = $this->ticket->status_id;
         $this->onHoldReason = $this->ticket->on_hold_reason_id;
         $this->priority = $this->ticket->priority;
@@ -82,9 +85,10 @@ class TicketEditForm extends TicketForm
 
     public function save()
     {
-        $this->syncTicket();
         $this->validate();
+        $this->syncTicket();
         $this->ticket->save();
+        $this->dispatch('ticket-updated');
     }
 
     protected function checkOnHoldReason(){
@@ -98,7 +102,7 @@ class TicketEditForm extends TicketForm
         $this->ticket->on_hold_reason_id = $this->onHoldReason;
         $this->ticket->priority = $this->priority;
         $this->ticket->group_id = $this->group;
-        $this->ticket->resolver_id = $this->resolver;
+        $this->ticket->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->resolvers = $this->ticket->group ? $this->ticket->group->resolvers : collect([]);
     }
 }

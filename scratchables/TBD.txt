@@ -10,8 +10,22 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 8. Items -- done
 9. Resolver group support -- done
 10. On hold status needs reason -- done
-11. Priority 1 can be assigned only by a person with necessary permission -- done
-12. Activities
+11. Priority 1 can be added only by user with the necessary permission -- done
+
+12. Activities -- in progress
+
+-- resolve, why does system fail if resolver is set to null -- done
+-- set value as 'empty' when no old or new attribute value in Activity is set -- done
+-- emit event TicketEditForm saved to TicketComments component
+-- wrap activities logging in tests -- done
+-- make Activity Row header uppercased -- done
+-- make Activity Row header have spaces in front of capital letters -- done
+-- combine Activities with Comments -- done
+-- utilize 1 single component for both Comments and Activities -- done
+-- wrap into tests
+
+
+
 
 13. SLAs
 14. Implement multiple tasks support for requests
@@ -24,3 +38,8 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 21. Subcategories
 22. Resolver required_if Status in_progress
 23. Make TicketEditForm be synchronized in real time between browsers
+
+Refactor ideas:
+
+- refactor setActivities() method on TicketComments Livewire component
+- i think we should set 'empty' somewhere else, than view

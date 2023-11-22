@@ -3,6 +3,7 @@
 
 namespace Tests\Feature\Ticket;
 
+use App\Livewire\TicketActivities;
 use App\Livewire\TicketEditForm;
 use App\Models\Category;
 use App\Models\Comment;
@@ -95,13 +96,9 @@ class EditTest extends TestCase
     {
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
-        Comment::factory([
-            'body' => 'Comment Body',
-            'ticket_id' => $ticket,
-            'user_id' => $user,
-        ])->create();
-
         $this->actingAs($user);
+        $ticket->addComment('Comment Body');
+
         $response = $this->get(route('tickets.edit', $ticket));
 
         $response->assertSuccessful();
@@ -204,5 +201,166 @@ class EditTest extends TestCase
             'id' => $ticket->id,
             'priority' => 2,
         ]);
+    }
+
+    public function test_it_emits_ticket_updated_on_save_call()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->call('save')
+            ->assertDispatched('ticket-updated');
+    }
+
+    public function test_it_displays_ticket_created_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Ticket was created at');
+    }
+
+    public function test_it_displays_changes_activity_dynamically()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory(['status_id' => Status::OPEN])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', Status::IN_PROGRESS)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Status: In Progress was Open');
+    }
+
+    public function test_it_displays_multiple_activity_changes()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory([
+            'status_id' => Status::OPEN,
+            'group_id' => Group::SERVICE_DESK,
+        ])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', Status::IN_PROGRESS)
+            ->set('group', Group::LOCAL_6445_NEW_YORK)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Status: In Progress was Open')
+            ->assertSee('Group: LOCAL-6445-NEW-YORK was SERVICE-DESK');
+    }
+
+    public function test_it_displays_status_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory(['status_id' => Status::OPEN])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', Status::IN_PROGRESS)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Status: In Progress was Open');
+    }
+
+    public function test_it_displays_on_hold_reason_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('status', Status::ON_HOLD)
+            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('On hold reason: Caller Response was empty');
+    }
+
+    public function test_it_displays_priority_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory(['priority' => Ticket::DEFAULT_PRIORITY])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('priority', 3)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Priority: 3 was ' . Ticket::DEFAULT_PRIORITY);
+    }
+
+    public function test_it_displays_group_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory(['group_id' => Group::SERVICE_DESK])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('group', Group::LOCAL_6445_NEW_YORK)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Group: LOCAL-6445-NEW-YORK was SERVICE-DESK');
+    }
+
+    public function test_it_displays_resolver_changes_activity()
+    {
+        $resolver = User::factory(['name' => 'Average Joe'])->resolver(true)->create();
+        $ticket = Ticket::factory()->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('resolver', $resolver->id)
+            ->call('save')
+            ->assertSuccessful();
+
+        $ticket = $ticket->refresh();
+
+        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSuccessful()
+            ->assertSee('Resolver: Average Joe was empty');
     }
 }

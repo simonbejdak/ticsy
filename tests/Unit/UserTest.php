@@ -58,4 +58,18 @@ class UserTest extends TestCase
         $this->assertEquals($resolverTwo, $ticket->resolver);
         $this->assertNotEquals($resolverOne, $ticket->resolver);
     }
+
+    public function test_it_has_correct_default_profile_picture()
+    {
+        $user = User::factory()->create();
+
+        $this->assertEquals(User::DEFAULT_PROFILE_PICTURE, $user->profile_picture);
+    }
+
+    public function test_it_has_profile_picture()
+    {
+        $user = User::factory(['profile_picture' => 'j2dku8ds.jpg'])->create();
+
+        $this->assertEquals('j2dku8ds.jpg', $user->profile_picture);
+    }
 }

@@ -18,6 +18,7 @@ class TestDatabaseSeeder extends Seeder
             MapSeeder::class,
             TestCategoryItemSeeder::class,
             PermissionSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

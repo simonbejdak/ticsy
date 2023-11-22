@@ -1,0 +1,27 @@
+Purpose of the project "ticket_system" is to demonstrate my programming abilities on potential job interviews.
+
+1. Resolved status archives ticket 3 days after resolving -- done
+2. When ticket is in resolved status, no field other than status can be changed -- done
+3. Refactor ticket field duplication (controller and view) -- done
+4. Refactor entire code, so that we can have a good feeling from it -- done
+5. Solve submit problem, nothing is currently being submitted - done
+6. Dynamic field graying out -- done
+7. Solve validation errors not displaying in fields -- done
+8. Items -- done
+9. Resolver group support -- done
+10. On hold status needs reason -- done
+11. Priority 1 can be added only by user with the necessary permission -- done
+
+12. SLAs
+
+13. Activities
+14. Implement multiple tasks support for requests
+15. E-mail notifcation on ticket update
+16. Watch list for tickets
+17. Statistics
+18. Resolver dashboard
+19. Knowledge articles for common problems
+20. Change templates
+21. Subcategories
+22. Resolver required_if Status in_progress
+23. Make TicketEditForm be synchronized in real time between browsers

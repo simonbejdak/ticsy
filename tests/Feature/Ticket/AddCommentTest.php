@@ -2,12 +2,13 @@
 
 namespace Tests\Feature\Ticket;
 
-use App\Livewire\TicketComments;
+use App\Livewire\TicketActivities;
 use App\Models\Comment;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Activitylog\Facades\CauserResolver;
 use Str;
 use Tests\TestCase;
 
@@ -21,7 +22,7 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->test(TicketActivities::class, ['ticket' => $ticket])
             ->call('addComment', ['body' => 'Comment Body',])
             ->assertForbidden();
     }
@@ -31,16 +32,20 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
+        // I have to set activity causer here, as by default it gets overridden in TestCase class
+        CauserResolver::setCauser($user);
+
         Livewire::actingAs($user)
-            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->test(TicketActivities::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
             ->call('addComment')
             ->assertSee('Comment Body');
 
-        $this->assertDatabaseHas('comments', [
-            'ticket_id' => $ticket->id,
-            'user_id' => $user->id,
-            'body' => 'Comment Body'
+        $this->assertDatabaseHas('activity_log', [
+            'subject_id' => $ticket->id,
+            'causer_id' => $user->id,
+            'event' => 'comment',
+            'description' => 'Comment Body'
         ]);
     }
 
@@ -49,16 +54,20 @@ class AddCommentTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory()->create();
 
+        // I have to set activity causer here, as by default it gets overridden in TestCase class
+        CauserResolver::setCauser($resolver);
+
         Livewire::actingAs($resolver)
-            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->test(TicketActivities::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
             ->call('addComment')
             ->assertSee('Comment Body');
 
-        $this->assertDatabaseHas('comments', [
-            'ticket_id' => $ticket->id,
-            'user_id' => $resolver->id,
-            'body' => 'Comment Body'
+        $this->assertDatabaseHas('activity_log', [
+            'subject_id' => $ticket->id,
+            'causer_id' => $resolver->id,
+            'event' => 'comment',
+            'description' => 'Comment Body'
         ]);
     }
 
@@ -68,7 +77,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->test(TicketActivities::class, ['ticket' => $ticket])
             ->set('body', '')
             ->call('addComment')
             ->assertHasErrors(['body' => 'required']);
@@ -80,7 +89,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->test(TicketActivities::class, ['ticket' => $ticket])
             ->set('body', Str::random(Comment::MIN_BODY_CHARS - 1))
             ->call('addComment')
             ->assertHasErrors(['body' => 'min']);
@@ -92,7 +101,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketComments::class, ['ticket' => $ticket])
+            ->test(TicketActivities::class, ['ticket' => $ticket])
             ->set('body', Str::random(Comment::MAX_BODY_CHARS + 1))
             ->call('addComment')
             ->assertHasErrors(['body' => 'max']);
