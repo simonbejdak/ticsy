@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
+    public function isGroupMember(Group $group)
+    {
+        return $this->groups()->where('id', $group->id)->exists();
+    }
+
     public static function getSystemUser()
     {
         // the first user being created is System user in UserSeeder, so ID should be 1

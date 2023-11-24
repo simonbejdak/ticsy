@@ -71,16 +71,16 @@ class TicketEditForm extends TicketForm
 
     public function updated($property): void
     {
-        $this->syncTicket();
-
-        parent::updated($property);
-
         if($property === 'group'){
             $this->resolver = null;
         }
         if($property === 'status' &&  !$this->ticket->isStatus('on_hold')){
             $this->onHoldReason = null;
         }
+
+        $this->syncTicket();
+
+        parent::updated($property);
     }
 
     public function save()

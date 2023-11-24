@@ -28,8 +28,11 @@ class Ticket extends Model
         'group_id' => Group::DEFAULT,
     ];
 
-    public $loggableAttributes = [
-        'status', 'onHoldReason', 'priority', 'group', 'resolver',
+    public array $loggableAttributes = [
+        'status.name',
+        'onHoldReason.name',
+        'priority', 'group.name',
+        'resolver.name',
     ];
 
     protected $casts = [

@@ -10,9 +10,9 @@ use Illuminate\View\Component;
 class SimpleProfileCard extends Component
 {
     public User $user;
-    public function __construct(User $user)
+    public function __construct(User $user = null)
     {
-        $this->user = $user;
+        ($user !== null) ? $this->user = $user : $this->user = User::getSystemUser();
     }
 
     public function render(): View|Closure|string

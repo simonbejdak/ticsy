@@ -56,12 +56,13 @@ class HomeTest extends TestCase
     {
         $user = User::factory()->create();
 
-        for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT + 1; $i++){
+        for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT; $i++){
             Ticket::factory([
                 'user_id' => $user,
                 'description' => 'Ticket Description ' . $i,
             ])->create();
         }
+
 
         $this->actingAs($user);
         $response = $this->get(route('home'));

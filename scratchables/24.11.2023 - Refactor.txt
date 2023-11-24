@@ -12,9 +12,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 10. On hold status needs reason -- done
 11. Priority 1 can be added only by user with the necessary permission -- done
 12. Activities -- done
-
-13. SLAs -- in progress
-
+13. SLAs
 14. Implement multiple tasks support for requests
 15. E-mail notification on ticket update
 16. Watch list for tickets
@@ -26,3 +24,17 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 22. Resolver required_if Status in_progress
 23. Make TicketEditForm be synchronized in real time between browsers
 
+Refactor ideas:
+
+- refactor setActivities() method on TicketComments Livewire component -- done
+- i think we should set 'empty' somewhere else, than view -- done
+- System user in tests does not have to be set in testcase -- done
+- create a method isGroupMember() in User model, then use it in application instead of duplicating the logic on separate places -- done
+
+Bugs:
+
+- sometimes Resolver field gets greyed out until page refresh -- done
+
+Test ideas:
+
+- test for Activites order in TicketActivities component -- done

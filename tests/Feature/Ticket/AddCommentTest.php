@@ -32,9 +32,6 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
 
-        // I have to set activity causer here, as by default it gets overridden in TestCase class
-        CauserResolver::setCauser($user);
-
         Livewire::actingAs($user)
             ->test(TicketActivities::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
@@ -53,9 +50,6 @@ class AddCommentTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory()->create();
-
-        // I have to set activity causer here, as by default it gets overridden in TestCase class
-        CauserResolver::setCauser($resolver);
 
         Livewire::actingAs($resolver)
             ->test(TicketActivities::class, ['ticket' => $ticket])

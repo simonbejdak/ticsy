@@ -16,7 +16,5 @@ abstract class TestCase extends BaseTestCase
 
         $this->artisan('migrate');
         $this->artisan('db:seed --class TestDatabaseSeeder');
-
-        CauserResolver::setCauser(User::getSystemUser());
     }
 }

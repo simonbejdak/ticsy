@@ -222,7 +222,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Ticket was created at');
+            ->assertSee('Ticket was created');
     }
 
     public function test_it_displays_changes_activity_dynamically()
@@ -362,5 +362,30 @@ class EditTest extends TestCase
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSee('Resolver: Average Joe was empty');
+    }
+
+    public function test_it_displays_activities_in_descending_order()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        $ticket->status_id = Status::IN_PROGRESS;
+        $ticket->save();
+
+        $ticket->addComment('Test Comment');
+
+        $ticket->status_id = Status::MONITORING;
+        $ticket->save();
+
+        $ticket->refresh();
+
+        Livewire::actingAs($resolver)
+            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->assertSeeInOrder([
+                'Status: Monitoring was In Progress',
+                'Test Comment',
+                'Status: In Progress was Open',
+                'Ticket was created',
+            ]);
     }
 }

@@ -84,7 +84,7 @@ class TicketPolicy
         $resolver = $ticket->resolver;
 
         if($resolver !== null){
-            $isResolverValid = $resolver->groups()->where('id', $ticket->group->id)->exists();
+            $isResolverValid = $resolver->isGroupMember($ticket->group);
         }
         if($resolver === null){
             $isResolverValid = true;
