@@ -48,7 +48,6 @@ class DatabaseSeeder extends Seeder
 
         Ticket::factory(30)->create([
             'user_id' => $user,
-            'resolver_id' => $resolver,
         ]);
 
         User::factory(5)->resolver()->create();

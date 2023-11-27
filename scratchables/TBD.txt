@@ -26,3 +26,11 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 22. Resolver required_if Status in_progress
 23. Make TicketEditForm be synchronized in real time between browsers
 
+Refactor ideas:
+- modify for example category.name field name to Category on pipe level
+
+Bugs:
+
+- OnHoldReason validation error not audible if reason is empty
+
+

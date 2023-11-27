@@ -105,7 +105,7 @@ class EditTest extends TestCase
         $response->assertSee('Comment Body');
     }
 
-    public function test_it_shows_validation_error_when_unknown_group_is_selected()
+    public function test_it_shows_red_ring_when_unknown_group_is_selected()
     {
         $ticket = Ticket::factory()->create();
         $resolver = User::factory()->resolver()->create();
@@ -114,7 +114,7 @@ class EditTest extends TestCase
             ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('group', Group::count() + 1)
             ->call('save')
-            ->assertSee('The group field must not be greater than '. Group::count() .'.');
+            ->assertSee('ring-2 ring-red-500');
     }
 
     public function test_on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
@@ -222,7 +222,11 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Ticket was created');
+            ->assertSeeInOrder([
+                'Status:', 'Open',
+                'Priority', '4',
+                'Group:', 'SERVICE-DESK',
+            ]);
     }
 
     public function test_it_displays_changes_activity_dynamically()
@@ -241,7 +245,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Status: In Progress was Open');
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     public function test_it_displays_multiple_activity_changes()
@@ -264,8 +268,8 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Status: In Progress was Open')
-            ->assertSee('Group: LOCAL-6445-NEW-YORK was SERVICE-DESK');
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
+            ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
     public function test_it_displays_status_changes_activity()
@@ -284,7 +288,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Status: In Progress was Open');
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     public function test_it_displays_on_hold_reason_changes_activity()
@@ -304,7 +308,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('On hold reason: Caller Response was empty');
+            ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
 
     public function test_it_displays_priority_changes_activity()
@@ -323,7 +327,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Priority: 3 was ' . Ticket::DEFAULT_PRIORITY);
+            ->assertSeeInOrder(['Priority:', '3', 'was', Ticket::DEFAULT_PRIORITY]);
     }
 
     public function test_it_displays_group_changes_activity()
@@ -342,7 +346,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Group: LOCAL-6445-NEW-YORK was SERVICE-DESK');
+            ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
     public function test_it_displays_resolver_changes_activity()
@@ -361,7 +365,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSuccessful()
-            ->assertSee('Resolver: Average Joe was empty');
+            ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
 
     public function test_it_displays_activities_in_descending_order()
@@ -382,10 +386,10 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(TicketActivities::class, ['ticket' => $ticket])
             ->assertSeeInOrder([
-                'Status: Monitoring was In Progress',
+                'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
-                'Status: In Progress was Open',
-                'Ticket was created',
+                'Status:', 'In Progress', 'was', 'Open',
+                'Created', 'Status:', 'Open',
             ]);
     }
 }

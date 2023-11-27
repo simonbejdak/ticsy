@@ -1,21 +1,32 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        "./app/View/Components/TicketField.php",
+        "./app/View/Components/FieldElement.php",
+        "./app/View/Components/ActivityCard.php",
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
         "./resources/**/*.vue",
     ],
     theme: {
+
+      fontFamily: {
+        'sans': ['Oswald', 'system-ui'],
+      },
       extend: {
-          width: {
-              '2.5': '10rem',
-          },
-          scale: {
-              '101': '1.01',
-          }
+        borderWidth: {
+          '3': '3px',
+        },
+        width: {
+          '2.5': '10rem',
+        },
+        scale: {
+          '101': '1.01',
+        },
+        fontSize: {
+          'xxs': '0.65rem',
+        },
       }
     },
-  plugins: [],
+    plugins: [],
 }
 

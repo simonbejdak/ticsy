@@ -15,8 +15,8 @@ class ActivityCard extends Component
     public array|string $body;
     protected array $styleMap = [
         'comment' => 'border-black',
-        'created' => 'border-gray-300',
-        'updated' => 'border-gray-300',
+        'created' => 'border-slate-300',
+        'updated' => 'border-slate-300',
     ];
     public function __construct(Activity $activity)
     {
@@ -32,26 +32,39 @@ class ActivityCard extends Component
 
     protected function setBody(): string|array{
         if($this->activity->event === 'comment'){
-
             $body = $this->activity->description;
-
         }
 
         elseif($this->activity->event === 'created'){
+            foreach ($this->activity->changes['attributes'] as $field => $value){
+                $fieldName =
+                    ucfirst(
+                        strtolower(
+                            preg_replace('/(?<!\ )[A-Z]/', ' $0',
+                                str_replace('.name', '', $field)
+                            )
+                        )
+                    );
 
-            $body = 'Ticket was created';
+                $value = ($value !== null) ? $value : 'empty';
 
+                $body[] = $fieldName . ": " . $value;
+            }
         }
 
         elseif($this->activity->event === 'updated'){
-
             foreach ($this->activity->changes['attributes'] as $field => $value){
-                $fieldName = ucfirst(strtolower(preg_replace('/(?<!\ )[A-Z]/', ' $0', (str_replace('.name', '', $field)))));
+                $fieldName =
+                    ucfirst(
+                        strtolower(
+                            preg_replace('/(?<!\ )[A-Z]/', ' $0',
+                                str_replace('.name', '', $field)
+                            )
+                        )
+                    );
                 $newValue = ($value !== null) ? $value : 'empty';
                 $oldValue = ($this->activity->changes['old'][$field] !== null) ? $this->activity->changes['old'][$field] : 'empty';
-
-                $body[] = $fieldName . ': ' . $newValue . ' was ' . $oldValue;
-
+                $body[] = $fieldName . ': "' . $newValue . '" was "' . $oldValue . '"';
             }
 
         }

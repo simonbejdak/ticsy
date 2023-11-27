@@ -12,6 +12,11 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             'resolve_ticket',
+            'set_number',
+            'set_caller',
+            'set_created',
+            'set_updated',
+            'set_type',
             'set_category',
             'set_item',
             'set_description',
@@ -45,6 +50,6 @@ class PermissionSeeder extends Seeder
         );
 
         $roleManager = Role::create(['name' => 'manager']);
-        $roleManager->givePermissionTo('set_priority_one');
+        $roleManager->givePermissionTo('set_priority_one', 'view_all_tickets');
     }
 }

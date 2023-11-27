@@ -1,20 +1,20 @@
 <form wire:submit="save">
     <div class="flex flex-col space-y-4">
-        <x-ticket-grid>
-            <x-ticket-field :name="'number'" :value="$ticket->id" />
-            <x-ticket-field :name="'caller'" :value="$ticket->user->name" />
-            <x-ticket-field :name="'created'" :value="$ticket->created_at" />
-            <x-ticket-field :name="'updated'" :value="$ticket->updated_at" />
-            <x-ticket-field :name="'type'" :value="$ticket->type->name" />
-            <x-ticket-field :name="'category'" :value="$ticket->category->name" :ticket="$ticket" />
-            <x-ticket-field :name="'item'" :value="$ticket->item->name" :ticket="$ticket" />
-            <x-ticket-field-select-status :options="$statuses" :ticket="$ticket" />
-            <x-ticket-field-select :name="'onHoldReason'" :options="$onHoldReasons" :hideable="true" :blank="true" :ticket="$ticket"/>
-            <x-ticket-field-select :name="'priority'" :options="$priorities" :ticket="$ticket" />
-            <x-ticket-field-select :name="'group'" :options="$groups" :ticket="$ticket" />
-            <x-ticket-field-select :name="'resolver'" :options="$resolvers" :ticket="$ticket" :blank="true" />
-        </x-ticket-grid>
-        <x-ticket-field :disabled="true" :name="'description'" :value="$ticket->description" />
+        <x-field-grid class="'grid-cols-3'">
+            <x-field :name="'number'" :value="$ticket->id" :represented-model="$ticket" />
+            <x-field :name="'caller'" :value="$ticket->user->name" :represented-model="$ticket" />
+            <x-field :name="'created'" :value="$ticket->created_at" :represented-model="$ticket" />
+            <x-field :name="'updated'" :value="$ticket->updated_at" :represented-model="$ticket" />
+            <x-field :name="'type'" :value="$ticket->type->name" :represented-model="$ticket" />
+            <x-field :name="'category'" :value="$ticket->category->name" :represented-model="$ticket" />
+            <x-field :name="'item'" :value="$ticket->item->name" :represented-model="$ticket" />
+            <x-field-dropdown :name="'status'" :options="$statuses" :represented-model="$ticket" />
+            <x-field-dropdown :name="'onHoldReason'" :options="$onHoldReasons" :hideable="true" :blank="true" :represented-model="$ticket"/>
+            <x-field-dropdown :name="'priority'" :options="$priorities" :represented-model="$ticket" />
+            <x-field-dropdown :name="'group'" :options="$groups" :represented-model="$ticket" />
+            <x-field-dropdown :name="'resolver'" :options="$resolvers" :represented-model="$ticket" :blank="true" />
+        </x-field-grid>
+        <x-field :disabled="true" :name="'description'" :value="$ticket->description" />
         <div class="flex flex-row justify-end">
             <x-secondary-button>Update</x-secondary-button>
         </div>

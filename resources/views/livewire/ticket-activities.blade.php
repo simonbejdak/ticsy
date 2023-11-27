@@ -1,6 +1,6 @@
 <div class="flex flex-col">
     <hr class="my-4 border-gray-300">
-    <h4>Comments</h4>
+    <h4>Activities</h4>
     <div>
         <form wire:submit.prevent="addComment">
             <div class="flex flex-row mt-2 space-x-2">
@@ -11,7 +11,7 @@
             <x-input-error :messages="$errors->get('body')" class="mt-2" />
         </form>
         @if(count($activities))
-            <div class="flex flex-col mt-4 space-y-2">
+            <div class="flex flex-col mt-4 mb-10 space-y-2">
                 @foreach($activities as $activity)
                     <x-activity-card :activity="$activity" />
                 @endforeach

@@ -29,6 +29,9 @@ class Ticket extends Model
     ];
 
     public array $loggableAttributes = [
+        'category.name',
+        'item.name',
+        'description',
         'status.name',
         'onHoldReason.name',
         'priority', 'group.name',
