@@ -194,12 +194,13 @@ class UpdateTest extends TestCase
 
     function test_user_can_change_priority_with_permission()
     {
-        $resolver = User::factory()->create()->givePermissionTo('set_priority');
+        $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory(['priority' => 4])->create();
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 2)
+            ->set('priorityChangeReason', 'Production issue')
             ->call('save');
 
         $this->assertDatabaseHas('tickets', [
@@ -236,6 +237,7 @@ class UpdateTest extends TestCase
             ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('status', $status->id)
             ->set('priority', $priority)
+            ->set('priorityChangeReason', 'Production issue')
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
             ->call('save');

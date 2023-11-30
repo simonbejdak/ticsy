@@ -3,19 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Comment;
-use App\Models\Incident;
-use App\Models\Resolver;
-use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfig;
 use App\Models\Type;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
 
 class TicketsController extends Controller
 {

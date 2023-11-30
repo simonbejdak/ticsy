@@ -19,6 +19,7 @@ class Field extends Component
     public string $displayName;
     public $value;
     public bool $hideable;
+    public bool|string $permission;
     public bool $disabled;
     public $error;
     public bool $hidden;
@@ -27,13 +28,16 @@ class Field extends Component
         string $name,
         Model|null $representedModel = null,
         bool $hideable = false,
+        bool|string $permission = true,
         $value = '',
-        bool $disabled = null
+        bool $disabled = null,
+        string $displayName = null,
     ){
         $this->name = $name;
         $this->value = $value;
-        $this->displayName = App::makeDisplayName($name);
+        $this->displayName = $displayName !== null ? $displayName : App::makeDisplayName($name);
         $this->representedModel = $representedModel;
+        $this->permission = $permission;
         $this->disabled = $disabled !== null ? $disabled : $this->isDisabled();
         $this->hideable = $hideable;
         $this->hidden = $this->hideable && $this->disabled;
@@ -46,6 +50,12 @@ class Field extends Component
 
     protected function isDisabled(): bool
     {
+        if(!$this->permission){
+            return false;
+        }
+        if(is_string($this->permission)){
+            return !auth()->user()->hasPermissionTo($this->permission);
+        }
         if($this->representedModel === null){
             return !auth()->user()->hasPermissionTo('set_' . $this->name);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Slable;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Ticket extends Model
+class Ticket extends Model implements Slable
 {
     use Timestamp;
     use HasFactory;
@@ -20,6 +21,12 @@ class Ticket extends Model
     const DEFAULT_PRIORITY = 4;
     const MIN_DESCRIPTION_CHARS = 8;
     const MAX_DESCRIPTION_CHARS = 255;
+    const PRIORITY_SLA = [
+        1 => 30,
+        2 => 2 * 60,
+        3 => 12 * 60,
+        4 => 24 * 60,
+    ];
 
     protected $guarded = [];
     protected $attributes = [
@@ -90,6 +97,11 @@ class Ticket extends Model
         return $this->belongsTo(Group::class);
     }
 
+    public function slas()
+    {
+        return $this->morphMany(Sla::class, 'slable');
+    }
+
     public function isResolved(): bool
     {
         return $this->getOriginal('status_id') == Status::RESOLVED;
@@ -131,10 +143,29 @@ class Ticket extends Model
             ->log($body);
     }
 
+    public function addPriorityChangeReason($body)
+    {
+        activity()
+            ->performedOn($this)
+            ->causedBy(auth()->user())
+            ->event('priority_change_reason')
+            ->log($body);
+    }
+
     public function getActivityLogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly($this->loggableAttributes)
             ->logOnlyDirty();
+    }
+
+    public function setSla(): void
+    {
+        Sla::newSla($this, self::PRIORITY_SLA[$this->priority]);
+    }
+
+    public function sla(): Sla
+    {
+        return $this->slas->last();
     }
 }

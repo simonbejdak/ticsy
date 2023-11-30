@@ -17,6 +17,7 @@ use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -176,6 +177,7 @@ class EditTest extends TestCase
         Livewire::actingAs($user)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 1)
+            ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -194,6 +196,7 @@ class EditTest extends TestCase
         Livewire::actingAs($user)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 2)
+            ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -320,6 +323,7 @@ class EditTest extends TestCase
 
         Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 3)
+            ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -391,5 +395,34 @@ class EditTest extends TestCase
                 'Status:', 'In Progress', 'was', 'Open',
                 'Created', 'Status:', 'Open',
             ]);
+    }
+
+    public function test_it_requires_priority_change_reason_if_priority_changes()
+    {
+        $ticket = Ticket::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+            ->set('priority', 3)
+            ->call('save')
+            ->assertHasErrors(['priorityChangeReason' => 'required'])
+            ->set('priorityChangeReason', 'Production issue')
+            ->call('save')
+            ->assertSuccessful();
+    }
+
+    public function test_sla_bar_shows_correct_minutes()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $ticket = Ticket::factory()->create();
+
+        $date = Carbon::now()->addMinutes(10);
+        Carbon::setTestNow($date);
+
+        Livewire::actingAs($resolver)
+            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->assertSee($ticket->sla()->minutesTillExpires() . ' minutes');
     }
 }

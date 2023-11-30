@@ -30,9 +30,9 @@ class TicketObserver
         }
     }
 
-    public function created(Ticket $ticket): void
+    public function created(Ticket $ticket)
     {
-        //
+        $ticket->setSla();
     }
 
     public function updating(Ticket $ticket): void{
@@ -55,7 +55,16 @@ class TicketObserver
 
     public function updated(Ticket $ticket): void
     {
-        //        
+        //
+    }
+
+    public function saved(Ticket $ticket)
+    {
+        if($ticket->isDirty('priority')){
+            $ticket->sla()->closed_at = Carbon::now();
+            $ticket->sla()->save();
+            $ticket->setSla();
+        }
     }
 
     public function deleted(Ticket $ticket): void

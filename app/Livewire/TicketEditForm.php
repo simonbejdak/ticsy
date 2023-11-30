@@ -8,7 +8,7 @@ use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Spatie\Activitylog\Models\Activity;
+use Illuminate\Validation\Rule;
 
 class TicketEditForm extends TicketForm
 {
@@ -17,6 +17,7 @@ class TicketEditForm extends TicketForm
     public $status;
     public $onHoldReason;
     public $priority;
+    public string $priorityChangeReason = '';
     public $group;
     public $resolver;
 
@@ -30,22 +31,17 @@ class TicketEditForm extends TicketForm
     {
         return [
             'status' => 'min:1|max:'. Status::count() . '|required|numeric',
+
             'onHoldReason' => 'min:1|max:'. OnHoldReason::count() . '|required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
+
             'priority' => 'min:'. (auth()->user()->can('setPriorityOne', $this->ticket) ? '1' : '2') . '|max:'. count(Ticket::PRIORITIES) . '|required|numeric',
+
+            'priorityChangeReason' => $this->ticket->isDirty('priority') ? 'required|string' : 'present|max:0',
+
             'group' => 'min:1|max:'. Group::count() . '|required|numeric',
+
             'resolver' => 'min:1|max:'. User::max('id') . '|nullable|numeric',
         ];
-    }
-
-    public function messages()
-    {
-        $messages = ['onHoldReason.required_if' => 'On hold reason is required'];
-
-        if(auth()->user()->cannot('setPriorityOne')){
-            $messages['priority.min'] = 'You cannot set priority 1 to a ticket';
-        }
-
-        return $messages;
     }
 
     public function mount(Ticket $ticket){
@@ -69,6 +65,29 @@ class TicketEditForm extends TicketForm
         return view('livewire.ticket-edit-form');
     }
 
+    public function save()
+    {
+        $this->syncTicket();
+        $this->validate();
+        $this->ticket->save();
+
+        if($this->priorityChangeReason !== ''){
+            $this->ticket->addPriorityChangeReason($this->priorityChangeReason);
+            $this->priorityChangeReason = '';
+        }
+
+        $this->dispatch('ticket-updated');
+    }
+
+    protected function syncTicket(){
+        $this->ticket->status_id = $this->status;
+        $this->ticket->on_hold_reason_id = $this->onHoldReason;
+        $this->ticket->priority = $this->priority;
+        $this->ticket->group_id = $this->group;
+        $this->ticket->resolver_id = ($this->resolver === '') ? null : $this->resolver;
+        $this->resolvers = $this->ticket->group ? $this->ticket->group->resolvers : collect([]);
+    }
+
     public function updated($property): void
     {
         if($property === 'group'){
@@ -81,28 +100,5 @@ class TicketEditForm extends TicketForm
         $this->syncTicket();
 
         parent::updated($property);
-    }
-
-    public function save()
-    {
-        $this->validate();
-        $this->syncTicket();
-        $this->ticket->save();
-        $this->dispatch('ticket-updated');
-    }
-
-    protected function checkOnHoldReason(){
-        if($this->ticket->isStatus('on_hold') && $this->onHoldReason === null){
-            abort(403);
-        }
-    }
-
-    protected function syncTicket(){
-        $this->ticket->status_id = $this->status;
-        $this->ticket->on_hold_reason_id = $this->onHoldReason;
-        $this->ticket->priority = $this->priority;
-        $this->ticket->group_id = $this->group;
-        $this->ticket->resolver_id = ($this->resolver === '') ? null : $this->resolver;
-        $this->resolvers = $this->ticket->group ? $this->ticket->group->resolvers : collect([]);
     }
 }

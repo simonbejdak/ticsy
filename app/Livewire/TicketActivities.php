@@ -15,6 +15,11 @@ class TicketActivities extends Component
     public string $body = '';
     protected $listeners = ['ticket-updated'];
 
+    public function mount(bool $show = false)
+    {
+        $this->show = $show;
+    }
+
     public function render()
     {
         $this->activities = $this->ticket->activities()->orderByDesc('id')->get();

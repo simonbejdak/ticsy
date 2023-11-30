@@ -15,6 +15,7 @@ class ActivityCard extends Component
     public array|string $body;
     protected array $styleMap = [
         'comment' => 'border-black',
+        'priority_change_reason' => 'border-yellow-300',
         'created' => 'border-slate-300',
         'updated' => 'border-slate-300',
     ];
@@ -31,7 +32,7 @@ class ActivityCard extends Component
     }
 
     protected function setBody(): string|array{
-        if($this->activity->event === 'comment'){
+        if($this->activity->event === 'comment' || $this->activity->event === 'priority_change_reason'){
             $body = $this->activity->description;
         }
 

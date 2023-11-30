@@ -13,8 +13,15 @@
             <x-field-dropdown :name="'priority'" :options="$priorities" :represented-model="$ticket" />
             <x-field-dropdown :name="'group'" :options="$groups" :represented-model="$ticket" />
             <x-field-dropdown :name="'resolver'" :options="$resolvers" :represented-model="$ticket" :blank="true" />
+            <x-field-bar
+                :name="'sla'"
+                :permission="false"
+                :percentage="$ticket->sla()->toPercentage()"
+                :value="$ticket->sla()->minutesTillExpires() . ' minutes'"
+            />
         </x-field-grid>
-        <x-field :disabled="true" :name="'description'" :value="$ticket->description" />
+        <x-field :hideable="true" :name="'priorityChangeReason'" :represented-model="$ticket" />
+        <x-field :disabled="true" :name="'description'" :value="$ticket->description" :represented-model="$ticket" />
         <div class="flex flex-row justify-end">
             <x-secondary-button>Update</x-secondary-button>
         </div>

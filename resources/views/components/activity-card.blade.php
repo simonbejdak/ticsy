@@ -3,10 +3,10 @@
     <div class="flex flex-col bg-white w-full px-4 py-2 rounded-r-md rounded-y-md border-y border-r border-gray-300">
         <div class="flex flex-row items-center justify-between">
             <x-simple-profile-card :user="$activity->causer" />
-            <div class="text-xxs">{{ ucfirst($activity->event) }} &bullet; {{ $activity->created_at->format('d.m.Y h:m') }}</div>
+            <div class="text-xxs">{{ ucfirst(str_replace('_', ' ', $activity->event)) }} &bullet; {{ $activity->created_at->format('d.m.Y h:m') }}</div>
         </div>
         <div class="mt-4 text-xs flex flex-col">
-            @if($activity->event === 'comment')
+            @if($activity->event === 'comment' || $activity->event === 'priority_change_reason')
                 <p>{{ $activity->description }}</p>
             @else
                 <table class="border-separate border-spacing-x-2 w-1/2">

@@ -24,6 +24,7 @@ class PermissionSeeder extends Seeder
             'set_resolver',
             'set_priority',
             'set_priority_one',
+            'set_priority_change_reason',
             'set_status',
             'set_on_hold_reason',
             'add_comments_to_all_tickets',
@@ -43,6 +44,7 @@ class PermissionSeeder extends Seeder
             'set_group',
             'set_resolver',
             'set_priority',
+            'set_priority_change_reason',
             'set_status',
             'set_on_hold_reason',
             'add_comments_to_all_tickets',
@@ -50,6 +52,6 @@ class PermissionSeeder extends Seeder
         );
 
         $roleManager = Role::create(['name' => 'manager']);
-        $roleManager->givePermissionTo('set_priority_one', 'view_all_tickets');
+        $roleManager->givePermissionTo('set_priority_one', 'set_priority_change_reason', 'view_all_tickets');
     }
 }

@@ -15,6 +15,22 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 
 13. SLAs -- in progress
 
+
+-- SLA-s in our contract already exist, we are just trying to implement funcionalities, which will effectively notify resolver about remaining time until SLA expires
+
+- SLA belongsTo SLAble -- done
+- Ticket is SLAble -- done
+- Ticket hasMany SLAs -- done
+- on Ticket creation SLA is assigned based on priority -- done
+- on each priority change SLA resets -- done
+- on priority change a reason needs to be added -- done
+- P4 has 24h -- done
+- P3 has 12h -- done
+- P2 has 2h -- done
+- P1 has 30m -- done
+- SLA state will be viewable in similar fashion as other fields -- done
+- SLA closes itself if a new SLA for same Slable model gets created -- done
+
 14. Implement multiple tasks support for requests
 15. E-mail notification on ticket update
 16. Watch list for tickets
@@ -25,9 +41,11 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 21. Subcategories
 22. Resolver required_if Status in_progress
 23. Make TicketEditForm be synchronized in real time between browsers
+24. Send e-mail, when Ticket SLA is before expiration
 
 Refactor ideas:
 - modify for example category.name field name to Category on pipe level
+- adding new activity type to the system is cumbersome, too many places to manage.. (view, controller, permissions, policies)
 
 Bugs:
 
