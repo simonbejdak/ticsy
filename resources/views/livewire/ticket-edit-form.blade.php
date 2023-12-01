@@ -8,14 +8,14 @@
             <x-field :name="'type'" :value="$ticket->type->name" :represented-model="$ticket" />
             <x-field :name="'category'" :value="$ticket->category->name" :represented-model="$ticket" />
             <x-field :name="'item'" :value="$ticket->item->name" :represented-model="$ticket" />
-            <x-field-dropdown :name="'status'" :options="$statuses" :represented-model="$ticket" />
-            <x-field-dropdown :name="'onHoldReason'" :options="$onHoldReasons" :hideable="true" :blank="true" :represented-model="$ticket"/>
-            <x-field-dropdown :name="'priority'" :options="$priorities" :represented-model="$ticket" />
-            <x-field-dropdown :name="'group'" :options="$groups" :represented-model="$ticket" />
-            <x-field-dropdown :name="'resolver'" :options="$resolvers" :represented-model="$ticket" :blank="true" />
-            <x-field-bar
+            <x-field :name="'status'" :value="$statuses" :represented-model="$ticket" />
+            <x-field :name="'onHoldReason'" :value="$onHoldReasons" :hideable="true" :blank="true" :represented-model="$ticket"/>
+            <x-field :name="'priority'" :value="$priorities" :represented-model="$ticket" />
+            <x-field :name="'group'" :value="$groups" :represented-model="$ticket" />
+            <x-field :name="'resolver'" :value="$resolvers" :represented-model="$ticket" :blank="true" />
+            <x-field
                 :name="'sla'"
-                :permission="false"
+                :has-permission="false"
                 :percentage="$ticket->sla()->toPercentage()"
                 :value="$ticket->sla()->minutesTillExpires() . ' minutes'"
             />

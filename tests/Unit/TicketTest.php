@@ -142,7 +142,7 @@ class TicketTest extends TestCase
 
     function test_sql_violation_thrown_when_higher_priority_than_predefined_is_assigned()
     {
-        $this->expectException(ErrorException::class);
+        $this->expectException(QueryException::class);
 
         Ticket::factory(['priority' => count(Ticket::PRIORITIES) + 1])->create();
     }
