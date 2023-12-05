@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Comment;
 use App\Models\Ticket;
+use App\Services\ActivityService;
+use App\Services\TicketService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -34,7 +36,7 @@ class TicketActivities extends Component
             'body' => 'min:'. Comment::MIN_BODY_CHARS .'|max:'. Comment::MAX_BODY_CHARS .'|required',
         ]);
 
-        $this->ticket->addComment($this->body);
+        ActivityService::comment($this->ticket, $this->body);
 
         $this->reset('body');
     }

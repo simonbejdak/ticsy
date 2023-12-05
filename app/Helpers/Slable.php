@@ -4,5 +4,5 @@ namespace App\Helpers;
 
 interface Slable
 {
-    function setSla();
+    function calculateSlaMinutes(): int;
 }

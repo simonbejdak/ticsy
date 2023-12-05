@@ -104,25 +104,22 @@ class Ticket extends Model implements Slable
 
     public function isResolved(): bool
     {
-        return $this->getOriginal('status_id') == Status::RESOLVED;
+        return $this->isStatus('resolved');
     }
 
     public function isCancelled(): bool
     {
-        return $this->getOriginal('status_id') == Status::CANCELLED;
+        return $this->isStatus('cancelled');
     }
 
     public function isArchived(): bool{
-        if($this->isResolved()){
-
-            $expireDate = Carbon::now()->subDays(Ticket::ARCHIVE_AFTER_DAYS);
-
-            if(isset($this->resolved_at) && $this->resolved_at->lessThan($expireDate)){
+        if($this->getOriginal('status_id') == Status::RESOLVED){
+            $archivalDate = $this->resolved_at->addDays(Ticket::ARCHIVE_AFTER_DAYS);
+            if(isset($this->resolved_at) && Carbon::now()->greaterThan($archivalDate)){
                 return true;
             }
-        };
-
-        return $this->isCancelled();
+        }
+        return $this->getOriginal('status_id') == Status::CANCELLED;
     }
 
     public function isStatus(...$statuses): bool{
@@ -134,24 +131,6 @@ class Ticket extends Model implements Slable
         return false;
     }
 
-    public function addComment($body)
-    {
-        activity()
-            ->performedOn($this)
-            ->causedBy(auth()->user())
-            ->event('comment')
-            ->log($body);
-    }
-
-    public function addPriorityChangeReason($body)
-    {
-        activity()
-            ->performedOn($this)
-            ->causedBy(auth()->user())
-            ->event('priority_change_reason')
-            ->log($body);
-    }
-
     public function getActivityLogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -159,9 +138,9 @@ class Ticket extends Model implements Slable
             ->logOnlyDirty();
     }
 
-    public function setSla(): void
+    public function calculateSlaMinutes(): int
     {
-        Sla::newSla($this, self::PRIORITY_SLA[$this->priority]);
+        return self::PRIORITY_SLA[$this->priority];
     }
 
     public function sla(): Sla

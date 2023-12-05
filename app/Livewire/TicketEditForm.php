@@ -7,6 +7,7 @@ use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Services\ActivityService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
@@ -72,7 +73,7 @@ class TicketEditForm extends TicketForm
         $this->ticket->save();
 
         if($this->priorityChangeReason !== ''){
-            $this->ticket->addPriorityChangeReason($this->priorityChangeReason);
+            ActivityService::priorityChangeReason($this->ticket, $this->priorityChangeReason);
             $this->priorityChangeReason = '';
         }
 

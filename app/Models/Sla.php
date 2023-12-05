@@ -20,16 +20,7 @@ class Sla extends Model
         return $this->morphTo();
     }
 
-    public static function newSla(Slable $slable, int $minutes): self{
-        $sla = new self;
-        $sla->slable()->associate($slable);
-        $sla->expires_at = Carbon::now()->addMinutes($minutes);
-        $sla->save();
-
-        return $sla;
-    }
-
-    public function minutes()
+    public function minutes(): int
     {
         return $this->expires_at->diffInMinutes($this->created_at);
     }

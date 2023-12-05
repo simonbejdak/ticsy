@@ -14,6 +14,7 @@ use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
+use App\Services\SlaService;
 use ErrorException;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -32,7 +33,7 @@ class TicketTest extends TestCase
 
     function test_it_has_many_slas(){
         $ticket = Ticket::factory()->create();
-        $ticket->setSla();
+        SlaService::createSla($ticket);
 
         $this->assertEquals(2, count($ticket->slas));
     }

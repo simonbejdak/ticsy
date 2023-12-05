@@ -16,6 +16,8 @@ use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use App\Models\User;
+use App\Services\ActivityService;
+use App\Services\TicketService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Livewire\Livewire;
@@ -98,7 +100,7 @@ class EditTest extends TestCase
         $user = User::factory()->create();
         $ticket = Ticket::factory(['user_id' => $user])->create();
         $this->actingAs($user);
-        $ticket->addComment('Comment Body');
+        ActivityService::comment($ticket, 'Comment Body');
 
         $response = $this->get(route('tickets.edit', $ticket));
 
@@ -380,7 +382,7 @@ class EditTest extends TestCase
         $ticket->status_id = Status::IN_PROGRESS;
         $ticket->save();
 
-        $ticket->addComment('Test Comment');
+        ActivityService::comment($ticket, 'Test Comment');
 
         $ticket->status_id = Status::MONITORING;
         $ticket->save();

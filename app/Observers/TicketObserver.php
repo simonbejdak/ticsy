@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Ticket;
 use App\Models\TicketConfig;
+use App\Services\SlaService;
 use Exception;
 use Illuminate\Support\Carbon;
 
@@ -30,9 +31,9 @@ class TicketObserver
         }
     }
 
-    public function created(Ticket $ticket)
+    public function created(Ticket $ticket): void
     {
-        $ticket->setSla();
+        SlaService::createSla($ticket);
     }
 
     public function updating(Ticket $ticket): void{
@@ -58,12 +59,11 @@ class TicketObserver
         //
     }
 
-    public function saved(Ticket $ticket)
+    public function saved(Ticket $ticket): void
     {
         if($ticket->isDirty('priority')){
-            $ticket->sla()->closed_at = Carbon::now();
-            $ticket->sla()->save();
-            $ticket->setSla();
+            SlaService::closeSla($ticket->sla());
+            SlaService::createSla($ticket);
         }
     }
 
