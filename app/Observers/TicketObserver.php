@@ -12,21 +12,19 @@ class TicketObserver
 {
     public function creating(Ticket $ticket): void
     {
-        $category = $ticket->category;
-        $categoryItems = $category->items()->where('id', '=', $ticket->item->id)->get();
-        if(count($categoryItems) == 0){
+        if ($ticket->category->hasItem($ticket->item)){
             throw new Exception('Item cannot be assigned to Ticket if it does not match Category');
         }
 
-        if($ticket->on_hold_reason_id !== null && !$ticket->isStatus('on_hold')){
-            throw new Exception('Status on hold reason cannot be assigned to Ticket if Status is different than on hold');
+        if(!$ticket->isStatusOnHold() && $ticket->on_hold_reason_id !== null){
+            throw new Exception('On hold reason cannot be assigned to Ticket if Status is not than on hold');
         }
 
-        if($ticket->isStatus('on_hold') && $ticket->onHoldReason === null){
-            throw new Exception('Status on hold reason must be assigned to Ticket if Status is on hold');
+        if($ticket->isStatusOnHold() && $ticket->onHoldReason === null){
+            throw new Exception('On hold reason must be assigned to Ticket if Status is on hold');
         }
 
-        if($ticket->isResolved()){
+        if($ticket->isStatusResolved()){
             $ticket->resolved_at = Carbon::now();
         }
     }
@@ -40,17 +38,20 @@ class TicketObserver
         if($ticket->isArchived()){
             throw new Exception('Ticket state cannot be changed if Ticket is archived');
         }
-        if($ticket->isDirty('status_id') && $ticket->isStatus('resolved')){
-            $ticket->resolved_at = Carbon::now();
+
+        if($ticket->isDirty('status_id')){
+            if(!$ticket->isStatusOnHold()){
+                $ticket->on_hold_reason_id = null;
+            }
+            if($ticket->isStatusResolved()){
+                $ticket->resolved_at = Carbon::now();
+            } else {
+                $ticket->resolved_at = null;
+            }
         }
-        if($ticket->isDirty('status_id') && !$ticket->isStatus('resolved')){
-            $ticket->resolved_at = null;
-        }
-        if($ticket->isDirty('status_id') && !$ticket->isStatus('on_hold')){
-            $ticket->on_hold_reason_id = null;
-        }
-        if($ticket->on_hold_reason_id !== null && !$ticket->isStatus('on_hold')){
-            throw new Exception('Status on hold reason cannot be assigned to Ticket if Status is different than on hold');
+
+        if(!$ticket->isStatusOnHold() && $ticket->on_hold_reason_id !== null){
+            throw new Exception('On hold reason cannot be assigned to Ticket if Status is not on hold');
         }
     }
 

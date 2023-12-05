@@ -23,27 +23,6 @@ class UserTest extends TestCase
         $this->assertEquals(Group::LOCAL_6445_NEW_YORK, $resolver->groups()->findOrFail(2)->id);
     }
 
-    function test_it_has_many_comments()
-    {
-        $user = User::factory()->create();
-
-        $commentOne = Comment::factory([
-            'user_id' => $user,
-            'body' => 'Comment Body 1',
-        ])->create();
-
-        $commentTwo = Comment::factory([
-            'user_id' => $user,
-            'body' => 'Comment Body 2',
-        ])->create();
-
-        $i = 1;
-        foreach ($user->comments as $comment){
-            $this->assertEquals('Comment Body ' . $i, $comment->body);
-            $i++;
-        }
-    }
-
     function test_only_one_resolver_can_be_assigned_to_ticket()
     {
         $ticket = Ticket::factory()->create();

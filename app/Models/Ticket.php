@@ -79,11 +79,6 @@ class Ticket extends Model implements Slable
         return $this->belongsTo(Item::class);
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
     public function status(){
         return $this->belongsTo(Status::class);
     }
@@ -100,16 +95,6 @@ class Ticket extends Model implements Slable
     public function slas()
     {
         return $this->morphMany(Sla::class, 'slable');
-    }
-
-    public function isResolved(): bool
-    {
-        return $this->isStatus('resolved');
-    }
-
-    public function isCancelled(): bool
-    {
-        return $this->isStatus('cancelled');
     }
 
     public function isArchived(): bool{
@@ -129,6 +114,36 @@ class Ticket extends Model implements Slable
             }
         }
         return false;
+    }
+
+    public function isStatusOpen(): bool
+    {
+        return $this->isStatus('open');
+    }
+
+    public function isStatusProgress(): bool
+    {
+        return $this->isStatus('in_progress');
+    }
+
+    public function isStatusOnHold(): bool
+    {
+        return $this->isStatus('on_hold');
+    }
+
+    public function isStatusResolved(): bool
+    {
+        return $this->isStatus('resolved');
+    }
+
+    public function isStatusCancelled(): bool
+    {
+        return $this->isStatus('cancelled');
+    }
+
+
+    public function isNotStatus($status): bool{
+        return !$this->isStatus($status);
     }
 
     public function getActivityLogOptions(): LogOptions

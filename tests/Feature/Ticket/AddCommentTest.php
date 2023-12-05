@@ -77,17 +77,6 @@ class AddCommentTest extends TestCase
             ->assertHasErrors(['body' => 'required']);
     }
 
-    public function test_it_fails_validation_with_body_having_less_characters_than_predefined()
-    {
-        $user = User::factory()->create();
-        $ticket = Ticket::factory(['user_id' => $user])->create();
-
-        Livewire::actingAs($user)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
-            ->set('body', Str::random(Comment::MIN_BODY_CHARS - 1))
-            ->call('addComment')
-            ->assertHasErrors(['body' => 'min']);
-    }
 
     public function test_it_fails_validation_with_body_having_more_characters_than_predefined()
     {
@@ -96,7 +85,7 @@ class AddCommentTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketActivities::class, ['ticket' => $ticket])
-            ->set('body', Str::random(Comment::MAX_BODY_CHARS + 1))
+            ->set('body', Str::random(256))
             ->call('addComment')
             ->assertHasErrors(['body' => 'max']);
     }

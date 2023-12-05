@@ -35,7 +35,7 @@ class TicketTest extends TestCase
         $ticket = Ticket::factory()->create();
         SlaService::createSla($ticket);
 
-        $this->assertEquals(2, count($ticket->slas));
+        $this->assertCount(2, $ticket->slas);
     }
 
     function test_it_has_one_type()
@@ -59,27 +59,6 @@ class TicketTest extends TestCase
         $ticket = Ticket::factory(['resolver_id' => $resolver])->create();
 
         $this->assertEquals('John Doe', $ticket->resolver->name);
-    }
-
-    public function test_it_has_many_comments()
-    {
-        $ticket = Ticket::factory()->create();
-
-        $commentOne = Comment::factory([
-            'ticket_id' => $ticket,
-            'body' => 'Comment Body 1',
-        ])->create();
-
-        $commentTwo = Comment::factory()->create([
-            'ticket_id' => $ticket,
-            'body' => 'Comment Body 2'
-        ]);
-
-        $i = 1;
-        foreach ($ticket->comments as $comment){
-            $this->assertEquals('Comment Body ' . $i, $comment->body);
-            $i++;
-        }
     }
 
     public function test_it_belongs_to_status()

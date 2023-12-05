@@ -2,10 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
-use App\Models\TicketConfig;
 use App\Models\User;
 
 class TicketPolicy
@@ -66,25 +64,25 @@ class TicketPolicy
 
     public function setPriorityOne(User $user, Ticket $ticket): bool
     {
-        return ($user->hasPermissionTo('set_priority_one') && !$ticket->isResolved() && !$ticket->isArchived());
+        return ($user->hasPermissionTo('set_priority_one') && !$ticket->isStatusResolved() && !$ticket->isArchived());
     }
 
     public function setPriority(User $user, Ticket $ticket): bool
     {
-        return (($user->hasPermissionTo('set_priority') || ($user->hasPermissionTo('set_priority_one'))) && !$ticket->isResolved() && !$ticket->isArchived());
+        return (($user->hasPermissionTo('set_priority') || ($user->hasPermissionTo('set_priority_one'))) && !$ticket->isStatusResolved() && !$ticket->isArchived());
     }
 
     public function setPriorityChangeReason(User $user, Ticket $ticket): bool
     {
         return $user->hasPermissionTo('set_priority_change_reason') &&
             $ticket->isDirty('priority') &&
-            !$ticket->isResolved() &&
+            !$ticket->isStatusResolved() &&
             !$ticket->isArchived();
     }
 
     public function setGroup(User $user, Ticket $ticket): bool
     {
-        return ($user->hasPermissionTo('set_group') && !$ticket->isResolved() && !$ticket->isArchived());
+        return ($user->hasPermissionTo('set_group') && !$ticket->isStatusResolved() && !$ticket->isArchived());
     }
 
     public function setResolver(User $user, Ticket $ticket): bool
@@ -99,7 +97,7 @@ class TicketPolicy
         }
 
         return ($user->hasPermissionTo('set_resolver')
-            && !$ticket->isResolved()
+            && !$ticket->isStatusResolved()
             && !$ticket->isArchived()
             && $isResolverValid
         );

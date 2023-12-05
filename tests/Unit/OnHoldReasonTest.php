@@ -44,7 +44,7 @@ class OnHoldReasonTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Status on hold reason cannot be assigned to Ticket if Status is different than on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Ticket if Status is not than on hold');
 
         Ticket::factory(['status_id' => Status::OPEN,
             'on_hold_reason_id' => $onHoldReason
@@ -55,7 +55,7 @@ class OnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Status on hold reason must be assigned to Ticket if Status is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to Ticket if Status is on hold');
 
         Ticket::factory()->onHold()->create();
     }

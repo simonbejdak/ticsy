@@ -42,4 +42,12 @@ class Category extends MappableModel
     {
         return $this->items()->inRandomOrder()->first();
     }
+
+    public function hasItem(Item $item): bool
+    {
+        if(count($this->items()->where('id', '=', $item->id)->get()) == 0){
+            return true;
+        }
+        return false;
+    }
 }

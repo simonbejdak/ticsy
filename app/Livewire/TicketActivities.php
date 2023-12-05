@@ -33,7 +33,7 @@ class TicketActivities extends Component
         $this->authorize('addComment', $this->ticket);
 
         $this->validate([
-            'body' => 'min:'. Comment::MIN_BODY_CHARS .'|max:'. Comment::MAX_BODY_CHARS .'|required',
+            'body' => 'max:255|required',
         ]);
 
         ActivityService::comment($this->ticket, $this->body);
