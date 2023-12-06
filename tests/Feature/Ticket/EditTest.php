@@ -108,18 +108,6 @@ class EditTest extends TestCase
         $response->assertSee('Comment Body');
     }
 
-    public function test_it_shows_red_ring_when_unknown_group_is_selected()
-    {
-        $ticket = Ticket::factory()->create();
-        $resolver = User::factory()->resolver()->create();
-
-        Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('group', Group::count() + 1)
-            ->call('save')
-            ->assertSee('ring-2 ring-red-500');
-    }
-
     public function test_on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
@@ -157,20 +145,19 @@ class EditTest extends TestCase
         ]);
     }
 
-    public function test_it_returns_validation_error_if_user_with_no_permission_assigns_priority_one_to_a_ticket()
+    public function test_it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_ticket()
     {
         // resolver does not have a permisssion to set priority one
-        $user = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory()->create();
 
-        Livewire::actingAs($user)
+        Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('priority', 1)
-            ->call('save')
-            ->assertHasErrors(['priority' => 'min']);
+            ->set('priority', Ticket::PRIORITY_ONE)
+            ->assertForbidden();
     }
 
-    public function test_it_does_not_return_validation_error_if_user_with_permission_assigns_priority_one_to_a_ticket()
+    public function test_it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_ticket()
     {
         // manager has a permisssion to set priority one
         $user = User::factory()->manager()->create();

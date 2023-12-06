@@ -18,6 +18,7 @@ class Ticket extends Model implements Slable
 
     const ARCHIVE_AFTER_DAYS = 3;
     const PRIORITIES = [1, 2, 3, 4];
+    const PRIORITY_ONE = 1;
     const DEFAULT_PRIORITY = 4;
     const MIN_DESCRIPTION_CHARS = 8;
     const MAX_DESCRIPTION_CHARS = 255;

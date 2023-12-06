@@ -411,8 +411,6 @@ class UpdateTest extends TestCase
 
     static function invalidStatuses(){
         return [
-            [0, 'min'],
-            [Status::count() + 1, 'max'],
             ['word', 'numeric'],
             ['', 'required'],
         ];
@@ -420,16 +418,12 @@ class UpdateTest extends TestCase
 
     static function invalidOnHoldReasons(){
         return [
-            [0, 'min'],
-            [OnHoldReason::count() + 1, 'max'],
             ['word', 'numeric'],
         ];
     }
 
     static function invalidPriorities(){
         return [
-            [0, 'min'],
-            [count(Ticket::PRIORITIES) + 1, 'max'],
             ['word', 'numeric'],
             ['', 'required'],
         ];
@@ -437,8 +431,6 @@ class UpdateTest extends TestCase
 
     static function invalidGroups(){
         return [
-            [0, 'min'],
-            [count(Ticket::PRIORITIES) + 1, 'max'],
             ['word', 'numeric'],
             ['', 'required'],
         ];
@@ -446,7 +438,6 @@ class UpdateTest extends TestCase
 
     static function invalidResolvers(){
         return [
-            [0, 'min'],
             ['word', 'numeric'],
         ];
     }

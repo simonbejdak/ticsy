@@ -55,31 +55,11 @@ class TicketObserver
         }
     }
 
-    public function updated(Ticket $ticket): void
-    {
-        //
-    }
-
     public function saved(Ticket $ticket): void
     {
         if($ticket->isDirty('priority')){
             SlaService::closeSla($ticket->sla());
             SlaService::createSla($ticket);
         }
-    }
-
-    public function deleted(Ticket $ticket): void
-    {
-        //
-    }
-
-    public function restored(Ticket $ticket): void
-    {
-        //
-    }
-
-    public function forceDeleted(Ticket $ticket): void
-    {
-        //
     }
 }
