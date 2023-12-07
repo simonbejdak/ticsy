@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Helpers\Fieldable;
 use App\Models\Category;
 use App\Models\Group;
 use App\Models\Item;
@@ -15,9 +16,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
-class TicketCreateForm extends TicketForm
+class TicketCreateForm extends Form
 {
-    public Ticket|null $ticket = null;
     public Type|int $type;
     public string $typeName;
     public $category;
@@ -28,19 +28,15 @@ class TicketCreateForm extends TicketForm
 
     public function rules()
     {
-        $min_desc = Ticket::MIN_DESCRIPTION_CHARS;
-        $max_desc = Ticket::MAX_DESCRIPTION_CHARS;
-
         return [
-            'category' => 'numeric|required|min:1|max:' . Category::count(),
-            'item' => 'numeric|required|min:1|max:' . Item::count(),
-            'description' => 'string|required|min:' . $min_desc . '|max:' . $max_desc,
+            'category' => 'numeric|required',
+            'item' => 'numeric|required',
+            'description' => 'string|required',
         ];
     }
 
-    public function mount(int $type = Type::DEFAULT, Ticket|null $ticket = null)
+    public function mount(int $type = Type::DEFAULT)
     {
-        $this->ticket = $ticket;
         $this->type = Type::findOrFail($type);
         $this->category = null;
         $this->item = null;

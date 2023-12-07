@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Fieldable;
 use App\Helpers\Slable;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +11,7 @@ use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Ticket extends Model implements Slable
+class Ticket extends Model implements Slable, Fieldable
 {
     use Timestamp;
     use HasFactory;
@@ -162,5 +163,38 @@ class Ticket extends Model implements Slable
     public function sla(): Sla
     {
         return $this->slas->last();
+    }
+
+    public function isFieldModifiable(string $name): bool
+    {
+        if($this->isArchived()){
+            return false;
+        }
+
+        return match($name){
+            'category' =>
+                auth()->user()->can('setCategory', Ticket::class) && !$this->exists,
+            'item' =>
+                auth()->user()->can('setItem', Ticket::class) && !$this->exists,
+            'description' =>
+                auth()->user()->can('setDescription', Ticket::class) && !$this->exists,
+            'status' =>
+                auth()->user()->can('setStatus', Ticket::class),
+            'onHoldReason' =>
+                auth()->user()->can('setOnHoldReason', Ticket::class) && $this->isStatusOnHold(),
+            'priority' =>
+                auth()->user()->can('setPriority', Ticket::class) && !$this->isStatusResolved(),
+            'priorityChangeReason' =>
+                auth()->user()->can('setPriorityChangeReason', Ticket::class) &&
+                $this->isDirty('priority') &&
+                !$this->isStatusResolved(),
+            'group' =>
+                auth()->user()->can('setGroup', Ticket::class) && !$this->isStatusResolved(),
+            'resolver' =>
+                auth()->user()->can('setResolver', Ticket::class) &&
+                !$this->isStatusResolved() &&
+                ($this->resolver == null ? true : $this->resolver->isGroupMember($this->group)),
+            default => false,
+        };
     }
 }

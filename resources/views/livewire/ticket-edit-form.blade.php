@@ -18,6 +18,7 @@
                 :has-permission="false"
                 :percentage="$ticket->sla()->toPercentage()"
                 :value="$ticket->sla()->minutesTillExpires() . ' minutes'"
+                :represented-model="$ticket"
             />
         </x-field-grid>
         <x-field :hideable="true" :name="'priorityChangeReason'" :represented-model="$ticket" />

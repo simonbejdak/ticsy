@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Helpers\Fieldable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
 use App\Models\Status;
@@ -11,7 +12,7 @@ use App\Services\ActivityService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
-class TicketEditForm extends TicketForm
+class TicketEditForm extends Form
 {
     public Ticket $ticket;
     public Collection $activities;
@@ -86,7 +87,7 @@ class TicketEditForm extends TicketForm
         parent::updated($property);
     }
 
-    public function save()
+    public function save(): void
     {
         $this->syncTicket();
         $this->validate();
@@ -100,12 +101,17 @@ class TicketEditForm extends TicketForm
         $this->dispatch('ticket-updated');
     }
 
-    protected function syncTicket(){
+    protected function syncTicket(): void
+    {
         $this->ticket->status_id = $this->status;
         $this->ticket->on_hold_reason_id = $this->onHoldReason;
         $this->ticket->priority = $this->priority;
         $this->ticket->group_id = $this->group;
         $this->ticket->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->resolvers = $this->ticket->group ? $this->ticket->group->resolvers : collect([]);
+    }
+
+    protected function fieldableModel(): Fieldable{
+        return $this->ticket;
     }
 }

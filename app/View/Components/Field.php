@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use App\Helpers\App;
+use App\Helpers\Fieldable;
 use App\Models\Ticket;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -14,12 +15,13 @@ use InvalidArgumentException;
 
 class Field extends Component
 {
-    public Model|null $representedModel;
+    public Fieldable|null $representedModel;
     public string $name;
     public string $displayName;
     public string|array|Collection $value;
     public bool $hideable;
     public bool|string $hasPermission;
+    public bool $modifiable;
     public bool $disabled;
     public bool $blank;
     public int|null $percentage;
@@ -32,21 +34,23 @@ class Field extends Component
                                 $hideable = false,
                                 $hasPermission = true,
                                 string|array|Collection $value = '',
-                                $disabled = null,
+                                $modifiable = null,
                                 $percentage = null,
                                 $blank = false,
                                 $displayName = null,
     ){
         $this->name = $name;
-        $this->value = is_string($value) ? $value : $this->toIterable($value);
-        $this->displayName = $displayName !== null ? $displayName : App::makeDisplayName($name);
+        $this->value = is_string($value) ? $value : App::toIterable($value);
+        $this->displayName = $displayName ?? App::makeDisplayName($name);
         $this->representedModel = $representedModel;
         $this->hasPermission = $hasPermission;
-        $this->disabled = $disabled !== null ? $disabled : $this->isDisabled();
+//        $this->disabled = $disabled ?? $this->isDisabled();
+        $this->modifiable = $modifiable ?? $representedModel->isFieldModifiable($this->name);
+        $this->disabled = !$this->modifiable;
         $this->percentage = $percentage;
         $this->blank = $blank;
         $this->hideable = $hideable;
-        $this->hidden = $this->hideable && $this->disabled;
+        $this->hidden = $this->hideable && !$this->modifiable;
         $this->type = $this->setType();
     }
 
@@ -55,49 +59,20 @@ class Field extends Component
         return view('components.field');
     }
 
-    protected function isDisabled(): bool
-    {
-        if(!$this->hasPermission){
-            return false;
-        }
-        if(is_string($this->hasPermission)){
-            return !auth()->user()->hasPermissionTo($this->hasPermission);
-        }
-        if($this->representedModel === null){
-            return !auth()->user()->hasPermissionTo('set_' . $this->name);
-        }
-
-        return auth()->user()->cannot('set' . ucfirst($this->name), $this->representedModel);
-    }
-
-    protected function toIterable(Collection|array $object): array{
-        $return = [];
-
-        if($object instanceof Collection){
-            foreach ($object->all() as $value){
-                $return[] = [
-                    'id' => $value->id,
-                    'name' => $value->name,
-                ];
-            }
-            return $return;
-        }
-        if(is_array($object)){
-            if(array_is_list($object)){
-                foreach ($object as $value){
-                    $return[] = ['id' => $value, 'name' => $value];
-                }
-            }
-            else {
-                foreach ($object as $key => $value){
-                    $return[] = ['id' => $value, 'name' => $key];
-                }
-            }
-            return $return;
-        }
-
-        throw new InvalidArgumentException('Method toIterable() only accepts arguments of type Collection or array');
-    }
+//    protected function isDisabled(): bool
+//    {
+//        if(!$this->hasPermission){
+//            return false;
+//        }
+//        if(is_string($this->hasPermission)){
+//            return !auth()->user()->hasPermissionTo($this->hasPermission);
+//        }
+//        if($this->fieldableModel === null){
+//            return !auth()->user()->hasPermissionTo('set_' . $this->name);
+//        }
+//
+//        return auth()->user()->cannot('set' . ucfirst($this->name), $this->fieldableModel);
+//    }
 
     protected function setType(): string{
         if(is_string($this->value)){

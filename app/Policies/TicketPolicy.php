@@ -33,78 +33,58 @@ class TicketPolicy
         return $user->id === $ticket->user_id;
     }
 
-    public function setCategory(User $user, Ticket|null $ticket): bool
+    public function setCategory(User $user): bool
     {
-        return ($user->hasPermissionTo('set_category') && !$ticket->exists);
+        return $user->hasPermissionTo('set_category');
     }
 
-    public function setItem(User $user, Ticket|null $ticket): bool
+    public function setItem(User $user): bool
     {
-        return ($user->hasPermissionTo('set_item') && !$ticket->exists);
+        return $user->hasPermissionTo('set_item');
     }
 
-    public function setDescription(User $user, Ticket|null $ticket): bool
+    public function setDescription(User $user): bool
     {
-        return ($user->hasPermissionTo('set_description') && !$ticket->exists);
+        return $user->hasPermissionTo('set_description');
     }
 
-    public function setStatus(User $user, Ticket $ticket): bool
+    public function setStatus(User $user): bool
     {
-        return ($user->hasPermissionTo('set_status') && !$ticket->isArchived());
+        return $user->hasPermissionTo('set_status');
     }
 
-    public function setOnHoldReason(User $user, Ticket $ticket): bool
+    public function setOnHoldReason(User $user): bool
     {
-        return (
-            $user->hasPermissionTo('set_on_hold_reason')
-            && !$ticket->isArchived()
-            && $ticket->isStatus('on_hold')
-        );
+        return $user->hasPermissionTo('set_on_hold_reason');
     }
 
     public function setPriorityOne(User $user, Ticket $ticket): bool
     {
-        return ($user->hasPermissionTo('set_priority_one') && !$ticket->isStatusResolved() && !$ticket->isArchived());
+        return $user->hasPermissionTo('set_priority_one') && !$ticket->isStatusResolved() && !$ticket->isArchived();
     }
 
-    public function setPriority(User $user, Ticket $ticket): bool
+    public function setPriority(User $user): bool
     {
-        return (($user->hasPermissionTo('set_priority') || ($user->hasPermissionTo('set_priority_one'))) && !$ticket->isStatusResolved() && !$ticket->isArchived());
+        return $user->hasPermissionTo('set_priority') || $user->hasPermissionTo('set_priority_one');
     }
 
-    public function setPriorityChangeReason(User $user, Ticket $ticket): bool
+    public function setPriorityChangeReason(User $user): bool
     {
-        return $user->hasPermissionTo('set_priority_change_reason') &&
-            $ticket->isDirty('priority') &&
-            !$ticket->isStatusResolved() &&
-            !$ticket->isArchived();
+        return $user->hasPermissionTo('set_priority_change_reason');
     }
 
-    public function setGroup(User $user, Ticket $ticket): bool
+    public function setGroup(User $user): bool
     {
-        return ($user->hasPermissionTo('set_group') && !$ticket->isStatusResolved() && !$ticket->isArchived());
+        return $user->hasPermissionTo('set_group');
     }
 
-    public function setResolver(User $user, Ticket $ticket): bool
+    public function setResolver(User $user): bool
     {
-        $resolver = $ticket->resolver;
-
-        if($resolver !== null){
-            $isResolverValid = $resolver->isGroupMember($ticket->group);
-        }
-        if($resolver === null){
-            $isResolverValid = true;
-        }
-
-        return ($user->hasPermissionTo('set_resolver')
-            && !$ticket->isStatusResolved()
-            && !$ticket->isArchived()
-            && $isResolverValid
-        );
+        return $user->hasPermissionTo('set_resolver');
     }
 
     public function addComment(User $user, Ticket $ticket): bool
     {
-        return ($user->id === $ticket->user_id || $user->hasPermissionTo('add_comments_to_all_tickets'));
+        return $user->id === $ticket->user_id || $user->hasPermissionTo('add_comments_to_all_tickets');
     }
 }

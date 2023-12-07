@@ -130,7 +130,7 @@ return [
     'display_role_in_exception' => false,
 
     /*
-     * By default wildcard permission lookups are disabled.
+     * By default wildcard permission lookups are modifiable.
      */
 
     'enable_wildcard_permission' => false,

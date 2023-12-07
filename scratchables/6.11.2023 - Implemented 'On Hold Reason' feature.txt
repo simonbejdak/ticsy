@@ -51,7 +51,7 @@ Refactor ideas:
 - instead of checking for status like "$ticket->status_id(TicketConfig::STATUSES['open'])" we should use model function isStatus()
 - delete unnecessary map factories
 - onHold() state should also assing on hold reason
-- share the code <template x-data="{ hidden: @json($hideable) && @json($disabled) }" x-if="!hidden"> between ticket field and ticket field select components
+- share the code <template x-data="{ hidden: @json($hideable) && @json($modifiable) }" x-if="!hidden"> between ticket field and ticket field select components
 - put addSpaceBeforeUppercase in TicketField class to some ServiceFile, or helper file..
 - do the same for setDisplayName, maybe you can even make the method pure
 - make ticket-field and ticket-field-select as pure as possible

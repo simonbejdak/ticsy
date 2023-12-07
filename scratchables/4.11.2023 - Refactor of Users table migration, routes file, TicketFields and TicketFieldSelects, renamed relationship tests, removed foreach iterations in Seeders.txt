@@ -37,8 +37,8 @@ Refactor ideas
 - group should be either in TicketConfig file, or all the other things like status, type etc should have separate files due to consistency -- done
 - make actingAs and test in livewire test the same call chain -- done
 - refactor permission seeder, I'm pretty sure we can create permission in one call -- done
-- make TicketFieldSelectStatus share the isDisabled() funcionality with parent, add only additional funcionality, which is not mentioned in the parent method -- done
-- transfer isDisabled() funcionality to Policy level -- done
+- make TicketFieldSelectStatus share the isModifiable() funcionality with parent, add only additional funcionality, which is not mentioned in the parent method -- done
+- transfer isModifiable() funcionality to Policy level -- done
 
 - simplify attaching items to categories in tests - done
 	- just assign all items to all categories in testseeder perhaps hmm hmm -- done

@@ -105,8 +105,6 @@ class CreateTest extends TestCase
 
     static function invalidCategories(){
         return [
-            [Category::count() + 1, 'max'],
-            [0, 'min'],
             ['ASAP', 'numeric'],
             ['', 'required'],
         ];
@@ -115,17 +113,13 @@ class CreateTest extends TestCase
     static function invalidItems(){
         return [
             ['', 'required'],
-            [Item::count() + 1, 'max'],
             ['ASAP', 'numeric'],
-            [0, 'min'],
         ];
     }
 
     static function invalidDescription(){
         return [
             ['', 'required'],
-            [Str::random(Ticket::MIN_DESCRIPTION_CHARS - 1), 'min'],
-            [Str::random(Ticket::MAX_DESCRIPTION_CHARS + 1), 'max'],
         ];
     }
 }

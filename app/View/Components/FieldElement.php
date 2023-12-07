@@ -2,7 +2,7 @@
 
 namespace App\View\Components;
 
-use App\Livewire\TicketForm;
+use App\Livewire\Form;
 use App\Models\Ticket;
 use Closure;
 use Illuminate\Contracts\View\View;
