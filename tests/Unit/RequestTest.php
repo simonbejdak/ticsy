@@ -1,8 +1,10 @@
 <?php
 
 use App\Helpers\Slable;
+use App\Models\Group;
 use App\Models\Request;
 use App\Models\RequestCategory;
+use App\Models\RequestItem;
 use App\Models\RequestOnHoldReason;
 use App\Models\RequestStatus;
 use App\Models\Type;
@@ -60,38 +62,40 @@ class RequestTest extends TestCase
 
     public function test_it_belongs_to_group()
     {
-//        $group = Group::factory(['name' => 'LOCAL-6445-NEW-YORK'])->create();
-//        $ticket = Ticket::factory(['group_id' => $group])->create();
-//
-//        $this->assertEquals('LOCAL-6445-NEW-YORK', $ticket->group->name);
+        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $request = Request::factory(['group_id' => $group])->create();
+
+        $this->assertEquals('LOCAL-6445-NEW-YORK', $request->group->name);
     }
 
     public function test_it_belongs_to_item()
     {
-//        $category = Category::firstOrFail();
-//        $item = $category->items()->inRandomOrder()->first();
-//        $ticket = Ticket::factory(['category_id' => $category, 'item_id' => $item])->create();
-//
-//        $this->assertEquals($item->name, $ticket->item->name);
+        $item = RequestItem::firstOrFail();
+        $request = Request::factory(['item_id' => $item])->make();
+
+        $this->assertEquals($item->id, $request->item->id);
     }
 
     function test_it_has_priority()
     {
-//        $ticket = Ticket::factory(['priority' => 4])->create();
-//
-//        $this->assertEquals(4, $ticket->priority);
+        $request = Request::factory(['priority' => 4])->create();
+
+        $this->assertEquals(4, $request->priority);
     }
 
     function test_it_has_description()
     {
-//        $ticket = Ticket::factory(['description' => 'Ticket Description'])->create();
-//
-//        $this->assertEquals('Ticket Description', $ticket->description);
+        $request = Request::factory(['description' => 'Request Description'])->create();
+
+        $this->assertEquals('Request Description', $request->description);
     }
 
     function test_it_has_correct_default_attributes(){
         $request = new Request();
+
         $this->assertEquals(Request::DEFAULT_STATUS, $request->status->id);
+        $this->assertEquals(Request::DEFAULT_GROUP, $request->group->id);
+        $this->assertEquals(Request::DEFAULT_PRIORITY, $request->priority);
     }
 
     function test_it_gets_sla_assigned_based_on_priority(){

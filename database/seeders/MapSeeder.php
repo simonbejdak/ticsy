@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Group;
 use App\Models\Item;
 use App\Models\RequestCategory;
+use App\Models\RequestItem;
 use App\Models\RequestOnHoldReason;
 use App\Models\RequestStatus;
 use App\Models\Status;
@@ -45,6 +46,10 @@ class MapSeeder extends Seeder
 
         foreach (RequestCategory::MAP as $key => $value){
             RequestCategory::factory(['name' => $key])->create();
+        }
+
+        foreach (RequestItem::MAP as $key => $value){
+            RequestItem::factory(['name' => $key])->create();
         }
 
         foreach (RequestStatus::MAP as $key => $value){

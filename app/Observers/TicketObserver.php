@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\Ticket;
-use App\Models\TicketConfig;
 use App\Services\SlaService;
 use Exception;
 use Illuminate\Support\Carbon;

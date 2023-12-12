@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RequestCategory extends MappableModel
@@ -26,6 +27,16 @@ class RequestCategory extends MappableModel
 
     function requests(): hasMany{
         return $this->hasMany(Request::class, 'category_id');
+    }
+
+    public function items(): BelongsToMany
+    {
+        return $this->belongsToMany(Item::class, 'request_categories_request_items', 'category_id', 'item_id');
+    }
+
+    public function randomItem()
+    {
+        return $this->items()->inRandomOrder()->first();
     }
 
     function getNameAttribute($value): string

@@ -3,10 +3,11 @@
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\RequestOnHoldReason;
+use App\Models\RequestStatus;
 use App\Models\Status;
 use App\Models\OnHoldReason;
-use App\Models\Ticket;
-use App\Models\TicketConfig;
+use App\Models\Request;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,55 +17,44 @@ class RequestOnHoldReasonTest extends TestCase
     use RefreshDatabase;
     public function test_it_has_many_requests()
     {
-
-
-//        $onHoldReason = OnHoldReason::firstOrFail();
-//        Ticket::factory([
-//            'on_hold_reason_id' => $onHoldReason,
-//            'description' => 'Ticket Description 1'
-//        ])->onHold()->create();
-//
-//        Ticket::factory([
-//            'on_hold_reason_id' => $onHoldReason,
-//            'description' => 'Ticket Description 2'
-//        ])->onHold()->create();
-//
-//        $this->assertEquals('Ticket Description 1', $onHoldReason->tickets()->findOrFail(1)->description);
-//        $this->assertEquals('Ticket Description 2', $onHoldReason->tickets()->findOrFail(2)->description);
+        $onHoldReason = RequestOnHoldReason::firstOrFail();
+        Request::factory(2, ['on_hold_reason_id' => $onHoldReason])->create();
+        $this->assertCount(2, $onHoldReason->requests);
     }
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-//        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::WAITING_FOR_VENDOR);
-//
-//        $this->assertEquals('Waiting For Vendor', $onHoldReason->name);
+        $onHoldReason = RequestOnHoldReason::findOrFail(RequestOnHoldReason::WAITING_FOR_VENDOR);
+
+        $this->assertEquals('Waiting For Vendor', $onHoldReason->name);
     }
 
     public function test_exception_thrown_if_status_on_hold_reason_assigned_but_status_different_than_on_hold()
     {
-//        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::CALLER_RESPONSE);
-//
-//        $this->withoutExceptionHandling();
-//        $this->expectException(Exception::class);
-//        $this->expectExceptionMessage('On hold reason cannot be assigned to Ticket if Status is not than on hold');
-//
-//        Ticket::factory(['status_id' => Status::OPEN,
-//            'on_hold_reason_id' => $onHoldReason
-//        ])->create();
+        $this->withoutExceptionHandling();
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Request if Status is not on hold');
+
+        Request::factory([
+            'status_id' => RequestStatus::OPEN,
+            'on_hold_reason_id' => RequestOnHoldReason::CALLER_RESPONSE,
+        ])->create();
     }
 
     public function test_exception_thrown_if_status_on_hold_selected_but_status_on_hold_reason_is_empty()
     {
-//        $this->withoutExceptionHandling();
-//        $this->expectException(Exception::class);
-//        $this->expectExceptionMessage('On hold reason must be assigned to Ticket if Status is on hold');
-//
-//        Ticket::factory()->onHold()->create();
+        $this->withoutExceptionHandling();
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('On hold reason must be assigned to Request if Status is on hold');
+
+        Request::factory([
+            'status_id' => RequestStatus::ON_HOLD,
+        ])->create();
     }
 
-    public function test_resolver_is_able_to_set_on_hold_reason()
+    public function test_resolver_has_permission_to_set_request_on_hold_reason()
     {
-//        $resolver = User::factory()->resolver()->create();
-//        $this->assertTrue($resolver->can('set_on_hold_reason'));
+        $resolver = User::factory()->resolver()->create();
+        $this->assertTrue($resolver->can('set_request_on_hold_reason'));
     }
 }

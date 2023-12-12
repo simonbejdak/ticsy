@@ -36,6 +36,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 Refactor ideas:
 - modify for example category.name field name to Category on pipe level
 - adding new activity type to the system is cumbersome, too many places to manage.. (view, controller, permissions, policies)
+- Category-Item pairing is disgusting.. please find a better solution
 
 Bugs:
 

@@ -6,7 +6,6 @@ use App\Models\Item;
 use App\Models\Status;
 use App\Models\OnHoldReason;
 use App\Models\Ticket;
-use App\Models\TicketConfig;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

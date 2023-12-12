@@ -2,9 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Request;
 use App\Models\RequestCategory;
 use App\Models\RequestStatus;
 use App\Models\Status;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,10 +24,20 @@ class RequestFactory extends Factory
     {
         return [
             'category_id' => rand(1, RequestCategory::count()),
-            'status_id' => rand(1, RequestStatus::count()),
             'caller_id' => User::factory(),
             'resolver_id' => User::factory()->resolver(),
             'description' => fake()->realText(40),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterMaking(function (Request $request) {
+            if($request->item_id === null){
+                $request->item_id = $request->category->randomItem()->id;
+            }
+        })->afterCreating(function (Request $request) {
+            //
+        });
     }
 }

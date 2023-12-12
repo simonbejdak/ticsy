@@ -24,7 +24,7 @@ class RequestOnHoldReason extends Model
 
     public function requests(): HasMany
     {
-        return $this->hasMany(Request::class);
+        return $this->hasMany(Request::class, 'on_hold_reason_id');
     }
 
     public function getNameAttribute($value): string

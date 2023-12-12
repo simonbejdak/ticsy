@@ -11,30 +11,16 @@ class RequestCategoryTest extends TestCase
     public function test_it_has_many_requests()
     {
         $category = RequestCategory::firstOrFail();
+        Request::factory(2, ['category_id' => $category])->create();
 
-        Request::factory([
-            'description' => 'Request Description 1',
-            'category_id' => $category,
-        ])->create();
-
-        Request::factory([
-            'description' => 'Request Description 2',
-            'category_id' => $category,
-        ])->create();
-
-        $i = 1;
-        foreach ($category->requests as $request){
-            $this->assertEquals('Request Description ' . $i, $request->description);
-            $i++;
-        }
+        $this->assertCount(2, $category->requests);
     }
 
-    public function test_it_belongs_to_many_items()
+    public function test_it_belongs_to_many_request_items()
     {
-//        // Items are being attached to all Categories in TestDatabaseSeeder
-//        $category = Category::firstOrFail();
-//
-//        $this->assertEquals('Issue', $category->items()->findOrFail(1)->name);
-//        $this->assertEquals('Failed Node', $category->items()->findOrFail(5)->name);
+        // Items are being attached to all Categories in TestDatabaseSeeder
+        $category = RequestCategory::firstOrFail();
+
+        $this->assertGreaterThan(1, count($category->items));
     }
 }

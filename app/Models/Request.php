@@ -14,13 +14,23 @@ class Request extends Model implements Slable
 
     protected $attributes = [
         'status_id' => self::DEFAULT_STATUS,
+        'group_id' => self::DEFAULT_GROUP,
+        'priority' => 4,
     ];
 
+    const PRIORITIES = [1, 2, 3, 4];
+    const DEFAULT_PRIORITY = 4;
     const DEFAULT_STATUS = RequestStatus::OPEN;
+    const DEFAULT_GROUP = Group::SERVICE_DESK;
 
     function category(): BelongsTo
     {
         return $this->belongsTo(RequestCategory::class, 'category_id');
+    }
+
+    function item(): BelongsTo
+    {
+        return $this->belongsTo(RequestItem::class, 'item_id');
     }
 
     function status(): BelongsTo
@@ -43,6 +53,11 @@ class Request extends Model implements Slable
         return $this->belongsTo(User::class, 'resolver_id');
     }
 
+    function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
+    }
+
     function slas(): MorphMany
     {
         return $this->morphMany(Sla::class, 'slable');
@@ -51,5 +66,14 @@ class Request extends Model implements Slable
     function calculateSlaMinutes(): int
     {
         return 30;
+    }
+
+    public function isStatus(...$statuses): bool{
+        foreach ($statuses as $status){
+            if($this->status_id == RequestStatus::MAP[$status]){
+                return true;
+            }
+        }
+        return false;
     }
 }

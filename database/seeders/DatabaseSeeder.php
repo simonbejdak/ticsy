@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MapSeeder::class,
             CategoryItemSeeder::class,
+            RequestCategoryRequestItemSeeder::class,
             PermissionSeeder::class,
             UserSeeder::class,
         ]);;
