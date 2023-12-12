@@ -58,13 +58,10 @@ class TicketCreateForm extends Form
 
     public function create()
     {
-        $min_desc = Ticket::MIN_DESCRIPTION_CHARS;
-        $max_desc = Ticket::MAX_DESCRIPTION_CHARS;
-
         $this->validate();
 
         $ticket = new Ticket();
-        $ticket->user_id = Auth::user()->id;
+        $ticket->caller_id = Auth::user()->id;
         $ticket->type_id = $this->type->id;
         $ticket->category_id = $this->category;
         $ticket->item_id = $this->item;

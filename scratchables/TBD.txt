@@ -12,36 +12,26 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 10. On hold status needs reason -- done
 11. Priority 1 can be added only by user with the necessary permission -- done
 12. Activities -- done
+13. SLAs -- done
 
-13. SLAs -- in progress
+14. Implement Requests -- in progress
+    -- Sla calculation different than ticket
+    -- Statuses different than ticket
+    -- Categories different than ticket
+    -- Items different than ticket
 
 
--- SLA-s in our contract already exist, we are just trying to implement funcionalities, which will effectively notify resolver about remaining time until SLA expires
-
-- SLA belongsTo SLAble -- done
-- Ticket is SLAble -- done
-- Ticket hasMany SLAs -- done
-- on Ticket creation SLA is assigned based on priority -- done
-- on each priority change SLA resets -- done
-- on priority change a reason needs to be added -- done
-- P4 has 24h -- done
-- P3 has 12h -- done
-- P2 has 2h -- done
-- P1 has 30m -- done
-- SLA state will be viewable in similar fashion as other fields -- done
-- SLA closes itself if a new SLA for same Slable model gets created -- done
-
-14. Implement multiple tasks support for requests
-15. E-mail notification on ticket update
-16. Watch list for tickets
-17. Statistics
-18. Resolver dashboard
-19. Knowledge articles for common problems
-20. Change templates
-21. Subcategories
-22. Resolver required_if Status in_progress
-23. Make TicketEditForm be synchronized in real time between browsers
-24. Send e-mail, when Ticket SLA is before expiration
+15. Implement multiple tasks support for requests
+16. E-mail notification on ticket update
+17. Watch list for tickets
+18. Statistics
+19. Resolver dashboard
+20. Knowledge articles for common problems
+21. Change templates
+22. Subcategories
+23. Resolver required_if Status in_progress
+24. Make TicketEditForm be synchronized in real time between browsers
+25. Send e-mail, when Ticket SLA is before expiration
 
 Refactor ideas:
 - modify for example category.name field name to Category on pipe level

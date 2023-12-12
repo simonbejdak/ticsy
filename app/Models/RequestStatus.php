@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Status extends MappableModel
+class RequestStatus extends MappableModel
 {
     use HasFactory;
 
@@ -14,7 +15,7 @@ class Status extends MappableModel
         'in_progress' => 2,
         'on_hold' => 3,
         'monitoring' => 4,
-        'resolved' => 5,
+        'closed' => 5,
         'cancelled' => 6,
     ];
 
@@ -22,12 +23,11 @@ class Status extends MappableModel
     const IN_PROGRESS = self::MAP['in_progress'];
     const ON_HOLD = self::MAP['on_hold'];
     const MONITORING = self::MAP['monitoring'];
-    const RESOLVED = self::MAP['resolved'];
+    const CLOSED = self::MAP['closed'];
     const CANCELLED = self::MAP['cancelled'];
 
-    public function tickets()
-    {
-        return $this->hasMany(Ticket::class);
+    function requests(): hasMany{
+        return $this->hasMany(Request::class, 'status_id');
     }
 
     public function getNameAttribute($value)

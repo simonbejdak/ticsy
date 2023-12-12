@@ -22,7 +22,7 @@ class TicketFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => function (){
+            'caller_id' => function (){
                 return User::factory()->create();
             },
             'category_id' => function (){
@@ -31,7 +31,6 @@ class TicketFactory extends Factory
             'type_id' => function (){
                 return rand(1, Type::count());
             },
-            'group_id' => Group::DEFAULT,
             'description' => fake()->sentence(10),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

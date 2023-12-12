@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -41,7 +42,17 @@ class User extends Authenticatable
 
     public function tickets()
     {
-        return $this->hasMany(Ticket::class);
+        return $this->hasMany(Ticket::class, 'caller_id');
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(Request::class, 'caller_id');
+    }
+
+    public function resolverRequests(): HasMany
+    {
+        return $this->hasMany(Request::class, 'resolver_id');
     }
 
     public function comments()

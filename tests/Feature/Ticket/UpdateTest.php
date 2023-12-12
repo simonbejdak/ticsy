@@ -229,8 +229,8 @@ class UpdateTest extends TestCase
     {
         $group = Group::firstOrFail();
         $resolver = User::factory()->resolver(true)->create();
-        $ticket = Ticket::factory()->create();
-        $status = Status::findOrFail(Status::DEFAULT + 1);
+        $ticket = Ticket::factory(['status_id' => Status::OPEN])->create();
+        $status = Status::findOrFail(Status::IN_PROGRESS);
         $priority = Ticket::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
@@ -272,13 +272,13 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::DEFAULT)
+            ->set('status', Ticket::DEFAULT_STATUS)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('tickets', [
            'id' => $ticket->id,
-           'status_id' => Status::DEFAULT,
+           'status_id' => Ticket::DEFAULT_STATUS,
         ]);
     }
 
@@ -316,7 +316,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::DEFAULT)
+            ->set('status', Ticket::DEFAULT_STATUS)
             ->assertForbidden();
 
         $this->assertDatabaseHas('tickets', [

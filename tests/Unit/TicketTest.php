@@ -111,13 +111,13 @@ class TicketTest extends TestCase
     function test_it_gets_sla_assigned_based_on_priority(){
         $ticket = Ticket::factory(['priority' => Ticket::DEFAULT_PRIORITY])->create();
 
-        $this->assertEquals(Ticket::PRIORITY_SLA[Ticket::DEFAULT_PRIORITY], $ticket->sla()->minutes());
+        $this->assertEquals(Ticket::PRIORITY_SLA[Ticket::DEFAULT_PRIORITY], $ticket->sla->minutes());
 
         $ticket->priority = 3;
         $ticket->save();
         $ticket->refresh();
 
-        $this->assertEquals(Ticket::PRIORITY_SLA[3], $ticket->sla()->minutes());
+        $this->assertEquals(Ticket::PRIORITY_SLA[3], $ticket->sla->minutes());
     }
 
     function test_sql_violation_thrown_when_higher_priority_than_predefined_is_assigned()
@@ -137,7 +137,7 @@ class TicketTest extends TestCase
     function test_it_has_correct_default_group(){
         $ticket = new Ticket();
 
-        $this->assertEquals(Group::DEFAULT, $ticket->group->id);
+        $this->assertEquals(Ticket::DEFAULT_GROUP, $ticket->group->id);
     }
 
     function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
@@ -202,7 +202,7 @@ class TicketTest extends TestCase
         Carbon::setTestNow($date);
 
         // additional minute passes, as I'm running the test in real time
-        $this->assertEquals(Ticket::PRIORITY_SLA[$ticket->priority] - 6, $ticket->sla()->minutesTillExpires());
+        $this->assertEquals(Ticket::PRIORITY_SLA[$ticket->priority] - 6, $ticket->sla->minutesTillExpires());
 
         $ticket->priority = 3;
         $ticket->save();
@@ -211,41 +211,41 @@ class TicketTest extends TestCase
         $ticket->refresh();
 
         // minute has to be subtracted, as when the test runs, time adjusts
-        $this->assertEquals(Ticket::PRIORITY_SLA[$ticket->priority] - 1, $ticket->sla()->minutesTillExpires());
+        $this->assertEquals(Ticket::PRIORITY_SLA[$ticket->priority] - 1, $ticket->sla->minutesTillExpires());
     }
 
     public function test_sla_has_24_hours_if_priority_is_4()
     {
         $ticket = Ticket::factory(['priority' => 4])->create();
 
-        $this->assertEquals(24 * 60, $ticket->sla()->minutes());
+        $this->assertEquals(24 * 60, $ticket->sla->minutes());
     }
 
     public function test_sla_has_12_hours_if_priority_is_3()
     {
         $ticket = Ticket::factory(['priority' => 3])->create();
 
-        $this->assertEquals(12 * 60, $ticket->sla()->minutes());
+        $this->assertEquals(12 * 60, $ticket->sla->minutes());
     }
 
     public function test_sla_has_2_hours_if_priority_is_2()
     {
         $ticket = Ticket::factory(['priority' => 2])->create();
 
-        $this->assertEquals(2 * 60, $ticket->sla()->minutes());
+        $this->assertEquals(2 * 60, $ticket->sla->minutes());
     }
 
     public function test_sla_has_30_minutes_if_priority_is_1()
     {
         $ticket = Ticket::factory(['priority' => 1])->create();
 
-        $this->assertEquals(30, $ticket->sla()->minutes());
+        $this->assertEquals(30, $ticket->sla->minutes());
     }
 
     public function test_sla_closes_itself_if_new_sla_is_created()
     {
         $ticket = Ticket::factory()->create();
-        $sla = $ticket->sla();
+        $sla = $ticket->sla;
 
         $ticket->priority = 3;
         $ticket->save();

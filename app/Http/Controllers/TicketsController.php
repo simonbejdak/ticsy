@@ -15,7 +15,7 @@ class TicketsController extends Controller
     {
         $user = Auth::user();
         $tickets = $user->tickets()
-            ->with(['category', 'user', 'resolver'])
+            ->with(['category', 'caller', 'resolver'])
             ->orderByDesc('id')
             ->simplePaginate(self::DEFAULT_PAGINATION);
 

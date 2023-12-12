@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         ])->manager()->create();
 
         Ticket::factory(30)->create([
-            'user_id' => $user,
+            'caller_id' => $user,
         ]);
 
         User::factory(5)->resolver()->create();

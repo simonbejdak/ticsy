@@ -98,7 +98,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class)
-            ->set('description', Str::random(Ticket::MIN_DESCRIPTION_CHARS + 1))
+            ->set('description', 'Ticket Description')
             ->call('create')
             ->assertHasNoErrors(['description' => 'required']);
     }

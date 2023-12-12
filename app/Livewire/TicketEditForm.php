@@ -69,7 +69,7 @@ class TicketEditForm extends Form
 
     public function updating($property, $value): void
     {
-        if($property === 'priority' && $value == Ticket::PRIORITY_ONE){
+        if($property === 'priority' && $value == 1){
             $this->authorize('setPriorityOne', $this->ticket);
         }
     }

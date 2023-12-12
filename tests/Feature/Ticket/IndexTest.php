@@ -26,7 +26,7 @@ class IndexTest extends TestCase
         $resolver = User::factory(['name' => 'Jeff Wing'])->resolver()->create();
         Ticket::factory([
             'description' => 'Ticket Description',
-            'user_id' => $user,
+            'caller_id' => $user,
             'resolver_id' => $resolver,
         ])->create();
 
@@ -45,11 +45,11 @@ class IndexTest extends TestCase
 
         Ticket::factory([
             'description' => 'This ticket is supposed to be on the second pagination page',
-            'user_id' => $user,
+            'caller_id' => $user,
         ])->create();
 
         Ticket::factory(TicketsController::DEFAULT_PAGINATION, [
-            'user_id' => $user,
+            'caller_id' => $user,
         ])->create();
 
         $this->actingAs($user);

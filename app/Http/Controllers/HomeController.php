@@ -17,7 +17,7 @@ class HomeController extends Controller
 
         if($user){
             $tickets = $user->tickets()
-                ->with(['category', 'user', 'resolver'])
+                ->with(['category', 'caller', 'resolver'])
                 ->latest()
                 ->take(self::RECENT_TICKETS_COUNT)
                 ->get();

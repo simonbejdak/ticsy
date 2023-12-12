@@ -7,7 +7,7 @@
             <p>{{$ticket->description}}</p>
             <hr class="my-4 border-gray-300">
             <div class="flex flex-row justify-between">
-                <div class="text-xs">Created {{$ticket->created_at->diffForHumans()}} by {{$ticket->user->name}}</div>
+                <div class="text-xs">Created {{$ticket->created_at->diffForHumans()}} by {{$ticket->caller->name}}</div>
                 @if($ticket->resolver)
                     <div class="text-xs">Assigned to: {{$ticket->resolver->name}}</div>
                 @endif

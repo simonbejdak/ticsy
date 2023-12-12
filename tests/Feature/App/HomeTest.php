@@ -39,13 +39,13 @@ class HomeTest extends TestCase
 
     public function test_it_displays_recent_tickets_when_user_has_tickets()
     {
-        $user = User::factory()->create();
+        $caller = User::factory()->create();
         Ticket::factory(HomeController::RECENT_TICKETS_COUNT, [
-            'user_id' => $user,
+            'caller_id' => $caller,
             'description' => 'Ticket Description',
         ])->create();
 
-        $this->actingAs($user);
+        $this->actingAs($caller);
         $response = $this->get(route('home'));
 
         $response->assertSee('Recent tickets you have already created');
@@ -58,7 +58,7 @@ class HomeTest extends TestCase
 
         for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT; $i++){
             Ticket::factory([
-                'user_id' => $user,
+                'caller_id' => $user,
                 'description' => 'Ticket Description ' . $i,
             ])->create();
         }

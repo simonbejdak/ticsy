@@ -22,7 +22,7 @@ class StoreTest extends TestCase
     use RefreshDatabase;
     function test_it_permits_authenticated_user_to_store_ticket(){
         $user = User::factory()->create();
-        $description = Str::random(Ticket::MIN_DESCRIPTION_CHARS + 1);
+        $description = 'Ticket Description';
         $category = Category::firstOrFail();
         $item = Item::firstOrFail();
 

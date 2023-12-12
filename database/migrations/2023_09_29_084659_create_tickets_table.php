@@ -12,7 +12,7 @@ return new class extends Migration {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id()->startingValue(10000001);
             $table->foreignId('type_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('caller_id')->constrained()->references('id')->on('users');
             $table->foreignId('category_id')->constrained();
             $table->foreignId('item_id')->constrained();
             $table->foreignId('status_id')->constrained();

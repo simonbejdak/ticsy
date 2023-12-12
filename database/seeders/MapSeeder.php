@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Group;
 use App\Models\Item;
+use App\Models\RequestCategory;
+use App\Models\RequestOnHoldReason;
+use App\Models\RequestStatus;
 use App\Models\Status;
 use App\Models\OnHoldReason;
 use App\Models\TicketConfig;
@@ -38,6 +41,18 @@ class MapSeeder extends Seeder
 
         foreach (Group::MAP as $key => $value){
             Group::factory(['name' => $key])->create();
+        }
+
+        foreach (RequestCategory::MAP as $key => $value){
+            RequestCategory::factory(['name' => $key])->create();
+        }
+
+        foreach (RequestStatus::MAP as $key => $value){
+            RequestStatus::factory(['name' => $key])->create();
+        }
+
+        foreach (RequestOnHoldReason::MAP as $key => $value){
+            RequestOnHoldReason::factory(['name' => $key])->create();
         }
     }
 }

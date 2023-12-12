@@ -17,12 +17,24 @@ class Ticket extends Model implements Slable, Fieldable
     use HasFactory;
     use LogsActivity;
 
-    const ARCHIVE_AFTER_DAYS = 3;
+    protected $guarded = [];
+    protected $attributes = [
+        'status_id' => self::DEFAULT_STATUS,
+        'priority' => self::DEFAULT_PRIORITY,
+        'group_id' => self::DEFAULT_GROUP,
+    ];
+
+    protected $casts = [
+        'resolved_at' => 'datetime'
+    ];
+
+    protected $appends = ['sla'];
+
+    const ARCHIVE_AFTER_DAYS = 4;
     const PRIORITIES = [1, 2, 3, 4];
-    const PRIORITY_ONE = 1;
     const DEFAULT_PRIORITY = 4;
-    const MIN_DESCRIPTION_CHARS = 8;
-    const MAX_DESCRIPTION_CHARS = 255;
+    const DEFAULT_STATUS = Status::OPEN;
+    const DEFAULT_GROUP = Group::SERVICE_DESK;
     const PRIORITY_SLA = [
         1 => 30,
         2 => 2 * 60,
@@ -30,45 +42,19 @@ class Ticket extends Model implements Slable, Fieldable
         4 => 24 * 60,
     ];
 
-    protected $guarded = [];
-    protected $attributes = [
-        'status_id' => Status::DEFAULT,
-        'priority' => self::DEFAULT_PRIORITY,
-        'group_id' => Group::DEFAULT,
-    ];
-
-    public array $loggableAttributes = [
-        'category.name',
-        'item.name',
-        'description',
-        'status.name',
-        'onHoldReason.name',
-        'priority', 'group.name',
-        'resolver.name',
-    ];
-
-    protected $casts = [
-        'resolved_at' => 'datetime'
-    ];
-
     public function type()
     {
         return $this->belongsTo(Type::class);
     }
 
-    public function user()
+    public function caller()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'caller_id');
     }
 
     public function resolver()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function assign(User $resolver)
-    {
-        $this->resolver = $resolver;
     }
 
     public function category()
@@ -99,6 +85,15 @@ class Ticket extends Model implements Slable, Fieldable
         return $this->morphMany(Sla::class, 'slable');
     }
 
+    public function isStatus(...$statuses): bool{
+        foreach ($statuses as $status){
+            if($this->status_id == Status::MAP[$status]){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function isArchived(): bool{
         if($this->getOriginal('status_id') == Status::RESOLVED){
             $archivalDate = $this->resolved_at->addDays(Ticket::ARCHIVE_AFTER_DAYS);
@@ -109,49 +104,18 @@ class Ticket extends Model implements Slable, Fieldable
         return $this->getOriginal('status_id') == Status::CANCELLED;
     }
 
-    public function isStatus(...$statuses): bool{
-        foreach ($statuses as $status){
-            if($this->status_id == Status::MAP[$status]){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function isStatusOpen(): bool
-    {
-        return $this->isStatus('open');
-    }
-
-    public function isStatusProgress(): bool
-    {
-        return $this->isStatus('in_progress');
-    }
-
-    public function isStatusOnHold(): bool
-    {
-        return $this->isStatus('on_hold');
-    }
-
-    public function isStatusResolved(): bool
-    {
-        return $this->isStatus('resolved');
-    }
-
-    public function isStatusCancelled(): bool
-    {
-        return $this->isStatus('cancelled');
-    }
-
-
-    public function isNotStatus($status): bool{
-        return !$this->isStatus($status);
-    }
-
     public function getActivityLogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly($this->loggableAttributes)
+            ->logOnly([
+                'category.name',
+                'item.name',
+                'description',
+                'status.name',
+                'onHoldReason.name',
+                'priority', 'group.name',
+                'resolver.name',
+            ])
             ->logOnlyDirty();
     }
 
@@ -160,7 +124,7 @@ class Ticket extends Model implements Slable, Fieldable
         return self::PRIORITY_SLA[$this->priority];
     }
 
-    public function sla(): Sla
+    public function getSlaAttribute(): Sla
     {
         return $this->slas->last();
     }
@@ -181,18 +145,18 @@ class Ticket extends Model implements Slable, Fieldable
             'status' =>
                 auth()->user()->can('setStatus', Ticket::class),
             'onHoldReason' =>
-                auth()->user()->can('setOnHoldReason', Ticket::class) && $this->isStatusOnHold(),
+                auth()->user()->can('setOnHoldReason', Ticket::class) && $this->isStatus('on_hold'),
             'priority' =>
-                auth()->user()->can('setPriority', Ticket::class) && !$this->isStatusResolved(),
+                auth()->user()->can('setPriority', Ticket::class) && !$this->isStatus('resolved'),
             'priorityChangeReason' =>
                 auth()->user()->can('setPriorityChangeReason', Ticket::class) &&
                 $this->isDirty('priority') &&
-                !$this->isStatusResolved(),
+                !$this->isStatus('resolved'),
             'group' =>
-                auth()->user()->can('setGroup', Ticket::class) && !$this->isStatusResolved(),
+                auth()->user()->can('setGroup', Ticket::class) && !$this->isStatus('resolved'),
             'resolver' =>
                 auth()->user()->can('setResolver', Ticket::class) &&
-                !$this->isStatusResolved() &&
+                !$this->isStatus('resolved') &&
                 ($this->resolver == null ? true : $this->resolver->isGroupMember($this->group)),
             default => false,
         };

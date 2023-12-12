@@ -45,7 +45,7 @@ class EditTest extends TestCase
 
     function test_it_authorizes_caller_to_view(){
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['user_id' => $user])->create();
+        $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         $this->actingAs($user);
         $response = $this->get(route('tickets.edit', $ticket));
@@ -79,7 +79,7 @@ class EditTest extends TestCase
             'group_id' => $group,
             'resolver_id' => $resolver,
             'status_id' => $status,
-            'user_id' => $user,
+            'caller_id' => $user,
         ])->create();
 
 
@@ -98,7 +98,7 @@ class EditTest extends TestCase
     public function test_it_displays_comments()
     {
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['user_id' => $user])->create();
+        $ticket = Ticket::factory(['caller_id' => $user])->create();
         $this->actingAs($user);
         ActivityService::comment($ticket, 'Comment Body');
 
@@ -153,7 +153,7 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('priority', Ticket::PRIORITY_ONE)
+            ->set('priority', 1)
             ->assertForbidden();
     }
 
@@ -412,6 +412,6 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->assertSee($ticket->sla()->minutesTillExpires() . ' minutes');
+            ->assertSee($ticket->sla->minutesTillExpires() . ' minutes');
     }
 }

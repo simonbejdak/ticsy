@@ -16,7 +16,7 @@ class SlaTest extends TestCase
         // Ticket is SLAble, as per its configuration
 
         $slable = Ticket::factory()->create();
-        $sla = $slable->sla();
+        $sla = $slable->sla;
 
         $this->assertEquals($slable->id, $sla->slable->id);
     }

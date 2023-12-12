@@ -30,7 +30,7 @@ class AddCommentTest extends TestCase
     public function test_it_allows_to_add_comment_to_user_who_has_created_the_ticket()
     {
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['user_id' => $user])->create();
+        $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         Livewire::actingAs($user)
             ->test(TicketActivities::class, ['ticket' => $ticket])
@@ -68,7 +68,7 @@ class AddCommentTest extends TestCase
     public function test_it_fails_validation_with_empty_body()
     {
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['user_id' => $user])->create();
+        $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         Livewire::actingAs($user)
             ->test(TicketActivities::class, ['ticket' => $ticket])
@@ -81,7 +81,7 @@ class AddCommentTest extends TestCase
     public function test_it_fails_validation_with_body_having_more_characters_than_predefined()
     {
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['user_id' => $user])->create();
+        $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         Livewire::actingAs($user)
             ->test(TicketActivities::class, ['ticket' => $ticket])

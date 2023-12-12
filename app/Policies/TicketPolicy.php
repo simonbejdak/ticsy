@@ -15,22 +15,22 @@ class TicketPolicy
 
     public function show(User $user, Ticket $ticket)
     {
-        return $user->id === $ticket->user_id;
+        return $user->id === $ticket->caller_id;
     }
 
     public function edit(User $user, Ticket $ticket)
     {
-        return ($user->id === $ticket->user_id || $user->hasPermissionTo('view_all_tickets'));
+        return ($user->id === $ticket->caller_id || $user->hasPermissionTo('view_all_tickets'));
     }
 
     public function update(User $user, Ticket $ticket)
     {
-        return $user->id === $ticket->user_id;
+        return $user->id === $ticket->caller_id;
     }
 
     public function destroy(User $user, Ticket $ticket)
     {
-        return $user->id === $ticket->user_id;
+        return $user->id === $ticket->caller_id;
     }
 
     public function setCategory(User $user): bool
@@ -60,7 +60,7 @@ class TicketPolicy
 
     public function setPriorityOne(User $user, Ticket $ticket): bool
     {
-        return $user->hasPermissionTo('set_priority_one') && !$ticket->isStatusResolved() && !$ticket->isArchived();
+        return $user->hasPermissionTo('set_priority_one') && !$ticket->isStatus('resolved') && !$ticket->isArchived();
     }
 
     public function setPriority(User $user): bool
@@ -85,6 +85,6 @@ class TicketPolicy
 
     public function addComment(User $user, Ticket $ticket): bool
     {
-        return $user->id === $ticket->user_id || $user->hasPermissionTo('add_comments_to_all_tickets');
+        return $user->id === $ticket->caller_id || $user->hasPermissionTo('add_comments_to_all_tickets');
     }
 }

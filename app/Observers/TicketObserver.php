@@ -16,15 +16,15 @@ class TicketObserver
             throw new Exception('Item cannot be assigned to Ticket if it does not match Category');
         }
 
-        if(!$ticket->isStatusOnHold() && $ticket->on_hold_reason_id !== null){
+        if(!$ticket->isStatus('on_hold') && $ticket->on_hold_reason_id !== null){
             throw new Exception('On hold reason cannot be assigned to Ticket if Status is not than on hold');
         }
 
-        if($ticket->isStatusOnHold() && $ticket->onHoldReason === null){
+        if($ticket->isStatus('on_hold') && $ticket->on_hold_reason_id === null){
             throw new Exception('On hold reason must be assigned to Ticket if Status is on hold');
         }
 
-        if($ticket->isStatusResolved()){
+        if($ticket->isStatus('resolved')){
             $ticket->resolved_at = Carbon::now();
         }
     }
@@ -40,17 +40,17 @@ class TicketObserver
         }
 
         if($ticket->isDirty('status_id')){
-            if(!$ticket->isStatusOnHold()){
+            if(!$ticket->isStatus('on_hold')){
                 $ticket->on_hold_reason_id = null;
             }
-            if($ticket->isStatusResolved()){
+            if($ticket->isStatus('resolved')){
                 $ticket->resolved_at = Carbon::now();
             } else {
                 $ticket->resolved_at = null;
             }
         }
 
-        if(!$ticket->isStatusOnHold() && $ticket->on_hold_reason_id !== null){
+        if(!$ticket->isStatus('on_hold') && $ticket->on_hold_reason_id !== null){
             throw new Exception('On hold reason cannot be assigned to Ticket if Status is not on hold');
         }
     }
@@ -58,7 +58,7 @@ class TicketObserver
     public function saved(Ticket $ticket): void
     {
         if($ticket->isDirty('priority')){
-            SlaService::closeSla($ticket->sla());
+            SlaService::closeSla($ticket->sla);
             SlaService::createSla($ticket);
         }
     }
