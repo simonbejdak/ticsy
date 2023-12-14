@@ -40,4 +40,22 @@ class RequestFactory extends Factory
             //
         });
     }
+
+    public function statusOnHold()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status_id' => RequestStatus::ON_HOLD,
+            ];
+        });
+    }
+
+    public function statusClosed()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status_id' => RequestStatus::CLOSED,
+            ];
+        });
+    }
 }

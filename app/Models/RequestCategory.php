@@ -34,6 +34,14 @@ class RequestCategory extends MappableModel
         return $this->belongsToMany(Item::class, 'request_categories_request_items', 'category_id', 'item_id');
     }
 
+    public function hasItem(RequestItem $item): bool
+    {
+        if(count($this->items()->where('id', '=', $item->id)->get()) == 0){
+            return true;
+        }
+        return false;
+    }
+
     public function randomItem()
     {
         return $this->items()->inRandomOrder()->first();

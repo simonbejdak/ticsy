@@ -28,6 +28,7 @@ return new class extends Migration
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
             $table->enum('priority', Request::PRIORITIES);
             $table->text('description');
+            $table->timestamp('closed_at')->nullable();
             $table->timestamps();
         });
     }

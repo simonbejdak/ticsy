@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RequestItem extends Model
 {
@@ -24,6 +25,11 @@ class RequestItem extends Model
     const BACKUP = self::MAP['backup'];
     const FAILED_NODE = self::MAP['failed_node'];
     const FAILURE = self::MAP['failure'];
+
+    public function requests(): HasMany
+    {
+        return $this->hasMany(Request::class, 'item_id');
+    }
 
     public function categories(): BelongsToMany
     {

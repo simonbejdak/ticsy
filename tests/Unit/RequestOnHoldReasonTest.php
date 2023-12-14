@@ -18,7 +18,7 @@ class RequestOnHoldReasonTest extends TestCase
     public function test_it_has_many_requests()
     {
         $onHoldReason = RequestOnHoldReason::firstOrFail();
-        Request::factory(2, ['on_hold_reason_id' => $onHoldReason])->create();
+        Request::factory(2, ['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
         $this->assertCount(2, $onHoldReason->requests);
     }
 

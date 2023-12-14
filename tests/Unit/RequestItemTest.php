@@ -3,9 +3,9 @@
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\RequestCategory;
 use App\Models\RequestItem;
-use App\Models\Ticket;
-use App\Models\TicketConfig;
+use App\Models\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,31 +21,20 @@ class RequestItemTest extends TestCase
         $this->assertGreaterThan(1, count($item->categories));
     }
 
-    public function test_it_has_many_tickets()
+    public function test_it_has_many_requests()
     {
-//        $item = Item::firstOrFail();
-//        $category = Category::firstOrFail();
-//
-//        Ticket::factory(['description' => 'Ticket Description 1',
-//            'category_id' => $category,
-//            'item_id' => $item,
-//        ])->create();
-//
-//        Ticket::factory([
-//            'description' => 'Ticket Description 2',
-//            'category_id' => $category,
-//            'item_id' => $item,
-//        ])->create();
-//
-//        $this->assertEquals('Ticket Description 1', $item->tickets()->findOrFail(1)->description);
-//        $this->assertEquals('Ticket Description 2', $item->tickets()->findOrFail(2)->description);
+        $item = RequestItem::firstOrFail();
+
+        Request::factory(2, ['item_id' => $item])->create();
+
+        $this->assertCount(2, $item->requests);
     }
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-//        $item = Item::findOrFail(Item::FAILED_NODE);
-//
-//        $this->assertEquals('Failed Node', $item->name);
+        $item = RequestItem::findOrFail(RequestItem::FAILED_NODE);
+
+        $this->assertEquals('Failed Node', $item->name);
     }
 
 }
