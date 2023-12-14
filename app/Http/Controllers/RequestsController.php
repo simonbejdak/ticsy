@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RequestsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    const DEFAULT_PAGINATION = 10;
+
     public function index()
     {
-        //
+        $user = Auth::user();
+        $requests = $user->requests()
+            ->with(['category', 'caller', 'resolver'])
+            ->orderByDesc('id')
+            ->simplePaginate(self::DEFAULT_PAGINATION);
+
+        return view('requests.index', ['requests' => $requests]);
     }
 
     public function create()

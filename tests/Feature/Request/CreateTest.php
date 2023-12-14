@@ -4,7 +4,6 @@
 namespace Tests\Feature\Request;
 
 use App\Livewire\RequestCreateForm;
-use App\Livewire\TicketCreateForm;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Request;

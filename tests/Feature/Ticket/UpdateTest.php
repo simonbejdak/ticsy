@@ -228,7 +228,7 @@ class UpdateTest extends TestCase
     public function test_it_updates_ticket_when_correct_data_submitted()
     {
         $group = Group::firstOrFail();
-        $resolver = User::factory()->resolver(true)->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $ticket = Ticket::factory(['status_id' => Status::OPEN])->create();
         $status = Status::findOrFail(Status::IN_PROGRESS);
         $priority = Ticket::DEFAULT_PRIORITY - 1;
@@ -380,7 +380,7 @@ class UpdateTest extends TestCase
 
     public function test_selected_resolver_is_empty_when_resolver_group_changes()
     {
-        $resolver = User::factory()->resolver(true)->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
 
         $groupOne = Group::findOrFail(Group::SERVICE_DESK);
         $groupTwo = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);

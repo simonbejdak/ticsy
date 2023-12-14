@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Item;
 use App\Models\OnHoldReason;
+use App\Models\Request;
 use App\Models\Resolver;
 use App\Models\Status;
 use App\Models\Ticket;
@@ -160,10 +161,10 @@ class EditTest extends TestCase
     public function test_it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_ticket()
     {
         // manager has a permisssion to set priority one
-        $user = User::factory()->manager()->create();
+        $manager = User::factory()->manager()->create();
         $ticket = Ticket::factory()->create();
 
-        Livewire::actingAs($user)
+        Livewire::actingAs($manager)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
             ->set('priority', 1)
             ->set('priorityChangeReason', 'Production issue')
@@ -212,7 +213,7 @@ class EditTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder([
                 'Status:', 'Open',
@@ -235,7 +236,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -258,7 +259,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
@@ -278,7 +279,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -298,7 +299,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
@@ -318,7 +319,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Priority:', '3', 'was', Ticket::DEFAULT_PRIORITY]);
     }
@@ -337,14 +338,14 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
     public function test_it_displays_resolver_changes_activity()
     {
-        $resolver = User::factory(['name' => 'Average Joe'])->resolver(true)->create();
+        $resolver = User::factory(['name' => 'Average Joe'])->resolverAllGroups()->create();
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver);
@@ -356,7 +357,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(Activities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['model' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
@@ -377,7 +378,7 @@ class EditTest extends TestCase
         $ticket->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['model' => $ticket])
             ->assertSeeInOrder([
                 'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',

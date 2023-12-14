@@ -3,36 +3,30 @@
 
 namespace Tests\Feature\Request;
 
-use App\Exceptions\UnmatchedModelException;
-use App\Livewire\TicketCreateForm;
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\Ticket;
-use App\Models\TicketConfig;
-use App\Models\Type;
+use App\Livewire\RequestCreateForm;
+use App\Models\RequestCategory;
+use App\Models\RequestItem;
 use App\Models\User;
-use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Str;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
 {
     use RefreshDatabase;
-    function test_it_permits_authenticated_user_to_store_ticket(){
-//        $user = User::factory()->create();
-//        $description = 'Ticket Description';
-//        $category = Category::firstOrFail();
-//        $item = Item::firstOrFail();
-//
-//        Livewire::actingAs($user)
-//            ->test(TicketCreateForm::class)
-//            ->set('category', $category->id)
-//            ->set('item', $item->id)
-//            ->set('description', $description)
-//            ->call('create');
-//
-//        $this->assertEquals($description, $user->tickets()->find(1)->description);
+    function test_it_permits_authenticated_user_to_store_request(){
+        $user = User::factory()->create();
+        $description = 'Request Description';
+        $category = RequestCategory::firstOrFail();
+        $item = RequestItem::firstOrFail();
+
+        Livewire::actingAs($user)
+            ->test(RequestCreateForm::class)
+            ->set('category', $category->id)
+            ->set('item', $item->id)
+            ->set('description', $description)
+            ->call('create');
+
+        $this->assertEquals($description, $user->requests()->first()->description);
     }
 }

@@ -9,18 +9,23 @@ use App\Models\User;
 
 class RequestPolicy
 {
-    public function __construct()
-    {
-
-    }
-
     public function edit(User $user, Request $request): bool
     {
         return ($user->id === $request->caller_id || $user->hasPermissionTo('view_all_tickets'));
     }
 
-    public function setRequestOnHoldReason(User $user): bool
+    public function update(User $user): bool
     {
-        return $user->hasPermissionTo('set_request_on_hold_reason');
+        return $user->hasPermissionTo('update_all_tickets');
+    }
+
+    public function setPriorityOne(User $user): bool
+    {
+        return $user->hasPermissionTo('set_priority_one');
+    }
+
+    public function addComment(User $user, Request $request): bool
+    {
+        return $user->id === $request->caller_id || $user->hasPermissionTo('add_comments_to_all_tickets');
     }
 }

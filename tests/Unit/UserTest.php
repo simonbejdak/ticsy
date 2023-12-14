@@ -18,7 +18,7 @@ class UserTest extends TestCase
     function test_it_belongs_to_many_groups()
     {
         $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
-        $resolver = User::factory()->resolver(true)->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
 
         // by default resolver in tests always belongs to the default group
         $this->assertEquals(Ticket::DEFAULT_GROUP, $resolver->groups()->findOrFail(1)->id);

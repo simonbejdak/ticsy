@@ -71,7 +71,7 @@ class RequestEditForm extends Form
     public function updating($property, $value): void
     {
         if($property === 'priority' && $value == 1){
-            $this->authorize('setPriorityOne', $this->request);
+            $this->authorize('setPriorityOne', Request::class);
         }
     }
 
@@ -109,7 +109,7 @@ class RequestEditForm extends Form
         $this->request->priority = $this->priority;
         $this->request->group_id = $this->group;
         $this->request->resolver_id = ($this->resolver === '') ? null : $this->resolver;
-        $this->resolvers = $this->request->group->resolvers;
+        $this->resolvers = $this->request->group ? $this->request->group->resolvers : collect([]);
     }
 
     protected function fieldableModel(): Fieldable{

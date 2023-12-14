@@ -51,10 +51,4 @@ class RequestOnHoldReasonTest extends TestCase
             'status_id' => RequestStatus::ON_HOLD,
         ])->create();
     }
-
-    public function test_resolver_has_permission_to_set_request_on_hold_reason()
-    {
-        $resolver = User::factory()->resolver()->create();
-        $this->assertTrue($resolver->can('set_request_on_hold_reason'));
-    }
 }

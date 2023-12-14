@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Helpers\Fieldable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
+use App\Models\Request;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
@@ -68,7 +69,7 @@ class TicketEditForm extends Form
     public function updating($property, $value): void
     {
         if($property === 'priority' && $value == 1){
-            $this->authorize('setPriorityOne', $this->ticket);
+            $this->authorize('setPriorityOne', Ticket::class);
         }
     }
 

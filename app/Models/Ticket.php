@@ -130,6 +130,11 @@ class Ticket extends Model implements Slable, Fieldable, Activitable
         return $this->slas->last();
     }
 
+    public function priorityChanged(): bool
+    {
+        return $this->isDirty('priority');
+    }
+
     public function isFieldModifiable(string $name): bool
     {
         if($this->isArchived()){
@@ -137,28 +142,20 @@ class Ticket extends Model implements Slable, Fieldable, Activitable
         }
 
         return match($name){
-            'category' =>
-                auth()->user()->can('setCategory', Ticket::class) && !$this->exists,
-            'item' =>
-                auth()->user()->can('setItem', Ticket::class) && !$this->exists,
-            'description' =>
-                auth()->user()->can('setDescription', Ticket::class) && !$this->exists,
-            'status' =>
-                auth()->user()->can('setStatus', Ticket::class),
+            'category', 'item', 'description' => !$this->exists,
+            'status' => auth()->user()->can('update', Ticket::class),
             'onHoldReason' =>
-                auth()->user()->can('setOnHoldReason', Ticket::class) && $this->isStatus('on_hold'),
-            'priority' =>
-                auth()->user()->can('setPriority', Ticket::class) && !$this->isStatus('resolved'),
+                auth()->user()->can('update', Ticket::class) && $this->isStatus('on_hold'),
+            'priority', 'group' =>
+                auth()->user()->can('update', Ticket::class) && !$this->isStatus('resolved'),
             'priorityChangeReason' =>
-                auth()->user()->can('setPriorityChangeReason', Ticket::class) &&
-                $this->isDirty('priority') &&
+                auth()->user()->can('update', Ticket::class) &&
+                $this->priorityChanged() &&
                 !$this->isStatus('resolved'),
-            'group' =>
-                auth()->user()->can('setGroup', Ticket::class) && !$this->isStatus('resolved'),
             'resolver' =>
-                auth()->user()->can('setResolver', Ticket::class) &&
+                auth()->user()->can('update', Ticket::class) &&
                 !$this->isStatus('resolved') &&
-                ($this->resolver == null ? true : $this->resolver->isGroupMember($this->group)),
+                ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
             default => false,
         };
     }

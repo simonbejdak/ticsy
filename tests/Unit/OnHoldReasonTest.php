@@ -58,10 +58,4 @@ class OnHoldReasonTest extends TestCase
 
         Ticket::factory()->onHold()->create();
     }
-
-    public function test_resolver_is_able_to_set_on_hold_reason()
-    {
-        $resolver = User::factory()->resolver()->create();
-        $this->assertTrue($resolver->can('set_on_hold_reason'));
-    }
 }

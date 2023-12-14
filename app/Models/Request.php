@@ -111,6 +111,11 @@ class Request extends Model implements Slable, Fieldable, Activitable
         return false;
     }
 
+    public function priorityChanged()
+    {
+        return $this->isDirty('priority');
+    }
+
     public function statusChanged(): bool
     {
         return $this->isDirty('status_id');
@@ -133,28 +138,20 @@ class Request extends Model implements Slable, Fieldable, Activitable
         }
 
         return match($name){
-            'category' =>
-                auth()->user()->can('setRequestCategory', Request::class) && !$this->exists,
-            'item' =>
-                auth()->user()->can('setRequestItem', Request::class) && !$this->exists,
-            'description' =>
-                auth()->user()->can('setRequestDescription', Request::class) && !$this->exists,
-            'status' =>
-            auth()->user()->can('setRequestStatus', Request::class),
+            'category', 'item', 'description' => !$this->exists,
+            'status' => auth()->user()->can('update', Request::class),
             'onHoldReason' =>
-                auth()->user()->can('setRequestOnHoldReason', Request::class) && $this->isStatus('on_hold'),
-            'priority' =>
-                auth()->user()->can('setRequestPriority', Request::class) && !$this->isStatus('resolved'),
+                auth()->user()->can('update', Request::class) && $this->isStatus('on_hold'),
+            'priority', 'group' =>
+                auth()->user()->can('update', Request::class) && !$this->isStatus('closed'),
             'priorityChangeReason' =>
-                auth()->user()->can('setRequestPriorityChangeReason', Request::class) &&
-                $this->isDirty('priority') &&
-                !$this->isStatus('resolved'),
-            'group' =>
-                auth()->user()->can('setRequestGroup', Request::class) && !$this->isStatus('resolved'),
+                auth()->user()->can('update', Request::class) &&
+                $this->priorityChanged() &&
+                !$this->isStatus('closed'),
             'resolver' =>
-                auth()->user()->can('setRequestResolver', Request::class) &&
-                !$this->isStatus('resolved') &&
-                ($this->resolver == null ? true : $this->resolver->isGroupMember($this->group)),
+                auth()->user()->can('update', Request::class) &&
+                !$this->isStatus('closed') &&
+                ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
             default => false,
         };
     }

@@ -10,50 +10,24 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $permissions = [
-            'resolve_ticket',
-            'set_number',
-            'set_caller',
-            'set_created',
-            'set_updated',
-            'set_type',
-            'set_category',
-            'set_item',
-            'set_description',
-            'set_group',
-            'set_resolver',
-            'set_priority',
-            'set_priority_one',
-            'set_priority_change_reason',
-            'set_status',
-            'set_on_hold_reason',
-            'set_request_on_hold_reason',
-            'add_comments_to_all_tickets',
-            'view_all_tickets',
-        ];
-
-        foreach ($permissions as $permission){
-            Permission::create(['name' => $permission]);
-        }
-
-        $roleUser = Role::create(['name' => 'user']);
-        $roleUser->givePermissionTo('set_category', 'set_item', 'set_description');
+        Permission::create(['name' => 'view_all_tickets']);
+        Permission::create(['name' => 'update_all_tickets']);
+        Permission::create(['name' => 'set_priority_one']);
+        Permission::create(['name' => 'add_comments_to_all_tickets']);
 
         $roleResolver = Role::create(['name' => 'resolver']);
         $roleResolver->givePermissionTo(
-            'resolve_ticket',
-            'set_group',
-            'set_resolver',
-            'set_priority',
-            'set_priority_change_reason',
-            'set_status',
-            'set_on_hold_reason',
-            'set_request_on_hold_reason',
-            'add_comments_to_all_tickets',
             'view_all_tickets',
+            'update_all_tickets',
+            'add_comments_to_all_tickets',
         );
 
         $roleManager = Role::create(['name' => 'manager']);
-        $roleManager->givePermissionTo('set_priority_one', 'set_priority_change_reason', 'view_all_tickets');
+        $roleManager->givePermissionTo(
+            'view_all_tickets',
+            'update_all_tickets',
+            'add_comments_to_all_tickets',
+            'set_priority_one',
+        );
     }
 }

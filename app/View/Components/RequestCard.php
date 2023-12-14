@@ -8,13 +8,13 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class TicketCard extends Component
+class RequestCard extends Component
 {
     /**
      * Create a new component instance.
      */
     public function __construct(
-        public Ticket $ticket,
+        public Request $request,
     ) {}
 
     /**
@@ -22,6 +22,6 @@ class TicketCard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.ticket-card');
+        return view('components.request-card');
     }
 }

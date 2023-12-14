@@ -67,4 +67,13 @@ class RequestFactory extends Factory
             ];
         });
     }
+
+    public function statusCancelled()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status_id' => RequestStatus::CANCELLED,
+            ];
+        });
+    }
 }

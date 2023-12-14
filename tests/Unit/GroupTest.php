@@ -12,8 +12,8 @@ class GroupTest extends TestCase
 {
     public function test_it_belongs_to_many_resolvers()
     {
-        User::factory(['name' => 'John Doe'])->resolver(true)->create();
-        User::factory(['name' => 'Frank Loew'])->resolver(true)->create();
+        User::factory(['name' => 'John Doe'])->resolverAllGroups()->create();
+        User::factory(['name' => 'Frank Loew'])->resolverAllGroups()->create();
         $group = Group::firstOrFail();
 
 
