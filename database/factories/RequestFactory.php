@@ -41,6 +41,15 @@ class RequestFactory extends Factory
         });
     }
 
+    public function statusInProgress()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status_id' => RequestStatus::IN_PROGRESS,
+            ];
+        });
+    }
+
     public function statusOnHold()
     {
         return $this->state(function (array $attributes) {

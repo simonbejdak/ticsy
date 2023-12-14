@@ -26,14 +26,15 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::middleware('auth')->group(function (){
 
     Route::controller(TicketsController::class)->group(function (){
-        Route::resource('/tickets', TicketsController::class)->only(['index', 'store', 'update']);
-        Route::get('/tickets/create/{type?}', 'create')->name('tickets.create')->middleware(Authenticate::class);
-        Route::get('/tickets/{id}', 'edit')->name('tickets.edit')->middleware(Authenticate::class);
+        Route::get('/tickets', 'index')->name('tickets.index');
+        Route::get('/tickets/create/{type?}', 'create')->name('tickets.create');
+        Route::get('/tickets/{id}', 'edit')->name('tickets.edit');
     });
 
-});
+    Route::controller(RequestsController::class)->group(function (){
+        Route::resource('/requests', RequestsController::class)->only(['index', 'create', 'edit']);
+    });
 
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

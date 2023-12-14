@@ -2,16 +2,21 @@
 
 namespace App\Models;
 
+use App\Helpers\Activitable;
+use App\Helpers\Fieldable;
 use App\Helpers\Slable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class Request extends Model implements Slable
+class Request extends Model implements Slable, Fieldable, Activitable
 {
     use HasFactory;
+    use LogsActivity;
 
     const ARCHIVE_AFTER_DAYS = 3;
     const DEFAULT_PRIORITY = 4;
@@ -119,5 +124,53 @@ class Request extends Model implements Slable
     public function statusChangedFrom(string $status): bool
     {
         return $this->statusChanged() && $this->getOriginal('status_id') == RequestStatus::MAP[$status];
+    }
+
+    public function isFieldModifiable(string $name): bool
+    {
+        if($this->isArchived()){
+            return false;
+        }
+
+        return match($name){
+            'category' =>
+                auth()->user()->can('setRequestCategory', Request::class) && !$this->exists,
+            'item' =>
+                auth()->user()->can('setRequestItem', Request::class) && !$this->exists,
+            'description' =>
+                auth()->user()->can('setRequestDescription', Request::class) && !$this->exists,
+            'status' =>
+            auth()->user()->can('setRequestStatus', Request::class),
+            'onHoldReason' =>
+                auth()->user()->can('setRequestOnHoldReason', Request::class) && $this->isStatus('on_hold'),
+            'priority' =>
+                auth()->user()->can('setRequestPriority', Request::class) && !$this->isStatus('resolved'),
+            'priorityChangeReason' =>
+                auth()->user()->can('setRequestPriorityChangeReason', Request::class) &&
+                $this->isDirty('priority') &&
+                !$this->isStatus('resolved'),
+            'group' =>
+                auth()->user()->can('setRequestGroup', Request::class) && !$this->isStatus('resolved'),
+            'resolver' =>
+                auth()->user()->can('setRequestResolver', Request::class) &&
+                !$this->isStatus('resolved') &&
+                ($this->resolver == null ? true : $this->resolver->isGroupMember($this->group)),
+            default => false,
+        };
+    }
+
+    public function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'category.name',
+                'item.name',
+                'description',
+                'status.name',
+                'onHoldReason.name',
+                'priority', 'group.name',
+                'resolver.name',
+            ])
+            ->logOnlyDirty();
     }
 }

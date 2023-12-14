@@ -5,6 +5,9 @@ namespace App\Livewire;
 use App\Helpers\Fieldable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
+use App\Models\Request;
+use App\Models\RequestOnHoldReason;
+use App\Models\RequestStatus;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
@@ -12,9 +15,9 @@ use App\Services\ActivityService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
-class TicketEditForm extends Form
+class RequestEditForm extends Form
 {
-    public Ticket $ticket;
+    public Request $request;
     public Collection $activities;
     public $status;
     public $onHoldReason;
@@ -35,40 +38,40 @@ class TicketEditForm extends Form
             'status' => 'required|numeric',
             'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
             'priority' => 'required|numeric',
-            'priorityChangeReason' => $this->ticket->isDirty('priority') ? 'required|string' : 'present|max:0',
+            'priorityChangeReason' => $this->request->isDirty('priority') ? 'required|string' : 'present|max:0',
             'group' => 'required|numeric',
             'resolver' => 'nullable|numeric',
         ];
     }
 
-    public function mount(Ticket $ticket){
-        $this->ticket = $ticket;
+    public function mount(Request $request){
+        $this->request = $request;
 
-        $this->statuses = Status::all();
-        $this->status = $this->ticket->status_id;
+        $this->statuses = RequestStatus::all();
+        $this->status = $this->request->status_id;
 
-        $this->onHoldReasons = OnHoldReason::all();
-        $this->onHoldReason = $this->ticket->on_hold_reason_id;
+        $this->onHoldReasons = RequestOnHoldReason::all();
+        $this->onHoldReason = $this->request->on_hold_reason_id;
 
-        $this->priorities = Ticket::PRIORITIES;
-        $this->priority = $this->ticket->priority;
+        $this->priorities = Request::PRIORITIES;
+        $this->priority = $this->request->priority;
 
         $this->groups = Group::all();
-        $this->group = $this->ticket->group_id;
+        $this->group = $this->request->group_id;
 
         $this->resolvers = Group::find($this->group)->resolvers()->get();
-        $this->resolver = $this->ticket->resolver_id;
+        $this->resolver = $this->request->resolver_id;
     }
 
     public function render()
     {
-        return view('livewire.ticket-edit-form');
+        return view('livewire.request-edit-form');
     }
 
     public function updating($property, $value): void
     {
         if($property === 'priority' && $value == 1){
-            $this->authorize('setPriorityOne', $this->ticket);
+            $this->authorize('setPriorityOne', $this->request);
         }
     }
 
@@ -77,39 +80,39 @@ class TicketEditForm extends Form
         if($property === 'group'){
             $this->resolver = null;
         }
-        if($property === 'status' &&  !$this->ticket->isStatus('on_hold')){
+        if($property === 'status' &&  !$this->request->isStatus('on_hold')){
             $this->onHoldReason = null;
         }
 
-        $this->syncTicket();
+        $this->syncRequest();
         parent::updated($property);
     }
 
     public function save(): void
     {
-        $this->syncTicket();
+        $this->syncRequest();
         $this->validate();
-        $this->ticket->save();
+        $this->request->save();
 
         if($this->priorityChangeReason !== ''){
-            ActivityService::priorityChangeReason($this->ticket, $this->priorityChangeReason);
+            ActivityService::priorityChangeReason($this->request, $this->priorityChangeReason);
             $this->priorityChangeReason = '';
         }
 
-        $this->dispatch('ticket-updated');
+        $this->dispatch('request-updated');
     }
 
-    protected function syncTicket(): void
+    protected function syncRequest(): void
     {
-        $this->ticket->status_id = $this->status;
-        $this->ticket->on_hold_reason_id = $this->onHoldReason;
-        $this->ticket->priority = $this->priority;
-        $this->ticket->group_id = $this->group;
-        $this->ticket->resolver_id = ($this->resolver === '') ? null : $this->resolver;
-        $this->resolvers = $this->ticket->group ? $this->ticket->group->resolvers : collect([]);
+        $this->request->status_id = $this->status;
+        $this->request->on_hold_reason_id = $this->onHoldReason;
+        $this->request->priority = $this->priority;
+        $this->request->group_id = $this->group;
+        $this->request->resolver_id = ($this->resolver === '') ? null : $this->resolver;
+        $this->resolvers = $this->request->group->resolvers;
     }
 
     protected function fieldableModel(): Fieldable{
-        return $this->ticket;
+        return $this->request;
     }
 }

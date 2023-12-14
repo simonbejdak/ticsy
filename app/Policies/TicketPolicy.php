@@ -13,11 +13,6 @@ class TicketPolicy
 
     }
 
-    public function show(User $user, Ticket $ticket)
-    {
-        return $user->id === $ticket->caller_id;
-    }
-
     public function edit(User $user, Ticket $ticket)
     {
         return ($user->id === $ticket->caller_id || $user->hasPermissionTo('view_all_tickets'));

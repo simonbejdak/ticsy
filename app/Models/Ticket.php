@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Activitable;
 use App\Helpers\Fieldable;
 use App\Helpers\Slable;
 use Carbon\Traits\Timestamp;
@@ -11,7 +12,7 @@ use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Ticket extends Model implements Slable, Fieldable
+class Ticket extends Model implements Slable, Fieldable, Activitable
 {
     use Timestamp;
     use HasFactory;

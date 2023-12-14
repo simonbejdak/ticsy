@@ -3,7 +3,7 @@
 
 namespace Tests\Feature\Ticket;
 
-use App\Livewire\TicketActivities;
+use App\Livewire\Activities;
 use App\Livewire\TicketEditForm;
 use App\Models\Category;
 use App\Models\Comment;
@@ -212,7 +212,7 @@ class EditTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder([
                 'Status:', 'Open',
@@ -235,7 +235,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -258,7 +258,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
@@ -278,7 +278,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -298,7 +298,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
@@ -318,7 +318,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Priority:', '3', 'was', Ticket::DEFAULT_PRIORITY]);
     }
@@ -337,7 +337,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
@@ -356,7 +356,7 @@ class EditTest extends TestCase
 
         $ticket = $ticket->refresh();
 
-        Livewire::test(TicketActivities::class, ['ticket' => $ticket])
+        Livewire::test(Activities::class, ['ticket' => $ticket])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
@@ -377,7 +377,7 @@ class EditTest extends TestCase
         $ticket->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->assertSeeInOrder([
                 'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',

@@ -55,11 +55,6 @@ class User extends Authenticatable
         return $this->hasMany(Request::class, 'resolver_id');
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
     public function isGroupMember(Group $group)
     {
         return $this->groups()->where('id', $group->id)->exists();

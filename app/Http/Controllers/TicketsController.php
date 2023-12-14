@@ -25,13 +25,10 @@ class TicketsController extends Controller
     public function create($type = null)
     {
         $type = $type ? Type::MAP[$type] : Type::DEFAULT;
-        $priorities = array_reverse(Ticket::PRIORITIES);
 
         return view('tickets.create', [
             'type' => $type,
             'categories' => Category::all(),
-            'priorities' => $priorities,
-            'default_priority' => Ticket::DEFAULT_PRIORITY,
         ]);
     }
 

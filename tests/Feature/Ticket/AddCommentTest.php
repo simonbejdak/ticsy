@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Ticket;
 
-use App\Livewire\TicketActivities;
+use App\Livewire\Activities;
 use App\Models\Comment;
 use App\Models\Ticket;
 use App\Models\User;
@@ -22,7 +22,7 @@ class AddCommentTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->call('addComment', ['body' => 'Comment Body',])
             ->assertForbidden();
     }
@@ -33,7 +33,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
             ->call('addComment')
             ->assertSee('Comment Body');
@@ -52,7 +52,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->set('body', 'Comment Body')
             ->call('addComment')
             ->assertSee('Comment Body');
@@ -71,7 +71,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->set('body', '')
             ->call('addComment')
             ->assertHasErrors(['body' => 'required']);
@@ -84,7 +84,7 @@ class AddCommentTest extends TestCase
         $ticket = Ticket::factory(['caller_id' => $user])->create();
 
         Livewire::actingAs($user)
-            ->test(TicketActivities::class, ['ticket' => $ticket])
+            ->test(Activities::class, ['ticket' => $ticket])
             ->set('body', Str::random(256))
             ->call('addComment')
             ->assertHasErrors(['body' => 'max']);
