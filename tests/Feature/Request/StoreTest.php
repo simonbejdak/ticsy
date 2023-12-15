@@ -4,8 +4,8 @@
 namespace Tests\Feature\Request;
 
 use App\Livewire\RequestCreateForm;
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

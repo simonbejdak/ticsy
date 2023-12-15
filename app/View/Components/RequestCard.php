@@ -2,8 +2,7 @@
 
 namespace App\View\Components;
 
-use App\Models\Request;
-use App\Models\Ticket;
+use App\Models\Request\Request;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;

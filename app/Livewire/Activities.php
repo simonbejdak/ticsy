@@ -2,14 +2,11 @@
 
 namespace App\Livewire;
 
-use App\Helpers\Activitable;
+use App\Interfaces\Activitable;
 use App\Models\Comment;
-use App\Models\Ticket;
 use App\Services\ActivityService;
-use App\Services\TicketService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 

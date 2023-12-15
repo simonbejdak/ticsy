@@ -2,18 +2,14 @@
 
 namespace App\Livewire;
 
-use App\Helpers\Fieldable;
+use App\Interfaces\Fieldable;
 use App\Models\Group;
-use App\Models\OnHoldReason;
-use App\Models\Request;
-use App\Models\RequestOnHoldReason;
-use App\Models\RequestStatus;
-use App\Models\Status;
-use App\Models\Ticket;
-use App\Models\User;
+use App\Models\Incident\IncidentStatus;
+use App\Models\Request\Request;
+use App\Models\Request\RequestOnHoldReason;
+use App\Models\Request\RequestStatus;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rule;
 
 class RequestEditForm extends Form
 {
@@ -36,7 +32,7 @@ class RequestEditForm extends Form
     {
         return [
             'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
+            'onHoldReason' => 'required_if:status,'. IncidentStatus::ON_HOLD . '|nullable|numeric',
             'priority' => 'required|numeric',
             'priorityChangeReason' => $this->request->isDirty('priority') ? 'required|string' : 'present|max:0',
             'group' => 'required|numeric',

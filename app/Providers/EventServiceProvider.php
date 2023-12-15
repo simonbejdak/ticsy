@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Models\Request;
+use App\Models\Incident\Incident;
+use App\Models\Request\Request;
 use App\Models\Ticket;
 use App\Observers\RequestObserver;
-use App\Observers\TicketObserver;
+use App\Observers\IncidentObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -29,7 +29,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Ticket::observe(TicketObserver::class);
+        Incident::observe(IncidentObserver::class);
         Request::observe(RequestObserver::class);
     }
 

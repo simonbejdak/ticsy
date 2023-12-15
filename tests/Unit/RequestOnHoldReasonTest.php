@@ -1,14 +1,9 @@
 <?php
 
 
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\RequestOnHoldReason;
-use App\Models\RequestStatus;
-use App\Models\Status;
-use App\Models\OnHoldReason;
-use App\Models\Request;
-use App\Models\User;
+use App\Models\Request\Request;
+use App\Models\Request\RequestOnHoldReason;
+use App\Models\Request\RequestStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -33,7 +28,7 @@ class RequestOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason cannot be assigned to Request if Status is not on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Request if IncidentStatus is not on hold');
 
         Request::factory([
             'status_id' => RequestStatus::OPEN,
@@ -45,7 +40,7 @@ class RequestOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason must be assigned to Request if Status is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to Request if IncidentStatus is on hold');
 
         Request::factory([
             'status_id' => RequestStatus::ON_HOLD,

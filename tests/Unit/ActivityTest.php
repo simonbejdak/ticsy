@@ -1,46 +1,47 @@
 <?php
 
 
-use App\Models\Category;
 use App\Models\Group;
-use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Models\Incident\Incident;
+use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\Incident\IncidentStatus;
+use App\Models\Request\RequestOnHoldReason;
+use App\Models\Request\RequestStatus;
 use App\Models\Ticket;
-use App\Models\TicketConfig;
 use App\Models\User;
 use Tests\TestCase;
 
 class ActivityTest extends TestCase
 {
-    public function test_it_logs_ticket_created_event()
+    public function test_it_logs_incident_created_event()
     {
-        $ticket = Ticket::factory()->create();
-        $activity = $ticket->activities->first();
+        $incident = Incident::factory()->create();
+        $activity = $incident->activities->first();
 
         $this->assertEquals('created', $activity->event);
     }
 
     public function test_it_logs_ticket_status_updated_event()
     {
-        $ticket = Ticket::factory(['status_id' => Status::OPEN])->create();
-        $ticket->status_id = Status::IN_PROGRESS;
-        $ticket->save();
+        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
+        $incident->status_id = IncidentStatus::IN_PROGRESS;
+        $incident->save();
 
-        $activity = $ticket->activities->last();
+        $activity = $incident->activities->last();
 
         $this->assertEquals('updated', $activity->event);
         $this->assertEquals('In Progress', $activity->changes['attributes']['status.name']);
         $this->assertEquals('Open', $activity->changes['old']['status.name']);
     }
 
-    public function test_it_logs_ticket_on_hold_reason_updated_event()
+    public function test_it_logs_incident_on_hold_reason_updated_event()
     {
-        $ticket = Ticket::factory()->create();
-        $ticket->status_id = Status::ON_HOLD;
-        $ticket->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
-        $ticket->save();
+        $request = Request::factory()->create();
+        $request->status_id = RequestStatus::ON_HOLD;
+        $request->on_hold_reason_id = RequestOnHoldReason::CALLER_RESPONSE;
+        $request->save();
 
-        $activity = $ticket->activities->last();
+        $activity = $request->activities->last();
 
         $this->assertEquals('updated', $activity->event);
         $this->assertEquals('Caller Response', $activity->changes['attributes']['onHoldReason.name']);

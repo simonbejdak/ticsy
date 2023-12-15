@@ -2,19 +2,13 @@
 
 namespace App\Livewire;
 
-use App\Helpers\Fieldable;
-use App\Models\Category;
-use App\Models\Group;
-use App\Models\Item;
+use App\Models\Incident\IncidentCategory;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
-use Livewire\Component;
 
 class TicketCreateForm extends Form
 {
@@ -41,19 +35,19 @@ class TicketCreateForm extends Form
         $this->category = null;
         $this->item = null;
         $this->description = null;
-        $this->categories = Category::all();
+        $this->categories = IncidentCategory::all();
         $this->items = collect([]);
     }
 
     public function updated($property): void
     {
         $this->validateOnly('category');
-        $this->items = $this->category ? Category::findOrFail($this->category)->items()->get() : collect([]);
+        $this->items = $this->category ? IncidentCategory::findOrFail($this->category)->items()->get() : collect([]);
     }
 
     public function render()
     {
-        return view('livewire.ticket-create-form');
+        return view('livewire.incident-create-form');
     }
 
     public function create()
@@ -69,6 +63,6 @@ class TicketCreateForm extends Form
         $ticket->save();
 
         Session::flash('success', 'You have successfully created a ticket');
-        return redirect()->route('tickets.edit', $ticket);
+        return redirect()->route('incidents.edit', $ticket);
     }
 }

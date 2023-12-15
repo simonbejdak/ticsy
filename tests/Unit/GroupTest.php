@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Group;
-use App\Models\Request;
+use App\Models\Request\Request;
 use App\Models\Ticket;
 use App\Models\User;
 use Tests\TestCase;

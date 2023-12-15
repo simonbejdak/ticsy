@@ -2,10 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Models\Comment;
 use App\Models\Group;
-use App\Models\Request;
-use App\Models\Ticket;
+use App\Models\Incident\Incident;
+use App\Models\Request\Request;
 use App\Models\User;
 use App\Services\TicketService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +20,7 @@ class UserTest extends TestCase
         $resolver = User::factory()->resolverAllGroups()->create();
 
         // by default resolver in tests always belongs to the default group
-        $this->assertEquals(Ticket::DEFAULT_GROUP, $resolver->groups()->findOrFail(1)->id);
+        $this->assertEquals(Group::SERVICE_DESK, $resolver->groups()->findOrFail(1)->id);
         $this->assertEquals(Group::LOCAL_6445_NEW_YORK, $resolver->groups()->findOrFail(2)->id);
     }
 
@@ -41,20 +40,20 @@ class UserTest extends TestCase
 
     function test_only_one_resolver_can_be_assigned_to_ticket()
     {
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
         $resolverOne = User::factory()->resolver()->create();
         $resolverTwo = User::factory()->resolver()->create();
 
-        TicketService::assignTicket($ticket, $resolverOne);
-        $ticket->refresh();
+        TicketService::assignTicket($incident, $resolverOne);
+        $incident->refresh();
 
-        $this->assertEquals($resolverOne->id, $ticket->resolver_id);
+        $this->assertEquals($resolverOne->id, $incident->resolver_id);
 
-        TicketService::assignTicket($ticket, $resolverTwo);
-        $ticket->refresh();
+        TicketService::assignTicket($incident, $resolverTwo);
+        $incident->refresh();
 
-        $this->assertEquals($resolverTwo->id, $ticket->resolver_id);
-        $this->assertNotEquals($resolverOne->id, $ticket->resolver_id);
+        $this->assertEquals($resolverTwo->id, $incident->resolver_id);
+        $this->assertNotEquals($resolverOne->id, $incident->resolver_id);
     }
 
     public function test_it_has_correct_default_profile_picture()

@@ -1,11 +1,8 @@
 <?php
 
 
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
-use App\Models\Request;
+use App\Models\Request\Request;
+use App\Models\Request\RequestItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

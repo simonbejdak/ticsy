@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Incident\Incident;
+use App\Models\Request\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -40,9 +42,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Group::class);
     }
 
-    public function tickets()
+    public function incidents()
     {
-        return $this->hasMany(Ticket::class, 'caller_id');
+        return $this->hasMany(Incident::class, 'caller_id');
     }
 
     public function requests()

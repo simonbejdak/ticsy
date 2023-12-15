@@ -2,16 +2,13 @@
 
 namespace App\Livewire;
 
-use App\Helpers\Fieldable;
+use App\Interfaces\Fieldable;
 use App\Models\Group;
-use App\Models\OnHoldReason;
-use App\Models\Request;
-use App\Models\Status;
+use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\Incident\IncidentStatus;
 use App\Models\Ticket;
-use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rule;
 
 class TicketEditForm extends Form
 {
@@ -34,7 +31,7 @@ class TicketEditForm extends Form
     {
         return [
             'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
+            'onHoldReason' => 'required_if:status,'. IncidentStatus::ON_HOLD . '|nullable|numeric',
             'priority' => 'required|numeric',
             'priorityChangeReason' => $this->ticket->isDirty('priority') ? 'required|string' : 'present|max:0',
             'group' => 'required|numeric',
@@ -45,10 +42,10 @@ class TicketEditForm extends Form
     public function mount(Ticket $ticket){
         $this->ticket = $ticket;
 
-        $this->statuses = Status::all();
+        $this->statuses = IncidentStatus::all();
         $this->status = $this->ticket->status_id;
 
-        $this->onHoldReasons = OnHoldReason::all();
+        $this->onHoldReasons = IncidentOnHoldReason::all();
         $this->onHoldReason = $this->ticket->on_hold_reason_id;
 
         $this->priorities = Ticket::PRIORITIES;
@@ -63,7 +60,7 @@ class TicketEditForm extends Form
 
     public function render()
     {
-        return view('livewire.ticket-edit-form');
+        return view('livewire.incident-edit-form');
     }
 
     public function updating($property, $value): void

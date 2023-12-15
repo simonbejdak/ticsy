@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Helpers\Slable;
+use App\Interfaces\Slable;
 use App\Models\Sla;
 use Illuminate\Support\Carbon;
 

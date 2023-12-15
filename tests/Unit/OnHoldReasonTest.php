@@ -1,12 +1,9 @@
 <?php
 
 
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\Status;
-use App\Models\OnHoldReason;
+use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\Incident\IncidentStatus;
 use App\Models\Ticket;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +12,7 @@ class OnHoldReasonTest extends TestCase
     use RefreshDatabase;
     public function test_it_has_many_tickets()
     {
-        $onHoldReason = OnHoldReason::firstOrFail();
+        $onHoldReason = IncidentOnHoldReason::firstOrFail();
         Ticket::factory([
             'on_hold_reason_id' => $onHoldReason,
             'description' => 'Ticket Description 1'
@@ -32,20 +29,20 @@ class OnHoldReasonTest extends TestCase
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::WAITING_FOR_VENDOR);
+        $onHoldReason = IncidentOnHoldReason::findOrFail(IncidentOnHoldReason::WAITING_FOR_VENDOR);
 
         $this->assertEquals('Waiting For Vendor', $onHoldReason->name);
     }
 
     public function test_exception_thrown_if_status_on_hold_reason_assigned_but_status_different_than_on_hold()
     {
-        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::CALLER_RESPONSE);
+        $onHoldReason = IncidentOnHoldReason::findOrFail(IncidentOnHoldReason::CALLER_RESPONSE);
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason cannot be assigned to Ticket if Status is not than on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Ticket if IncidentStatus is not than on hold');
 
-        Ticket::factory(['status_id' => Status::OPEN,
+        Ticket::factory(['status_id' => IncidentStatus::OPEN,
             'on_hold_reason_id' => $onHoldReason
         ])->create();
     }
@@ -54,7 +51,7 @@ class OnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason must be assigned to Ticket if Status is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to Ticket if IncidentStatus is on hold');
 
         Ticket::factory()->onHold()->create();
     }

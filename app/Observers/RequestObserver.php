@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Request;
+use App\Models\Request\Request;
 use App\Services\SlaService;
 use Carbon\Carbon;
 use Exception;
@@ -12,7 +12,7 @@ class RequestObserver
     function creating(Request $request): void
     {
         if ($request->category->hasItem($request->item)){
-            throw new Exception('Item cannot be assigned to Request if it does not match Category');
+            throw new Exception('IncidentItem cannot be assigned to Request if it does not match IncidentCategory');
         }
         if($request->isStatus('closed')){
             $request->closed_at = Carbon::now();

@@ -2,7 +2,6 @@
 
 namespace App\View\Components;
 
-use App\Models\Request;
 use App\Models\Ticket;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -22,6 +21,6 @@ class TicketCard extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.ticket-card');
+        return view('components.incident-card');
     }
 }

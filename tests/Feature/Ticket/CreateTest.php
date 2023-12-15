@@ -4,14 +4,11 @@
 namespace Tests\Feature\Ticket;
 
 use App\Livewire\TicketCreateForm;
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\Ticket;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
 use App\Models\TicketConfig;
-use App\Models\Type;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,7 +17,7 @@ class CreateTest extends TestCase
     use RefreshDatabase;
     function test_it_redirects_guests_to_login_page()
     {
-        $response = $this->get(route('tickets.create'));
+        $response = $this->get(route('incidents.create'));
 
         $response->assertRedirectToRoute('login');
     }
@@ -28,7 +25,7 @@ class CreateTest extends TestCase
     function test_it_loads_to_auth_users()
     {
         $this->actingAs(User::factory()->create());
-        $response = $this->get(route('tickets.create'));
+        $response = $this->get(route('incidents.create'));
 
         $response->assertSuccessful();
         $response->assertSee('Create Incident');
@@ -78,7 +75,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class)
-            ->set('category', Category::EMAIL)
+            ->set('category', IncidentCategory::EMAIL)
             ->call('create')
             ->assertHasNoErrors(['category' => 'required']);
     }
@@ -88,7 +85,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketCreateForm::class)
-            ->set('item', Item::ISSUE)
+            ->set('item', IncidentItem::ISSUE)
             ->call('create')
             ->assertHasNoErrors(['item' => 'required']);
     }

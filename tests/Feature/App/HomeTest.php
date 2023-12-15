@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Http\Controllers\HomeController;
+use App\Models\Incident\Incident;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,14 +19,14 @@ class HomeTest extends TestCase
         $response->assertSuccessful();
     }
 
-    public function test_it_does_not_display_recent_tickets_when_guest()
+    public function test_it_does_not_display_recent_incidents_when_guest()
     {
-        Ticket::factory(10, ['description' => 'Ticket Description'])->create();
+        Incident::factory(10, ['description' => 'Incident Description'])->create();
 
         $response = $this->get(route('home'));
         $response->assertSuccessful();
-        $response->assertDontSee('Recent tickets you have already created:');
-        $response->assertDontSee('Ticket Description');
+        $response->assertDontSee('Recent incidents you have already created:');
+        $response->assertDontSee('Incident Description');
     }
 
     public function test_it_does_not_display_recent_tickets_when_user_has_no_tickets()
@@ -34,22 +35,22 @@ class HomeTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertSuccessful();
-        $response->assertDontSee('Recent tickets you have already created:');
+        $response->assertDontSee('Recent incidents you have already created:');
     }
 
-    public function test_it_displays_recent_tickets_when_user_has_tickets()
+    public function test_it_displays_recent_incidents_when_user_has_incident()
     {
         $caller = User::factory()->create();
-        Ticket::factory(HomeController::RECENT_TICKETS_COUNT, [
+        Incident::factory(HomeController::RECENT_INCIDENTS_COUNT, [
             'caller_id' => $caller,
-            'description' => 'Ticket Description',
+            'description' => 'Incident Description',
         ])->create();
 
         $this->actingAs($caller);
         $response = $this->get(route('home'));
 
-        $response->assertSee('Recent tickets you have already created');
-        $response->assertSee('Ticket Description');
+        $response->assertSee('Recent incidents you have already created');
+        $response->assertSee('Incident Description');
     }
 
     public function test_it_displays_correct_number_of_recent_tickets()

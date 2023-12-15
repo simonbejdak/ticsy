@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Models\Category;
-use App\Models\RequestCategory;
-use App\Models\Request;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Request\Request;
+use App\Models\Request\RequestCategory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -31,7 +31,7 @@ class RequestCreateForm extends Form
         $this->category = null;
         $this->item = null;
         $this->description = null;
-        $this->categories = Category::all();
+        $this->categories = IncidentCategory::all();
         $this->items = collect([]);
     }
 

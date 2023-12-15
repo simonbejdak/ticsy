@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
 use Illuminate\Database\Seeder;
 
 class TestRequestCategoryRequestItemSeeder extends Seeder

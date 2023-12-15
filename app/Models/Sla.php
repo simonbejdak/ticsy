@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\Slable;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;

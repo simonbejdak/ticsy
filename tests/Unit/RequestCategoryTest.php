@@ -1,9 +1,8 @@
 <?php
 
 
-use App\Models\Category;
-use App\Models\Request;
-use App\Models\RequestCategory;
+use App\Models\Request\Request;
+use App\Models\Request\RequestCategory;
 use Tests\TestCase;
 
 class RequestCategoryTest extends TestCase

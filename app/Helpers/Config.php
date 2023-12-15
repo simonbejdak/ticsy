@@ -2,34 +2,34 @@
 
 namespace App\Helpers;
 
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
 
 class Config
 {
-    const CATEGORY_ITEM = [
-        [Category::NETWORK, Item::ISSUE],
-        [Category::NETWORK, Item::FAILED_NODE],
+    const INCIDENT_CATEGORY_TO_INCIDENT_ITEM = [
+        [IncidentCategory::NETWORK, IncidentItem::ISSUE],
+        [IncidentCategory::NETWORK, IncidentItem::FAILED_NODE],
 
-        [Category::SERVER, Item::ISSUE],
-        [Category::SERVER, Item::BACKUP],
-        [Category::SERVER, Item::FAILURE],
+        [IncidentCategory::SERVER, IncidentItem::ISSUE],
+        [IncidentCategory::SERVER, IncidentItem::BACKUP],
+        [IncidentCategory::SERVER, IncidentItem::FAILURE],
 
-        [Category::COMPUTER, Item::ISSUE],
-        [Category::COMPUTER, Item::COMPUTER_IS_TOO_SLOW],
-        [Category::COMPUTER, Item::APPLICATION_ERROR],
-        [Category::COMPUTER, Item::FAILURE],
+        [IncidentCategory::COMPUTER, IncidentItem::ISSUE],
+        [IncidentCategory::COMPUTER, IncidentItem::COMPUTER_IS_TOO_SLOW],
+        [IncidentCategory::COMPUTER, IncidentItem::APPLICATION_ERROR],
+        [IncidentCategory::COMPUTER, IncidentItem::FAILURE],
 
-        [Category::APPLICATION, Item::ISSUE],
-        [Category::APPLICATION, Item::APPLICATION_ERROR],
+        [IncidentCategory::APPLICATION, IncidentItem::ISSUE],
+        [IncidentCategory::APPLICATION, IncidentItem::APPLICATION_ERROR],
 
-        [Category::EMAIL, Item::ISSUE],
-        [Category::EMAIL, Item::BACKUP],
+        [IncidentCategory::EMAIL, IncidentItem::ISSUE],
+        [IncidentCategory::EMAIL, IncidentItem::BACKUP],
     ];
 
-    const REQUEST_CATEGORY_REQUEST_ITEM = [
+    const REQUEST_CATEGORY_TO_REQUEST_ITEM = [
         [RequestCategory::NETWORK, RequestItem::ISSUE],
         [RequestCategory::NETWORK, RequestItem::FAILED_NODE],
 

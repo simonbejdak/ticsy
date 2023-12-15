@@ -4,7 +4,7 @@
 namespace Tests\Feature\Request;
 
 use App\Http\Controllers\RequestsController;
-use App\Models\Request;
+use App\Models\Request\Request;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

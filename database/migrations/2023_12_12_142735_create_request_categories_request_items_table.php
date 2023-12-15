@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

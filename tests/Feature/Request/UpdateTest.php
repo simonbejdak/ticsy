@@ -4,11 +4,9 @@ namespace Tests\Feature\Request;
 
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
-use App\Models\OnHoldReason;
-use App\Models\Request;
-use App\Models\RequestOnHoldReason;
-use App\Models\RequestStatus;
-use App\Models\Status;
+use App\Models\Request\Request;
+use App\Models\Request\RequestOnHoldReason;
+use App\Models\Request\RequestStatus;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

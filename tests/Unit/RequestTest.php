@@ -1,12 +1,12 @@
 <?php
 
-use App\Helpers\Slable;
+use App\Interfaces\Slable;
 use App\Models\Group;
-use App\Models\Request;
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
-use App\Models\RequestOnHoldReason;
-use App\Models\RequestStatus;
+use App\Models\Request\Request;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
+use App\Models\Request\RequestOnHoldReason;
+use App\Models\Request\RequestStatus;
 use App\Models\User;
 use App\Services\SlaService;
 use Illuminate\Database\QueryException;
@@ -112,13 +112,13 @@ class RequestTest extends TestCase
     function it_gets_sla_assigned_based_on_priority(){
         $request = Request::factory(['priority' => 4])->create();
 
-        $this->assertEquals(Request::PRIORITY_SLA[4], $request->sla->minutes());
+        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[4], $request->sla->minutes());
 
         $request->priority = 3;
         $request->save();
         $request->refresh();
 
-        $this->assertEquals(Request::PRIORITY_SLA[3], $request->sla->minutes());
+        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[3], $request->sla->minutes());
     }
 
     /** @test */
@@ -206,7 +206,7 @@ class RequestTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Item cannot be assigned to Request if it does not match Category');
+        $this->expectExceptionMessage('IncidentItem cannot be assigned to Request if it does not match IncidentCategory');
 
         Request::factory(['category_id' => $category, 'item_id' => $item])->create();
     }
@@ -219,7 +219,7 @@ class RequestTest extends TestCase
         Carbon::setTestNow($date);
 
         // additional minute passes, as the test runs in real time
-        $this->assertEquals(Request::PRIORITY_SLA[$request->priority] - 6, $request->sla->minutesTillExpires());
+        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[$request->priority] - 6, $request->sla->minutesTillExpires());
 
         $request->priority = 3;
         $request->save();
@@ -228,7 +228,7 @@ class RequestTest extends TestCase
         $request->refresh();
 
         // minute has to be subtracted, as when the test runs, time adjusts
-        $this->assertEquals(Request::PRIORITY_SLA[$request->priority] - 1, $request->sla->minutesTillExpires());
+        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[$request->priority] - 1, $request->sla->minutesTillExpires());
     }
 
     /**

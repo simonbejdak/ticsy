@@ -3,15 +3,11 @@
 namespace App\View\Components;
 
 use App\Helpers\App;
-use App\Helpers\Fieldable;
-use App\Models\Ticket;
+use App\Interfaces\Fieldable;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Session;
 use Illuminate\View\Component;
-use InvalidArgumentException;
 
 class Field extends Component
 {

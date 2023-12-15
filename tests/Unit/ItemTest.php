@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\Category;
-use App\Models\Item;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,19 +15,19 @@ class ItemTest extends TestCase
 
     public function test_it_belongs_to_many_categories()
     {
-        $item = Item::firstOrFail();
+        $item = IncidentItem::firstOrFail();
 
-        $this->assertEquals('Network', $item->categories()->findOrFail(Category::NETWORK)->name);
+        $this->assertEquals('Network', $item->categories()->findOrFail(IncidentCategory::NETWORK)->name);
         $this->assertEquals(
             'Application',
-            $item->categories()->findOrFail(Category::APPLICATION)->name
+            $item->categories()->findOrFail(IncidentCategory::APPLICATION)->name
         );
     }
 
     public function test_it_has_many_tickets()
     {
-        $item = Item::firstOrFail();
-        $category = Category::firstOrFail();
+        $item = IncidentItem::firstOrFail();
+        $category = IncidentCategory::firstOrFail();
 
         Ticket::factory(['description' => 'Ticket Description 1',
             'category_id' => $category,
@@ -46,7 +46,7 @@ class ItemTest extends TestCase
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-        $item = Item::findOrFail(Item::FAILED_NODE);
+        $item = IncidentItem::findOrFail(IncidentItem::FAILED_NODE);
 
         $this->assertEquals('Failed Node', $item->name);
     }

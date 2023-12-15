@@ -5,16 +5,14 @@ namespace Tests\Feature\Request;
 
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
-use App\Models\Category;
 use App\Models\Group;
-use App\Models\Item;
-use App\Models\OnHoldReason;
-use App\Models\RequestCategory;
-use App\Models\RequestItem;
-use App\Models\RequestOnHoldReason;
-use App\Models\RequestStatus;
-use App\Models\Status;
-use App\Models\Request;
+use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\Incident\IncidentStatus;
+use App\Models\Request\Request;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
+use App\Models\Request\RequestOnHoldReason;
+use App\Models\Request\RequestStatus;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -224,7 +222,7 @@ class EditTest extends TestCase
             ->test(Activities::class, ['model' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder([
-                'Status:', 'Open',
+                'IncidentStatus:', 'Open',
                 'Priority', '4',
                 'Group:', 'SERVICE-DESK',
             ]);
@@ -246,7 +244,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
+            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open']);
     }
 
     /** @test */
@@ -270,7 +268,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
+            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
@@ -291,7 +289,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
+            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open']);
     }
 
     /** @test */
@@ -303,8 +301,8 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Status::ON_HOLD)
-            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
+            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('onHoldReason', IncidentOnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
 
@@ -395,10 +393,10 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(Activities::class, ['model' => $request])
             ->assertSeeInOrder([
-                'Status:', 'Monitoring', 'was', 'In Progress',
+                'IncidentStatus:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
-                'Status:', 'In Progress', 'was', 'Open',
-                'Created', 'Status:', 'Open',
+                'IncidentStatus:', 'In Progress', 'was', 'Open',
+                'Created', 'IncidentStatus:', 'Open',
             ]);
     }
 

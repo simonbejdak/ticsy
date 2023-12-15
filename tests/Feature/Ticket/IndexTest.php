@@ -3,7 +3,7 @@
 
 namespace Tests\Feature\Ticket;
 
-use App\Http\Controllers\TicketsController;
+use App\Http\Controllers\IncidentsController;
 use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\User;
@@ -15,7 +15,7 @@ class IndexTest extends TestCase
     use RefreshDatabase;
     function testTicketsIndexRedirectsGuestsToLoginPage()
     {
-        $response = $this->get(route('tickets.index'));
+        $response = $this->get(route('incidents.index'));
 
         $response->assertRedirectToRoute('login');
     }
@@ -31,7 +31,7 @@ class IndexTest extends TestCase
         ])->create();
 
         $this->actingAs($user);
-        $response = $this->get(route('tickets.index'));
+        $response = $this->get(route('incidents.index'));
 
         $response->assertSuccessful();
         $response->assertSee('John Doe');
@@ -48,17 +48,17 @@ class IndexTest extends TestCase
             'caller_id' => $user,
         ])->create();
 
-        Ticket::factory(TicketsController::DEFAULT_PAGINATION, [
+        Ticket::factory(IncidentsController::DEFAULT_PAGINATION, [
             'caller_id' => $user,
         ])->create();
 
         $this->actingAs($user);
 
-        $response = $this->get(route('tickets.index', ['page' => 1]));
+        $response = $this->get(route('incidents.index', ['page' => 1]));
         $response->assertSuccessful();
         $response->assertDontSee('This ticket is supposed to be on the second pagination page');
 
-        $response = $this->get(route('tickets.index', ['page' => 2]));
+        $response = $this->get(route('incidents.index', ['page' => 2]));
         $response->assertSuccessful();
         $response->assertSee('This ticket is supposed to be on the second pagination page');
     }

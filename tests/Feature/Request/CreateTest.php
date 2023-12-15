@@ -4,13 +4,10 @@
 namespace Tests\Feature\Request;
 
 use App\Livewire\RequestCreateForm;
-use App\Models\Category;
-use App\Models\Item;
-use App\Models\Request;
-use App\Models\Type;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -83,7 +80,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(RequestCreateForm::class)
-            ->set('category', Category::EMAIL)
+            ->set('category', IncidentCategory::EMAIL)
             ->call('create')
             ->assertHasNoErrors(['category' => 'required']);
     }
@@ -93,7 +90,7 @@ class CreateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(RequestCreateForm::class)
-            ->set('item', Item::ISSUE)
+            ->set('item', IncidentItem::ISSUE)
             ->call('create')
             ->assertHasNoErrors(['item' => 'required']);
     }

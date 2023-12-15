@@ -1,9 +1,8 @@
 <?php
 
 
-use App\Models\RequestStatus;
-use App\Models\Status;
-use App\Models\Request;
+use App\Models\Request\Request;
+use App\Models\Request\RequestStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

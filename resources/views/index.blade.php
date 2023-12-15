@@ -9,14 +9,14 @@
     </div>
     @isset($tickets)
         <div class="mt-12 flex flex-row justify-between">
-            <h3>Recent tickets you have already created: </h3>
-            <a href="{{route('tickets.index')}}">
+            <h3>Recent incidents you have already created: </h3>
+            <a href="{{route('incidents.index')}}">
                 <x-secondary-button>See All</x-secondary-button>
             </a>
         </div>
         <div class="mb-4 flex flex-col justify-start mt-4 space-y-4">
-            @foreach($tickets as $ticket)
-                <x-ticket-card :$ticket />
+            @foreach($incidents as $incident)
+                <x-incident-card :$incident />
             @endforeach
         </div>
     @endif

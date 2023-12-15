@@ -9,20 +9,20 @@ use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
-    const RECENT_TICKETS_COUNT = 3;
+    const RECENT_INCIDENTS_COUNT = 3;
     public function index()
     {
         $user = Auth::user();
         $data = [];
-
+//
         if($user){
-            $tickets = $user->tickets()
+            $incidents = $user->incidents()
                 ->with(['category', 'caller', 'resolver'])
                 ->latest()
-                ->take(self::RECENT_TICKETS_COUNT)
+                ->take(self::RECENT_INCIDENTS_COUNT)
                 ->get();
-            if($tickets->count() > 0){
-                $data['tickets'] = $tickets;
+            if($incidents->count() > 0){
+                $data['incidents'] = $incidents;
             }
         }
 

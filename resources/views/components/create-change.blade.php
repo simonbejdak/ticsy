@@ -1,4 +1,4 @@
-<a href="{{route('tickets.create', ['type' => 'change'])}}">
+<a href="{{route('incidents.create', ['type' => 'change'])}}">
     <x-card>
         <div class="mt-2 flex flex-row px-2 py-2 my-2 justify-between items-center max-w-xs">
             <div class="flex flex-row w-full justify-center">

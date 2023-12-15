@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Helpers\Fieldable;
+use App\Interfaces\Fieldable;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
 

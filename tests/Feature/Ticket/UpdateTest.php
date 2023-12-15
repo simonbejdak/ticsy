@@ -4,8 +4,8 @@ namespace Tests\Feature\Ticket;
 
 use App\Livewire\TicketEditForm;
 use App\Models\Group;
-use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\Incident\IncidentStatus;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,7 +23,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', IncidentStatus::IN_PROGRESS)
             ->assertForbidden();
     }
 
@@ -34,12 +34,12 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', IncidentStatus::IN_PROGRESS)
             ->call('save');
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
-            'status_id' => Status::IN_PROGRESS,
+            'status_id' => IncidentStatus::IN_PROGRESS,
         ]);
     }
 
@@ -68,7 +68,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', IncidentStatus::ON_HOLD)
             ->set('onHoldReason', $value)
             ->call('save')
             ->assertHasErrors(['onHoldReason' => $error]);
@@ -81,7 +81,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', IncidentStatus::ON_HOLD)
             ->set('onHoldReason', '')
             ->call('save')
             ->assertHasErrors(['onHoldReason' => 'required_if']);
@@ -139,14 +139,14 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::ON_HOLD)
-            ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR)
+            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('onHoldReason', IncidentOnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
-            'on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR,
+            'on_hold_reason_id' => IncidentOnHoldReason::WAITING_FOR_VENDOR,
         ]);
     }
 
@@ -157,9 +157,9 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', IncidentStatus::ON_HOLD)
             ->call('save')
-            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . Status::ON_HOLD]);
+            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . IncidentStatus::ON_HOLD]);
     }
 
     public function test_non_resolver_user_cannot_set_resolver()
@@ -186,7 +186,7 @@ class UpdateTest extends TestCase
             ->set('resolver', $resolver->id)
             ->call('save');
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'resolver_id' => $resolver->id,
         ]);
@@ -203,7 +203,7 @@ class UpdateTest extends TestCase
             ->set('priorityChangeReason', 'Production issue')
             ->call('save');
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'priority' => 2,
         ]);
@@ -219,7 +219,7 @@ class UpdateTest extends TestCase
             ->set('priority', 2)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'priority' => 4,
         ]);
@@ -229,8 +229,8 @@ class UpdateTest extends TestCase
     {
         $group = Group::firstOrFail();
         $resolver = User::factory()->resolverAllGroups()->create();
-        $ticket = Ticket::factory(['status_id' => Status::OPEN])->create();
-        $status = Status::findOrFail(Status::IN_PROGRESS);
+        $ticket = Ticket::factory(['status_id' => IncidentStatus::OPEN])->create();
+        $status = IncidentStatus::findOrFail(IncidentStatus::IN_PROGRESS);
         $priority = Ticket::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
@@ -242,7 +242,7 @@ class UpdateTest extends TestCase
             ->set('resolver', $resolver->id)
             ->call('save');
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'priority' => $priority,
             'status_id' => $status->id,
@@ -260,7 +260,7 @@ class UpdateTest extends TestCase
             ->set('priority', Ticket::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'priority' => Ticket::DEFAULT_PRIORITY,
         ]);
@@ -276,7 +276,7 @@ class UpdateTest extends TestCase
             ->call('save')
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
            'id' => $ticket->id,
            'status_id' => Ticket::DEFAULT_STATUS,
         ]);
@@ -285,7 +285,7 @@ class UpdateTest extends TestCase
     public function test_ticket_resolver_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
         $ticket = Ticket::factory([
-            'status_id' => Status::RESOLVED,
+            'status_id' => IncidentStatus::RESOLVED,
             'resolver_id' => null,
         ])->create();
 
@@ -294,7 +294,7 @@ class UpdateTest extends TestCase
             ->set('resolver', $resolver->id)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'resolver_id' => null,
         ]);
@@ -319,9 +319,9 @@ class UpdateTest extends TestCase
             ->set('status', Ticket::DEFAULT_STATUS)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
-            'status_id' => Status::CANCELLED,
+            'status_id' => IncidentStatus::CANCELLED,
         ]);
     }
 
@@ -392,7 +392,7 @@ class UpdateTest extends TestCase
             ->set('resolver', $resolver->id)
             ->call('save');
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'group_id' => $groupOne->id,
             'resolver_id' => $resolver->id,
@@ -402,7 +402,7 @@ class UpdateTest extends TestCase
             ->set('group', $groupTwo->id)
             ->call('save');
 
-        $this->assertDatabaseHas('tickets', [
+        $this->assertDatabaseHas('incidents', [
             'id' => $ticket->id,
             'group_id' => $groupTwo->id,
             'resolver_id' => null,
