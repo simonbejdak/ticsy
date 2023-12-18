@@ -222,7 +222,7 @@ class EditTest extends TestCase
             ->test(Activities::class, ['model' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder([
-                'IncidentStatus:', 'Open',
+                'Status:', 'Open',
                 'Priority', '4',
                 'Group:', 'SERVICE-DESK',
             ]);
@@ -244,7 +244,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open']);
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     /** @test */
@@ -268,7 +268,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open'])
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
@@ -289,7 +289,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open']);
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     /** @test */
@@ -393,10 +393,10 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(Activities::class, ['model' => $request])
             ->assertSeeInOrder([
-                'IncidentStatus:', 'Monitoring', 'was', 'In Progress',
+                'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
-                'IncidentStatus:', 'In Progress', 'was', 'Open',
-                'Created', 'IncidentStatus:', 'Open',
+                'Status:', 'In Progress', 'was', 'Open',
+                'Created', 'Status:', 'Open',
             ]);
     }
 

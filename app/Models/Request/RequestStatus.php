@@ -26,7 +26,8 @@ class RequestStatus extends Enum
     const CLOSED = self::MAP['closed'];
     const CANCELLED = self::MAP['cancelled'];
 
-    function requests(): hasMany{
+    function requests(): hasMany
+    {
         return $this->hasMany(Request::class, 'status_id');
     }
 }

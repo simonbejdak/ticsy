@@ -1,4 +1,4 @@
 <x-app-layout>
-    <livewire:ticket-edit-form :ticket="$ticket" />
-    <livewire:activities :model="$ticket" />
+    <livewire:incident-edit-form :incident="$incident" />
+    <livewire:activities :model="$incident" />
 </x-app-layout>

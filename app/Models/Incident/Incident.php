@@ -36,24 +36,23 @@ class Incident extends Ticket
         4 => 24 * 60,
     ];
 
-    public function category(): BelongsTo
+    public function defineCategoryClass(): string
     {
-        return $this->belongsTo(IncidentCategory::class, 'category_id');
+        return IncidentCategory::class;
+    }
+    public function defineItemClass(): string
+    {
+        return IncidentItem::class;
     }
 
-    public function item(): BelongsTo
+    public function defineStatusClass(): string
     {
-        return $this->belongsTo(IncidentItem::class, 'item_id');
+        return IncidentStatus::class;
     }
 
-    public function status(): BelongsTo
+    public function defineOnHoldReasonClass(): string
     {
-        return $this->belongsTo(IncidentStatus::class, 'status_id');
-    }
-
-    public function onHoldReason(): BelongsTo
-    {
-        return $this->belongsTo(IncidentOnHoldReason::class, 'on_hold_reason_id');
+        return IncidentOnHoldReason::class;
     }
 
     public function isArchived(): bool{
@@ -64,5 +63,30 @@ class Incident extends Ticket
             }
         }
         return $this->getOriginal('status_id') == IncidentStatus::CANCELLED;
+    }
+
+    function isFieldModifiable(string $name): bool
+    {
+        if($this->isArchived()){
+            return false;
+        }
+
+        return match($name){
+            'category', 'item', 'description' => !$this->exists,
+            'status' => auth()->user()->can('update', self::class),
+            'onHoldReason' =>
+                auth()->user()->can('update', self::class) && $this->isStatus('on_hold'),
+            'priority', 'group' =>
+                auth()->user()->can('update', self::class) && !$this->isStatus('resolved'),
+            'priorityChangeReason' =>
+                auth()->user()->can('update', self::class) &&
+                $this->priorityChanged() &&
+                !$this->isStatus('resolved'),
+            'resolver' =>
+                auth()->user()->can('update', self::class) &&
+                !$this->isStatus('resolved') &&
+                ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
+            default => false,
+        };
     }
 }

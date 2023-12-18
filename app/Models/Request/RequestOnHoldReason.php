@@ -2,11 +2,12 @@
 
 namespace App\Models\Request;
 
+use App\Models\Enum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class RequestOnHoldReason extends Model
+class RequestOnHoldReason extends Enum
 {
     use HasFactory;
 

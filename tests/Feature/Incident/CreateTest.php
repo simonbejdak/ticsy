@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Tests\Feature\Ticket;
+namespace Tests\Feature\Incident;
 
-use App\Livewire\TicketCreateForm;
+use App\Livewire\IncidentCreateForm;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\TicketConfig;
@@ -38,7 +38,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class)
+            ->test(IncidentCreateForm::class)
             ->set('category', $value)
             ->call('create')
             ->assertHasErrors(['category' => $error]);
@@ -51,7 +51,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class)
+            ->test(IncidentCreateForm::class)
             ->set('item', $value)
             ->call('create')
             ->assertHasErrors(['item' => $error]);
@@ -64,7 +64,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class)
+            ->test(IncidentCreateForm::class)
             ->set('description', $value)
             ->call('create')
             ->assertHasErrors(['description' => $error]);
@@ -74,7 +74,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class)
+            ->test(IncidentCreateForm::class)
             ->set('category', IncidentCategory::EMAIL)
             ->call('create')
             ->assertHasNoErrors(['category' => 'required']);
@@ -84,7 +84,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class)
+            ->test(IncidentCreateForm::class)
             ->set('item', IncidentItem::ISSUE)
             ->call('create')
             ->assertHasNoErrors(['item' => 'required']);
@@ -94,7 +94,7 @@ class CreateTest extends TestCase
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketCreateForm::class)
+            ->test(IncidentCreateForm::class)
             ->set('description', 'Ticket Description')
             ->call('create')
             ->assertHasNoErrors(['description' => 'required']);

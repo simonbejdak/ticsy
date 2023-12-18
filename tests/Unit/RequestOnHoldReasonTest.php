@@ -28,7 +28,7 @@ class RequestOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason cannot be assigned to Request if IncidentStatus is not on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Request if Status is not on hold');
 
         Request::factory([
             'status_id' => RequestStatus::OPEN,
@@ -40,7 +40,7 @@ class RequestOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason must be assigned to Request if IncidentStatus is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to Request if Status is on hold');
 
         Request::factory([
             'status_id' => RequestStatus::ON_HOLD,

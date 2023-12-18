@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
@@ -10,9 +11,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-class TicketCreateForm extends Form
+class IncidentCreateForm extends Form
 {
-    public Type|int $type;
     public string $typeName;
     public $category;
     public $item;
@@ -29,9 +29,8 @@ class TicketCreateForm extends Form
         ];
     }
 
-    public function mount(int $type = Type::DEFAULT)
+    public function mount()
     {
-        $this->type = Type::findOrFail($type);
         $this->category = null;
         $this->item = null;
         $this->description = null;
@@ -54,15 +53,14 @@ class TicketCreateForm extends Form
     {
         $this->validate();
 
-        $ticket = new Ticket();
-        $ticket->caller_id = Auth::user()->id;
-        $ticket->type_id = $this->type->id;
-        $ticket->category_id = $this->category;
-        $ticket->item_id = $this->item;
-        $ticket->description = $this->description;
-        $ticket->save();
+        $incident = new Incident();
+        $incident->caller_id = Auth::user()->id;
+        $incident->category_id = $this->category;
+        $incident->item_id = $this->item;
+        $incident->description = $this->description;
+        $incident->save();
 
-        Session::flash('success', 'You have successfully created a ticket');
-        return redirect()->route('incidents.edit', $ticket);
+        Session::flash('success', 'You have successfully created an incident');
+        return redirect()->route('incidents.edit', $incident);
     }
 }

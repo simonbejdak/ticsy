@@ -95,7 +95,7 @@ class RequestEditForm extends Form
             $this->priorityChangeReason = '';
         }
 
-        $this->dispatch('request-updated');
+        $this->dispatch('model-updated');
     }
 
     protected function syncRequest(): void

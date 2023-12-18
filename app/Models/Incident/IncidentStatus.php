@@ -3,8 +3,8 @@
 namespace App\Models\Incident;
 
 use App\Models\Enum;
-use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class IncidentStatus extends Enum
 {
@@ -26,7 +26,7 @@ class IncidentStatus extends Enum
     const RESOLVED = self::MAP['resolved'];
     const CANCELLED = self::MAP['cancelled'];
 
-    public function incidents()
+    public function incidents(): HasMany
     {
         return $this->hasMany(Incident::class, 'status_id');
     }

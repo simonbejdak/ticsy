@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Incident\Incident;
 use App\Models\Request\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,9 +24,9 @@ class Group extends Enum
         return $this->belongsToMany(User::class);
     }
 
-    public function tickets(): HasMany
+    public function incidents(): HasMany
     {
-        return $this->hasMany(Ticket::class);
+        return $this->hasMany(Incident::class);
     }
 
     public function requests(): HasMany

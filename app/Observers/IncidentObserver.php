@@ -16,7 +16,7 @@ class IncidentObserver
         }
 
         if(!$incident->isStatus('on_hold') && $incident->on_hold_reason_id !== null){
-            throw new Exception('On hold reason cannot be assigned to Incident if IncidentStatus is not than on hold');
+            throw new Exception('On hold reason cannot be assigned to Incident if IncidentStatus is not on hold');
         }
 
         if($incident->isStatus('on_hold') && $incident->on_hold_reason_id === null){

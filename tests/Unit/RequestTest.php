@@ -111,7 +111,6 @@ class RequestTest extends TestCase
     /** @test */
     function it_gets_sla_assigned_based_on_priority(){
         $request = Request::factory(['priority' => 4])->create();
-
         $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[4], $request->sla->minutes());
 
         $request->priority = 3;
@@ -259,10 +258,10 @@ class RequestTest extends TestCase
 
     static function priorityToSlaMinutes(){
         return [
-            [1, 15],
-            [2, 30],
-            [3, 360],
-            [4, 720],
+            [1, 30],
+            [2, 120],
+            [3, 720],
+            [4, 1440],
         ];
     }
 }

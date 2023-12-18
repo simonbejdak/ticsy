@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\Ticket;
@@ -9,7 +10,7 @@ use App\Models\TicketConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ItemTest extends TestCase
+class IncidentItemTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -24,24 +25,17 @@ class ItemTest extends TestCase
         );
     }
 
-    public function test_it_has_many_tickets()
+    public function test_it_has_many_incidents()
     {
         $item = IncidentItem::firstOrFail();
         $category = IncidentCategory::firstOrFail();
 
-        Ticket::factory(['description' => 'Ticket Description 1',
+        Incident::factory(2, [
             'category_id' => $category,
             'item_id' => $item,
         ])->create();
 
-        Ticket::factory([
-            'description' => 'Ticket Description 2',
-            'category_id' => $category,
-            'item_id' => $item,
-        ])->create();
-
-        $this->assertEquals('Ticket Description 1', $item->tickets()->findOrFail(1)->description);
-        $this->assertEquals('Ticket Description 2', $item->tickets()->findOrFail(2)->description);
+        $this->assertCount(2, $item->incidents);
     }
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()

@@ -41,8 +41,8 @@ class Activities extends Component
         $this->reset('body');
     }
 
-    #[On('request-updated')]
-    public function requestUpdated(): void
+    #[On('model-updated')]
+    public function modelUpdated(): void
     {
         $this->render();
     }

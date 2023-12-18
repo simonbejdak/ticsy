@@ -5,6 +5,10 @@ namespace App\Models;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
+use App\Models\Incident\IncidentStatus;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
+use App\Models\Request\RequestOnHoldReason;
 use App\Models\Request\RequestStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,13 +43,25 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
         return $this->belongsTo(User::class);
     }
 
-    abstract function category(): BelongsTo;
+    function category(): BelongsTo
+    {
+        return $this->belongsTo($this->defineCategoryClass(), 'category_id');
+    }
 
-    abstract function item(): BelongsTo;
+    function item(): BelongsTo
+    {
+        return $this->belongsTo($this->defineItemClass(), 'item_id');
+    }
 
-    abstract function status(): BelongsTo;
+    function status(): BelongsTo
+    {
+        return $this->belongsTo($this->defineStatusClass(), 'status_id');
+    }
 
-    abstract function onHoldReason(): BelongsTo;
+    function onHoldReason(): BelongsTo
+    {
+        return $this->belongsTo($this->defineOnHoldReasonClass(), 'on_hold_reason_id');
+    }
 
     function group(): BelongsTo
     {
@@ -60,12 +76,17 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
     function isStatus(...$statuses): bool
     {
         foreach ($statuses as $status){
-            if($this->status->name == $status){
+            if($this->status_id == $this->defineStatusClass()::MAP[$status]){
                 return true;
             }
         }
         return false;
     }
+
+    abstract function defineCategoryClass(): string;
+    abstract function defineItemClass(): string;
+    abstract function defineStatusClass(): string;
+    abstract function defineOnHoldReasonClass(): string;
 
     abstract function isArchived(): bool;
 
@@ -99,30 +120,7 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
         return $this->isDirty('priority');
     }
 
-    function isFieldModifiable(string $name): bool
-    {
-        if($this->isArchived()){
-            return false;
-        }
-
-        return match($name){
-            'category', 'item', 'description' => !$this->exists,
-            'status' => auth()->user()->can('update', self::class),
-            'onHoldReason' =>
-                auth()->user()->can('update', self::class) && $this->isStatus('on_hold'),
-            'priority', 'group' =>
-                auth()->user()->can('update', self::class) && !$this->isStatus('closed'),
-            'priorityChangeReason' =>
-                auth()->user()->can('update', self::class) &&
-                $this->priorityChanged() &&
-                !$this->isStatus('closed'),
-            'resolver' =>
-                auth()->user()->can('update', self::class) &&
-                !$this->isStatus('closed') &&
-                ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
-            default => false,
-        };
-    }
+    abstract function isFieldModifiable(string $name): bool;
 
     function getActivityLogOptions(): LogOptions
     {

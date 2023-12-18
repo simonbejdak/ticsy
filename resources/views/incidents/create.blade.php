@@ -1,3 +1,3 @@
 <x-app-layout>
-    <livewire:ticket-create-form :type="$type"/>
+    <livewire:incident-create-form />
 </x-app-layout>

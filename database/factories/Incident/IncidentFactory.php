@@ -31,7 +31,7 @@ class IncidentFactory extends Factory
         });
     }
 
-    public function statusInProgress(): Factory
+    public function statusInProgress()
     {
         return $this->state(function (array $attributes) {
             return [
@@ -40,7 +40,7 @@ class IncidentFactory extends Factory
         });
     }
 
-    public function statusOnHold(): Factory
+    public function statusOnHold()
     {
         return $this->state(function (array $attributes) {
             return [
@@ -49,7 +49,7 @@ class IncidentFactory extends Factory
         });
     }
 
-    public function statusResolved(): Factory
+    public function statusResolved()
     {
         return $this->state(function (array $attributes) {
             return [
@@ -58,7 +58,7 @@ class IncidentFactory extends Factory
         });
     }
 
-    public function statusCancelled(): Factory
+    public function statusCancelled()
     {
         return $this->state(function (array $attributes) {
             return [

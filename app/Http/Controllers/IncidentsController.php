@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Ticket;
 use App\Models\Type;
@@ -14,32 +15,27 @@ class IncidentsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $tickets = $user->tickets()
+        $incidents = $user->incidents()
             ->with(['category', 'caller', 'resolver'])
             ->orderByDesc('id')
             ->simplePaginate(self::DEFAULT_PAGINATION);
 
-        return view('tickets.index', ['incidents' => $tickets]);
+        return view('incidents.index', ['incidents' => $incidents]);
     }
 
-    public function create($type = null)
+    public function create()
     {
-        $type = $type ? Type::MAP[$type] : Type::DEFAULT;
-
-        return view('tickets.create', [
-            'type' => $type,
-            'categories' => IncidentCategory::all(),
-        ]);
+        return view('incidents.create', ['categories' => IncidentCategory::all()]);
     }
 
     public function edit($id)
     {
-        $ticket = Ticket::findOrFail($id);
+        $incident = Incident::findOrFail($id);
 
-        $this->authorize('edit', $ticket);
+        $this->authorize('edit', $incident);
 
-        return view('tickets.edit', [
-            'ticket' => $ticket,
+        return view('incidents.edit', [
+            'incident' => $incident,
         ]);
     }
 }

@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Group;
 use App\Models\Request\Request;
-use App\Models\Ticket;
+use App\Models\Incident\Incident;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -21,12 +21,12 @@ class GroupTest extends TestCase
         $this->assertEquals('Frank Loew', $group->resolvers()->orderByDesc('id')->first()->name);
     }
 
-    public function test_it_has_many_tickets(){
+    public function test_it_has_many_incidents(){
         $group = Group::firstOrFail();
 
-        Ticket::factory(2, ['group_id' => $group])->create();
+        Incident::factory(2, ['group_id' => $group])->create();
 
-        $this->assertCount(2, $group->tickets);
+        $this->assertCount(2, $group->incidents);
     }
 
     public function test_it_has_many_requests(){

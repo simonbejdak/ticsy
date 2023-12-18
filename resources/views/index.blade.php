@@ -7,7 +7,7 @@
         <x-create-request></x-create-request>
         <x-create-change></x-create-change>
     </div>
-    @isset($tickets)
+    @isset($incidents)
         <div class="mt-12 flex flex-row justify-between">
             <h3>Recent incidents you have already created: </h3>
             <a href="{{route('incidents.index')}}">

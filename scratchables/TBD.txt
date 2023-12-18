@@ -13,13 +13,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 11. Priority 1 can be added only by user with the necessary permission -- done
 12. Activities -- done
 13. SLAs -- done
-
-14. Implement Requests -- in progress
-    -- Sla calculation different than ticket
-    -- Statuses different than ticket
-    -- Categories different than ticket
-    -- Items different than ticket
-
+14. Implement Requests -- done
 
 15. Implement multiple tasks support for requests
 16. E-mail notification on ticket update

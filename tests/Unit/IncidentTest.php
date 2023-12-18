@@ -4,15 +4,12 @@
 namespace Tests\Unit;
 
 use App\Interfaces\Slable;
-use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\Incident\IncidentStatus;
-use App\Models\Ticket;
-use App\Models\TicketConfig;
-use App\Models\Type;
+use App\Models\Incident\Incident;
 use App\Models\User;
 use App\Services\SlaService;
 use Exception;
@@ -26,158 +23,149 @@ class IncidentTest extends TestCase
     use RefreshDatabase;
 
     function test_it_is_slable(){
-        $ticket = Ticket::factory()->create();
-        $this->assertTrue($ticket instanceof Slable);
+        $incident = Incident::factory()->create();
+        $this->assertTrue($incident instanceof Slable);
     }
 
     function test_it_has_many_slas(){
-        $ticket = Ticket::factory()->create();
-        SlaService::createSla($ticket);
+        $incident = Incident::factory()->create();
+        SlaService::createSla($incident);
 
-        $this->assertCount(2, $ticket->slas);
-    }
-
-    function test_it_has_one_type()
-    {
-        $type = Type::factory(['name' => 'incident'])->create();
-        $ticket = Ticket::factory(['type_id' => $type])->create();
-
-        $this->assertEquals('Incident', $ticket->type->name);
+        $this->assertCount(2, $incident->slas);
     }
 
     function test_it_has_one_category()
     {
         $category = IncidentCategory::findOrFail(IncidentCategory::NETWORK);
-        $ticket = Ticket::factory(['category_id' => $category])->create();
+        $incident = Incident::factory(['category_id' => $category])->create();
 
-        $this->assertEquals('Network', $ticket->category->name);
+        $this->assertEquals('Network', $incident->category->name);
     }
 
     function test_it_has_one_resolver(){
         $resolver = User::factory(['name' => 'John Doe'])->create()->assignRole('resolver');
-        $ticket = Ticket::factory(['resolver_id' => $resolver])->create();
+        $incident = Incident::factory(['resolver_id' => $resolver])->create();
 
-        $this->assertEquals('John Doe', $ticket->resolver->name);
+        $this->assertEquals('John Doe', $incident->resolver->name);
     }
 
     public function test_it_belongs_to_status()
     {
         $status = IncidentStatus::findOrFail(IncidentStatus::OPEN);
-        $ticket = Ticket::factory(['status_id' => $status])->create();
+        $incident = Incident::factory(['status_id' => $status])->create();
 
-        $this->assertEquals('Open', $ticket->status->name);
+        $this->assertEquals('Open', $incident->status->name);
     }
 
     public function test_it_belongs_to_status_on_hold_reason()
     {
-        $ticket = Ticket::factory(['on_hold_reason_id' => IncidentOnHoldReason::CALLER_RESPONSE])
-            ->onHold()->create();
+        $incident = Incident::factory(['on_hold_reason_id' => IncidentOnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
-        $this->assertEquals('Caller Response', $ticket->onHoldReason->name);
+        $this->assertEquals('Caller Response', $incident->onHoldReason->name);
     }
 
     public function test_it_belongs_to_group()
     {
-        $group = Group::factory(['name' => 'LOCAL-6445-NEW-YORK'])->create();
-        $ticket = Ticket::factory(['group_id' => $group])->create();
+        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $incident = Incident::factory(['group_id' => $group])->create();
 
-        $this->assertEquals('LOCAL-6445-NEW-YORK', $ticket->group->name);
+        $this->assertEquals('LOCAL-6445-NEW-YORK', $incident->group->name);
     }
 
     public function test_it_belongs_to_item()
     {
         $category = IncidentCategory::firstOrFail();
         $item = $category->items()->inRandomOrder()->first();
-        $ticket = Ticket::factory(['category_id' => $category, 'item_id' => $item])->create();
+        $incident = Incident::factory(['category_id' => $category, 'item_id' => $item])->create();
 
-        $this->assertEquals($item->name, $ticket->item->name);
+        $this->assertEquals($item->name, $incident->item->name);
     }
 
     function test_it_has_priority()
     {
-        $ticket = Ticket::factory(['priority' => 4])->create();
+        $incident = Incident::factory(['priority' => 4])->create();
 
-        $this->assertEquals(4, $ticket->priority);
+        $this->assertEquals(4, $incident->priority);
     }
 
     function test_it_has_description()
     {
-        $ticket = Ticket::factory(['description' => 'Ticket Description'])->create();
+        $incident = Incident::factory(['description' => 'Incident Description'])->create();
 
-        $this->assertEquals('Ticket Description', $ticket->description);
+        $this->assertEquals('Incident Description', $incident->description);
     }
 
     function test_it_gets_sla_assigned_based_on_priority(){
-        $ticket = Ticket::factory(['priority' => Ticket::DEFAULT_PRIORITY])->create();
+        $incident = Incident::factory(['priority' => Incident::DEFAULT_PRIORITY])->create();
 
-        $this->assertEquals(Ticket::PRIORITY_TO_SLA_MINUTES[Ticket::DEFAULT_PRIORITY], $ticket->sla->minutes());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[Incident::DEFAULT_PRIORITY], $incident->sla->minutes());
 
-        $ticket->priority = 3;
-        $ticket->save();
-        $ticket->refresh();
+        $incident->priority = 3;
+        $incident->save();
+        $incident->refresh();
 
-        $this->assertEquals(Ticket::PRIORITY_TO_SLA_MINUTES[3], $ticket->sla->minutes());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[3], $incident->sla->minutes());
     }
 
     function test_sql_violation_thrown_when_higher_priority_than_predefined_is_assigned()
     {
         $this->expectException(QueryException::class);
 
-        Ticket::factory(['priority' => count(Ticket::PRIORITIES) + 1])->create();
+        Incident::factory(['priority' => count(Incident::PRIORITIES) + 1])->create();
     }
 
     function test_it_has_correct_default_priority()
     {
-        $ticket = new Ticket();
+        $incident = new Incident();
 
-        $this->assertEquals(Ticket::DEFAULT_PRIORITY, $ticket->priority);
+        $this->assertEquals(Incident::DEFAULT_PRIORITY, $incident->priority);
     }
 
     function test_it_has_correct_default_group(){
-        $ticket = new Ticket();
+        $incident = new Incident();
 
-        $this->assertEquals(Ticket::DEFAULT_GROUP, $ticket->group->id);
+        $this->assertEquals(Incident::DEFAULT_GROUP, $incident->group->id);
     }
 
     function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
-        $ticket = Ticket::factory()->create();
-        $ticket->status_id = IncidentStatus::RESOLVED;
-        $ticket->save();
+        $incident = Incident::factory()->create();
+        $incident->status_id = IncidentStatus::RESOLVED;
+        $incident->save();
 
-        $ticket->status_id = IncidentStatus::IN_PROGRESS;
-        $ticket->save();
+        $incident->status_id = IncidentStatus::IN_PROGRESS;
+        $incident->save();
 
-        $this->assertEquals(null, $ticket->resolved_at);
+        $this->assertEquals(null, $incident->resolved_at);
     }
 
     function test_it_cannot_have_status_resolved_and_resolved_at_timestamp_null(){
-        $ticket = Ticket::factory()->create();
-        $ticket->status_id = IncidentStatus::RESOLVED;
-        $ticket->save();
+        $incident = Incident::factory()->create();
+        $incident->status_id = IncidentStatus::RESOLVED;
+        $incident->save();
 
-        $this->assertNotEquals(null, $ticket->resolved_at);
+        $this->assertNotEquals(null, $incident->resolved_at);
     }
 
     function test_it_is_not_archived_when_resolved_status_does_not_exceed_archival_period(){
-        $ticket = Ticket::factory()->create();
-        $ticket->status_id = IncidentStatus::RESOLVED;
-        $ticket->save();
+        $incident = Incident::factory()->create();
+        $incident->status_id = IncidentStatus::RESOLVED;
+        $incident->save();
 
-        $date = Carbon::now()->addDays(Ticket::ARCHIVE_AFTER_DAYS - 1);
+        $date = Carbon::now()->addDays(Incident::ARCHIVE_AFTER_DAYS - 1);
         Carbon::setTestNow($date);
 
-        $this->assertFalse($ticket->isArchived());
+        $this->assertFalse($incident->isArchived());
     }
 
     function test_it_is_archived_when_resolved_status_exceeds_archival_period(){
-        $ticket = Ticket::factory()->create();
-        $ticket->status_id = IncidentStatus::RESOLVED;
-        $ticket->save();
+        $incident = Incident::factory()->create();
+        $incident->status_id = IncidentStatus::RESOLVED;
+        $incident->save();
 
-        $date = Carbon::now()->addDays(Ticket::ARCHIVE_AFTER_DAYS);
+        $date = Carbon::now()->addDays(Incident::ARCHIVE_AFTER_DAYS);
         Carbon::setTestNow($date);
 
-        $this->assertTrue($ticket->isArchived());
+        $this->assertTrue($incident->isArchived());
     }
 
     public function test_exception_thrown_if_item_does_not_match_category()
@@ -189,65 +177,65 @@ class IncidentTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('IncidentItem cannot be assigned to Ticket if it does not match IncidentCategory');
+        $this->expectExceptionMessage('IncidentItem cannot be assigned to Incident if it does not match IncidentCategory');
 
-        Ticket::factory(['category_id' => $category, 'item_id' => $item])->create();
+        Incident::factory(['category_id' => $category, 'item_id' => $item])->create();
     }
 
     public function test_sla_resets_after_priority_is_changed()
     {
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
         $date = Carbon::now()->addMinutes(5);
         Carbon::setTestNow($date);
 
         // additional minute passes, as I'm running the test in real time
-        $this->assertEquals(Ticket::PRIORITY_TO_SLA_MINUTES[$ticket->priority] - 6, $ticket->sla->minutesTillExpires());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority] - 6, $incident->sla->minutesTillExpires());
 
-        $ticket->priority = 3;
-        $ticket->save();
-        $ticket->priority = 4;
-        $ticket->save();
-        $ticket->refresh();
+        $incident->priority = 3;
+        $incident->save();
+        $incident->priority = 4;
+        $incident->save();
+        $incident->refresh();
 
         // minute has to be subtracted, as when the test runs, time adjusts
-        $this->assertEquals(Ticket::PRIORITY_TO_SLA_MINUTES[$ticket->priority] - 1, $ticket->sla->minutesTillExpires());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority] - 1, $incident->sla->minutesTillExpires());
     }
 
     public function test_sla_has_24_hours_if_priority_is_4()
     {
-        $ticket = Ticket::factory(['priority' => 4])->create();
+        $incident = Incident::factory(['priority' => 4])->create();
 
-        $this->assertEquals(24 * 60, $ticket->sla->minutes());
+        $this->assertEquals(24 * 60, $incident->sla->minutes());
     }
 
     public function test_sla_has_12_hours_if_priority_is_3()
     {
-        $ticket = Ticket::factory(['priority' => 3])->create();
+        $incident = Incident::factory(['priority' => 3])->create();
 
-        $this->assertEquals(12 * 60, $ticket->sla->minutes());
+        $this->assertEquals(12 * 60, $incident->sla->minutes());
     }
 
     public function test_sla_has_2_hours_if_priority_is_2()
     {
-        $ticket = Ticket::factory(['priority' => 2])->create();
+        $incident = Incident::factory(['priority' => 2])->create();
 
-        $this->assertEquals(2 * 60, $ticket->sla->minutes());
+        $this->assertEquals(2 * 60, $incident->sla->minutes());
     }
 
     public function test_sla_has_30_minutes_if_priority_is_1()
     {
-        $ticket = Ticket::factory(['priority' => 1])->create();
+        $incident = Incident::factory(['priority' => 1])->create();
 
-        $this->assertEquals(30, $ticket->sla->minutes());
+        $this->assertEquals(30, $incident->sla->minutes());
     }
 
     public function test_sla_closes_itself_if_new_sla_is_created()
     {
-        $ticket = Ticket::factory()->create();
-        $sla = $ticket->sla;
+        $incident = Incident::factory()->create();
+        $sla = $incident->sla;
 
-        $ticket->priority = 3;
-        $ticket->save();
+        $incident->priority = 3;
+        $incident->save();
         $sla->refresh();
 
         $this->assertNotNull($sla->closed_at);

@@ -57,8 +57,8 @@ class HomeTest extends TestCase
     {
         $user = User::factory()->create();
 
-        for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT; $i++){
-            Ticket::factory([
+        for ($i = 1; $i <= HomeController::RECENT_INCIDENTS_COUNT; $i++){
+            Incident::factory([
                 'caller_id' => $user,
                 'description' => 'Ticket Description ' . $i,
             ])->create();
@@ -68,10 +68,10 @@ class HomeTest extends TestCase
         $this->actingAs($user);
         $response = $this->get(route('home'));
 
-        for ($i = 1; $i <= HomeController::RECENT_TICKETS_COUNT; $i++){
+        for ($i = 1; $i <= HomeController::RECENT_INCIDENTS_COUNT; $i++){
             $response->assertSee('Ticket Description ' . $i);
         }
 
-        $response->assertDontSee('Ticket Description ' . HomeController::RECENT_TICKETS_COUNT + 1);
+        $response->assertDontSee('Ticket Description ' . HomeController::RECENT_INCIDENTS_COUNT + 1);
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
 
-namespace Tests\Feature\Ticket;
+namespace Tests\Feature\Incident;
 
 use App\Http\Controllers\IncidentsController;
+use App\Models\Incident\Incident;
 use App\Models\Resolver;
 use App\Models\Ticket;
 use App\Models\User;
@@ -20,12 +21,12 @@ class IndexTest extends TestCase
         $response->assertRedirectToRoute('login');
     }
 
-    function testTicketsIndexDisplaysTicketsCorrectly()
+    function test_incident_index_displays_incidents_correctly()
     {
         $user = User::factory(['name' => 'John Doe'])->create();
         $resolver = User::factory(['name' => 'Jeff Wing'])->resolver()->create();
-        Ticket::factory([
-            'description' => 'Ticket Description',
+        Incident::factory([
+            'description' => 'Incident Description',
             'caller_id' => $user,
             'resolver_id' => $resolver,
         ])->create();
@@ -36,19 +37,19 @@ class IndexTest extends TestCase
         $response->assertSuccessful();
         $response->assertSee('John Doe');
         $response->assertSee('Jeff Wing');
-        $response->assertSee('Ticket Description');
+        $response->assertSee('Incident Description');
     }
 
     function test_tickets_index_pagination_displays_correct_number_of_tickets()
     {
         $user = User::factory()->create();
 
-        Ticket::factory([
+        Incident::factory([
             'description' => 'This ticket is supposed to be on the second pagination page',
             'caller_id' => $user,
         ])->create();
 
-        Ticket::factory(IncidentsController::DEFAULT_PAGINATION, [
+        Incident::factory(IncidentsController::DEFAULT_PAGINATION, [
             'caller_id' => $user,
         ])->create();
 

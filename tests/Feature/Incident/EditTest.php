@@ -1,20 +1,17 @@
 <?php
 
 
-namespace Tests\Feature\Ticket;
+namespace Tests\Feature\Incident;
 
 use App\Livewire\Activities;
-use App\Livewire\TicketEditForm;
+use App\Livewire\IncidentEditForm;
 use App\Models\Comment;
 use App\Models\Group;
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\Incident\IncidentStatus;
-use App\Models\Resolver;
-use App\Models\Ticket;
-use App\Models\TicketConfig;
-use App\Models\Type;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,35 +31,34 @@ class EditTest extends TestCase
 
     function test_it_errors_to_403_to_unauthorized_users()
     {
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         $this->actingAs(User::factory()->create());
-        $response = $this->get(route('incidents.edit', $ticket));
+        $response = $this->get(route('incidents.edit', $incident));
 
         $response->assertForbidden();
     }
 
     function test_it_authorizes_caller_to_view(){
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['caller_id' => $user])->create();
+        $incident = Incident::factory(['caller_id' => $user])->create();
 
         $this->actingAs($user);
-        $response = $this->get(route('incidents.edit', $ticket));
+        $response = $this->get(route('incidents.edit', $incident));
         $response->assertSuccessful();
     }
 
     function test_it_authorizes_resolver_to_view(){
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('incidents.edit', $ticket));
+        $response = $this->get(route('incidents.edit', $incident));
         $response->assertSuccessful();
     }
 
-    public function test_it_displays_ticket_data()
+    public function test_it_displays_incident_data()
     {
-        $type = Type::firstOrFail();
         $category = IncidentCategory::firstOrFail();
         $item = IncidentItem::firstOrFail();
         $group = Group::firstOrFail();
@@ -71,8 +67,7 @@ class EditTest extends TestCase
         $resolver = User::factory(['name' => 'John Doe'])->resolver(true)->create();
 
         $user = User::factory()->create();
-        $ticket = Ticket::factory([
-            'type_id' => $type,
+        $incident = Incident::factory([
             'category_id' => $category,
             'item_id' => $item,
             'group_id' => $group,
@@ -84,9 +79,8 @@ class EditTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->get(route('incidents.edit', $ticket));
+        $response = $this->get(route('incidents.edit', $incident));
         $response->assertSuccessful();
-        $response->assertSee($type->name);
         $response->assertSee($category->name);
         $response->assertSee($item->name);
         $response->assertSee($group->name);
@@ -97,11 +91,11 @@ class EditTest extends TestCase
     public function test_it_displays_comments()
     {
         $user = User::factory()->create();
-        $ticket = Ticket::factory(['caller_id' => $user])->create();
+        $incident = Incident::factory(['caller_id' => $user])->create();
         $this->actingAs($user);
-        ActivityService::comment($ticket, 'Comment Body');
+        ActivityService::comment($incident, 'Comment Body');
 
-        $response = $this->get(route('incidents.edit', $ticket));
+        $response = $this->get(route('incidents.edit', $incident));
 
         $response->assertSuccessful();
         $response->assertSee('Comment Body');
@@ -110,67 +104,67 @@ class EditTest extends TestCase
     public function test_on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->inProgress()->create();
+        $incident = Incident::factory()->statusInProgress()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->assertDontSee('On hold reason');
     }
     public function test_on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['on_hold_reason_id' => IncidentOnHoldReason::WAITING_FOR_VENDOR])
-            ->onHold()->create();
+        $incident = Incident::factory(['on_hold_reason_id' => IncidentOnHoldReason::WAITING_FOR_VENDOR])
+            ->statusOnHold()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSee('On hold reason');
     }
 
     public function test_status_can_be_set_to_cancelled_if_previous_status_is_different()
     {
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', IncidentStatus::CANCELLED)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('incidents', [
-            'id' => $ticket->id,
+            'id' => $incident->id,
             'status_id' => IncidentStatus::CANCELLED,
         ]);
     }
 
-    public function test_it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_ticket()
+    public function test_it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_incident()
     {
         // resolver does not have a permisssion to set priority one
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('priority', 1)
             ->assertForbidden();
     }
 
-    public function test_it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_ticket()
+    public function test_it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_incident()
     {
         // manager has a permisssion to set priority one
         $manager = User::factory()->manager()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($manager)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('priority', 1)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('incidents', [
-           'id' => $ticket->id,
+           'id' => $incident->id,
            'priority' => 1,
         ]);
     }
@@ -179,42 +173,42 @@ class EditTest extends TestCase
     {
         // manager has a permisssion to set priority one
         $user = User::factory()->manager()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('priority', 2)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('incidents', [
-            'id' => $ticket->id,
+            'id' => $incident->id,
             'priority' => 2,
         ]);
     }
 
-    public function test_it_emits_ticket_updated_on_save_call()
+    public function test_it_emits_incident_updated_on_save_call()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->call('save')
-            ->assertDispatched('ticket-updated');
+            ->assertDispatched('incident-updated');
     }
 
-    public function test_it_displays_ticket_created_activity()
+    public function test_it_displays_incident_created_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $ticket])
+            ->test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder([
-                'IncidentStatus:', 'Open',
+                'Status:', 'Open',
                 'Priority', '4',
                 'Group:', 'SERVICE-DESK',
             ]);
@@ -223,81 +217,81 @@ class EditTest extends TestCase
     public function test_it_displays_changes_activity_dynamically()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => IncidentStatus::OPEN])->create();
+        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', IncidentStatus::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
-            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open']);
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     public function test_it_displays_multiple_activity_changes()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory([
+        $incident = Incident::factory([
             'status_id' => IncidentStatus::OPEN,
             'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', IncidentStatus::IN_PROGRESS)
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
-            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open'])
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
     public function test_it_displays_status_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['status_id' => IncidentStatus::OPEN])->create();
+        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', IncidentStatus::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
-            ->assertSeeInOrder(['IncidentStatus:', 'In Progress', 'was', 'Open']);
+            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     public function test_it_displays_on_hold_reason_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', IncidentStatus::ON_HOLD)
             ->set('onHoldReason', IncidentOnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
@@ -305,38 +299,38 @@ class EditTest extends TestCase
     public function test_it_displays_priority_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['priority' => Ticket::DEFAULT_PRIORITY])->create();
+        $incident = Incident::factory(['priority' => Incident::DEFAULT_PRIORITY])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('priority', 3)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Priority:', '3', 'was', Ticket::DEFAULT_PRIORITY]);
+            ->assertSeeInOrder(['Priority:', '3', 'was', Incident::DEFAULT_PRIORITY]);
     }
 
     public function test_it_displays_group_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory(['group_id' => Group::SERVICE_DESK])->create();
+        $incident = Incident::factory(['group_id' => Group::SERVICE_DESK])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
@@ -344,18 +338,18 @@ class EditTest extends TestCase
     public function test_it_displays_resolver_changes_activity()
     {
         $resolver = User::factory(['name' => 'Average Joe'])->resolverAllGroups()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
-        $ticket = $ticket->refresh();
+        $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $ticket])
+        Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
@@ -363,36 +357,36 @@ class EditTest extends TestCase
     public function test_it_displays_activities_in_descending_order()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
-        $ticket->status_id = IncidentStatus::IN_PROGRESS;
-        $ticket->save();
+        $incident->status_id = IncidentStatus::IN_PROGRESS;
+        $incident->save();
 
-        ActivityService::comment($ticket, 'Test Comment');
+        ActivityService::comment($incident, 'Test Comment');
 
-        $ticket->status_id = IncidentStatus::MONITORING;
-        $ticket->save();
+        $incident->status_id = IncidentStatus::MONITORING;
+        $incident->save();
 
-        $ticket->refresh();
+        $incident->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $ticket])
+            ->test(Activities::class, ['model' => $incident])
             ->assertSeeInOrder([
-                'IncidentStatus:', 'Monitoring', 'was', 'In Progress',
+                'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
-                'IncidentStatus:', 'In Progress', 'was', 'Open',
-                'Created', 'IncidentStatus:', 'Open',
+                'Status:', 'In Progress', 'was', 'Open',
+                'Created', 'Status:', 'Open',
             ]);
     }
 
     public function test_it_requires_priority_change_reason_if_priority_changes()
     {
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(TicketEditForm::class, ['ticket' => $ticket])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('priority', 3)
             ->call('save')
             ->assertHasErrors(['priorityChangeReason' => 'required'])
@@ -404,13 +398,13 @@ class EditTest extends TestCase
     public function test_sla_bar_shows_correct_minutes()
     {
         $resolver = User::factory()->resolver()->create();
-        $ticket = Ticket::factory()->create();
+        $incident = Incident::factory()->create();
 
         $date = Carbon::now()->addMinutes(10);
         Carbon::setTestNow($date);
 
         Livewire::actingAs($resolver)
-            ->test(TicketEditForm::class, ['ticket' => $ticket])
-            ->assertSee($ticket->sla->minutesTillExpires() . ' minutes');
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->assertSee($incident->sla->minutesTillExpires() . ' minutes');
     }
 }

@@ -3,6 +3,10 @@
 namespace App\Models\Request;
 
 use App\Models\Group;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
+use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\Incident\IncidentStatus;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,10 +20,10 @@ class Request extends Ticket
     const DEFAULT_STATUS = RequestStatus::OPEN;
     const DEFAULT_GROUP = Group::SERVICE_DESK;
     const PRIORITY_TO_SLA_MINUTES = [
-        1 => 15,
-        2 => 30,
-        3 => 6 * 60,
-        4 => 12 * 60
+        1 => 30,
+        2 => 60,
+        3 => 12 * 60,
+        4 => 24 * 60
     ];
 
     protected $attributes = [
@@ -32,24 +36,23 @@ class Request extends Ticket
         'closed_at' => 'datetime',
     ];
 
-    function category(): BelongsTo
+    public function defineCategoryClass(): string
     {
-        return $this->belongsTo(RequestCategory::class, 'category_id');
+        return RequestCategory::class;
+    }
+    public function defineItemClass(): string
+    {
+        return RequestItem::class;
     }
 
-    function item(): BelongsTo
+    public function defineStatusClass(): string
     {
-        return $this->belongsTo(RequestItem::class, 'item_id');
+        return RequestStatus::class;
     }
 
-    function status(): BelongsTo
+    public function defineOnHoldReasonClass(): string
     {
-        return $this->belongsTo(RequestStatus::class, 'status_id');
-    }
-
-    function onHoldReason(): BelongsTo
-    {
-        return $this->belongsTo(RequestOnHoldReason::class, 'on_hold_reason_id');
+        return RequestOnHoldReason::class;
     }
 
     public function isArchived(): bool{
@@ -60,5 +63,30 @@ class Request extends Ticket
             }
         }
         return $this->getOriginal('status_id') == RequestStatus::CANCELLED;
+    }
+
+    function isFieldModifiable(string $name): bool
+    {
+        if($this->isArchived()){
+            return false;
+        }
+
+        return match($name){
+            'category', 'item', 'description' => !$this->exists,
+            'status' => auth()->user()->can('update', self::class),
+            'onHoldReason' =>
+                auth()->user()->can('update', self::class) && $this->isStatus('on_hold'),
+            'priority', 'group' =>
+                auth()->user()->can('update', self::class) && !$this->isStatus('closed'),
+            'priorityChangeReason' =>
+                auth()->user()->can('update', self::class) &&
+                $this->priorityChanged() &&
+                !$this->isStatus('closed'),
+            'resolver' =>
+                auth()->user()->can('update', self::class) &&
+                !$this->isStatus('closed') &&
+                ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
+            default => false,
+        };
     }
 }

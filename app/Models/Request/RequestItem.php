@@ -2,12 +2,12 @@
 
 namespace App\Models\Request;
 
+use App\Models\Enum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class RequestItem extends Model
+class RequestItem extends Enum
 {
     use HasFactory;
     const MAP = [

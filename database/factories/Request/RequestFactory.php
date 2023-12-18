@@ -7,6 +7,7 @@ use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Request\Request>
@@ -18,8 +19,9 @@ class RequestFactory extends Factory
         return [
             'category_id' => rand(1, RequestCategory::count()),
             'caller_id' => User::factory(),
-            'resolver_id' => User::factory()->resolver(),
             'description' => fake()->realText(40),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ];
     }
 

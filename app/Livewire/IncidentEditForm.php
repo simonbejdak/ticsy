@@ -4,15 +4,16 @@ namespace App\Livewire;
 
 use App\Interfaces\Fieldable;
 use App\Models\Group;
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\Incident\IncidentStatus;
 use App\Models\Ticket;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
 
-class TicketEditForm extends Form
+class IncidentEditForm extends Form
 {
-    public Ticket $ticket;
+    public Incident $incident;
     public Collection $activities;
     public $status;
     public $onHoldReason;
@@ -33,29 +34,29 @@ class TicketEditForm extends Form
             'status' => 'required|numeric',
             'onHoldReason' => 'required_if:status,'. IncidentStatus::ON_HOLD . '|nullable|numeric',
             'priority' => 'required|numeric',
-            'priorityChangeReason' => $this->ticket->isDirty('priority') ? 'required|string' : 'present|max:0',
+            'priorityChangeReason' => $this->incident->isDirty('priority') ? 'required|string' : 'present|max:0',
             'group' => 'required|numeric',
             'resolver' => 'nullable|numeric',
         ];
     }
 
-    public function mount(Ticket $ticket){
-        $this->ticket = $ticket;
+    public function mount(Incident $incident){
+        $this->incident = $incident;
 
         $this->statuses = IncidentStatus::all();
-        $this->status = $this->ticket->status_id;
+        $this->status = $this->incident->status_id;
 
         $this->onHoldReasons = IncidentOnHoldReason::all();
-        $this->onHoldReason = $this->ticket->on_hold_reason_id;
+        $this->onHoldReason = $this->incident->on_hold_reason_id;
 
         $this->priorities = Ticket::PRIORITIES;
-        $this->priority = $this->ticket->priority;
+        $this->priority = $this->incident->priority;
 
         $this->groups = Group::all();
-        $this->group = $this->ticket->group_id;
+        $this->group = $this->incident->group_id;
 
         $this->resolvers = Group::find($this->group)->resolvers()->get();
-        $this->resolver = $this->ticket->resolver_id;
+        $this->resolver = $this->incident->resolver_id;
     }
 
     public function render()
@@ -75,7 +76,7 @@ class TicketEditForm extends Form
         if($property === 'group'){
             $this->resolver = null;
         }
-        if($property === 'status' &&  !$this->ticket->isStatus('on_hold')){
+        if($property === 'status' &&  !$this->incident->isStatus('on_hold')){
             $this->onHoldReason = null;
         }
 
@@ -87,27 +88,27 @@ class TicketEditForm extends Form
     {
         $this->syncTicket();
         $this->validate();
-        $this->ticket->save();
+        $this->incident->save();
 
         if($this->priorityChangeReason !== ''){
-            ActivityService::priorityChangeReason($this->ticket, $this->priorityChangeReason);
+            ActivityService::priorityChangeReason($this->incident, $this->priorityChangeReason);
             $this->priorityChangeReason = '';
         }
 
-        $this->dispatch('ticket-updated');
+        $this->dispatch('model-updated');
     }
 
     protected function syncTicket(): void
     {
-        $this->ticket->status_id = $this->status;
-        $this->ticket->on_hold_reason_id = $this->onHoldReason;
-        $this->ticket->priority = $this->priority;
-        $this->ticket->group_id = $this->group;
-        $this->ticket->resolver_id = ($this->resolver === '') ? null : $this->resolver;
-        $this->resolvers = $this->ticket->group ? $this->ticket->group->resolvers : collect([]);
+        $this->incident->status_id = $this->status;
+        $this->incident->on_hold_reason_id = $this->onHoldReason;
+        $this->incident->priority = $this->priority;
+        $this->incident->group_id = $this->group;
+        $this->incident->resolver_id = ($this->resolver === '') ? null : $this->resolver;
+        $this->resolvers = $this->incident->group ? $this->incident->group->resolvers : collect([]);
     }
 
     protected function fieldableModel(): Fieldable{
-        return $this->ticket;
+        return $this->incident;
     }
 }
