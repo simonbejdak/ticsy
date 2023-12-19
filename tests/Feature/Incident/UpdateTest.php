@@ -6,7 +6,7 @@ use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentOnHoldReason;
-use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +24,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->assertForbidden();
     }
 
@@ -35,12 +35,12 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->call('save');
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'status_id' => IncidentStatus::IN_PROGRESS,
+            'status_id' => Status::IN_PROGRESS,
         ]);
     }
 
@@ -69,7 +69,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', $value)
             ->call('save')
             ->assertHasErrors(['onHoldReason' => $error]);
@@ -82,7 +82,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', '')
             ->call('save')
             ->assertHasErrors(['onHoldReason' => 'required_if']);
@@ -140,7 +140,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', IncidentOnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
@@ -158,9 +158,9 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->call('save')
-            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . IncidentStatus::ON_HOLD]);
+            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . Status::ON_HOLD]);
     }
 
     public function test_non_resolver_user_cannot_set_resolver()
@@ -230,8 +230,8 @@ class UpdateTest extends TestCase
     {
         $group = Group::firstOrFail();
         $resolver = User::factory()->resolverAllGroups()->create();
-        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
-        $status = IncidentStatus::findOrFail(IncidentStatus::IN_PROGRESS);
+        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
+        $status = Status::findOrFail(Status::IN_PROGRESS);
         $priority = Incident::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
@@ -286,7 +286,7 @@ class UpdateTest extends TestCase
     public function test_incident_resolver_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory([
-            'status_id' => IncidentStatus::RESOLVED,
+            'status_id' => Status::RESOLVED,
             'resolver_id' => null,
         ])->create();
 
@@ -322,7 +322,7 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'status_id' => IncidentStatus::CANCELLED,
+            'status_id' => Status::CANCELLED,
         ]);
     }
 

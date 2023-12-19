@@ -6,7 +6,7 @@ use App\Models\Request\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
+use App\Models\Status;
 use App\Models\User;
 use App\Services\SlaService;
 use Illuminate\Database\QueryException;
@@ -52,7 +52,7 @@ class RequestTest extends TestCase
     /** @test */
     public function it_belongs_to_status()
     {
-        $status = RequestStatus::findOrFail(RequestStatus::OPEN);
+        $status = Status::findOrFail(Status::OPEN);
         $request = Request::factory(['status_id' => $status])->create();
 
         $this->assertEquals($status->id, $request->status->id);
@@ -144,42 +144,42 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    function closed_at_timestamp_is_not_null_when_status_is_closed(){
-        $request = Request::factory()->statusClosed()->create();
-        $this->assertNotNull($request->closed_at);
+    function resolved_at_timestamp_is_not_null_when_status_is_closed(){
+        $request = Request::factory()->statusResolved()->create();
+        $this->assertNotNull($request->resolved_at);
     }
 
     /** @test */
-    function closed_at_timestamp_is_null_when_status_is_not_closed(){
+    function resolved_at_timestamp_is_null_when_status_is_not_closed(){
         $request = Request::factory()->create();
-        $this->assertNull($request->closed_at);
+        $this->assertNull($request->resolved_at);
     }
 
     /** @test */
-    function closed_at_timestamp_is_null_when_status_changes_from_closed_to_different_status(){
-        $request = Request::factory()->statusClosed()->create();
-        $this->assertNotNull($request->closed_at);
+    function resolved_at_timestamp_is_null_when_status_changes_from_closed_to_different_status(){
+        $request = Request::factory()->statusResolved()->create();
+        $this->assertNotNull($request->resolved_at);
 
-        $request->status_id = RequestStatus::IN_PROGRESS;
+        $request->status_id = Status::IN_PROGRESS;
         $request->save();
 
-        $this->assertNull($request->closed_at);
+        $this->assertNull($request->resolved_at);
     }
 
     /** @test */
-    function closed_at_timestamp_is_not_null_when_status_changes_to_status_closed(){
+    function resolved_at_timestamp_is_not_null_when_status_changes_to_status_closed(){
         $request = Request::factory()->create();
-        $this->assertNull($request->closed_at);
+        $this->assertNull($request->resolved_at);
 
-        $request->status_id = RequestStatus::CLOSED;
+        $request->status_id = Status::RESOLVED;
         $request->save();
 
-        $this->assertNotNull($request->closed_at);
+        $this->assertNotNull($request->resolved_at);
     }
 
     /** @test */
     function it_is_archived_when_status_closed_exceeds_archival_period(){
-        $request = Request::factory()->statusClosed()->create();
+        $request = Request::factory()->statusResolved()->create();
         $date = Carbon::now()->addDays(Request::ARCHIVE_AFTER_DAYS);
         Carbon::setTestNow($date);
 
@@ -188,7 +188,7 @@ class RequestTest extends TestCase
 
     /** @test */
     function it_is_not_archived_when_closed_status_does_not_exceed_archival_period(){
-        $request = Request::factory()->statusClosed()->create();
+        $request = Request::factory()->statusResolved()->create();
         $date = Carbon::now()->addDays(Request::ARCHIVE_AFTER_DAYS - 1);
         Carbon::setTestNow($date);
 
@@ -205,7 +205,7 @@ class RequestTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('IncidentItem cannot be assigned to Request if it does not match IncidentCategory');
+        $this->expectExceptionMessage('Item cannot be assigned to Ticket if it does not match Category');
 
         Request::factory(['category_id' => $category, 'item_id' => $item])->create();
     }

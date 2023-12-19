@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\TicketConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,7 +15,7 @@ class IncidentStatusTest extends TestCase
     use RefreshDatabase;
     public function test_it_has_many_incidents()
     {
-        $status = IncidentStatus::findOrFail(IncidentStatus::IN_PROGRESS);
+        $status = Status::findOrFail(Status::IN_PROGRESS);
         Incident::factory(2, ['status_id' => $status])->create();
 
         $this->assertCount(2, $status->incidents);

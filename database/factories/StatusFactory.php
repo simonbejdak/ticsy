@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories\Incident;
+namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Incident\IncidentStatus>
  */
-class IncidentStatusFactory extends Factory
+class StatusFactory extends Factory
 {
     public function definition(): array
     {

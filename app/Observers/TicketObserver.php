@@ -3,62 +3,63 @@
 namespace App\Observers;
 
 use App\Models\Incident\Incident;
+use App\Models\Ticket;
 use App\Services\SlaService;
 use Exception;
 use Illuminate\Support\Carbon;
 
-class IncidentObserver
+class TicketObserver
 {
-    public function creating(Incident $incident): void
+    public function creating(Ticket $ticket): void
     {
-        if ($incident->category->hasItem($incident->item)){
-            throw new Exception('IncidentItem cannot be assigned to Incident if it does not match IncidentCategory');
+        if ($ticket->category->hasItem($ticket->item)){
+            throw new Exception('Item cannot be assigned to Ticket if it does not match Category');
         }
 
-        if(!$incident->isStatus('on_hold') && $incident->on_hold_reason_id !== null){
-            throw new Exception('On hold reason cannot be assigned to Incident if IncidentStatus is not on hold');
+        if(!$ticket->isStatus('on_hold') && $ticket->on_hold_reason_id !== null){
+            throw new Exception('On hold reason cannot be assigned to Ticket if Status is not on hold');
         }
 
-        if($incident->isStatus('on_hold') && $incident->on_hold_reason_id === null){
-            throw new Exception('On hold reason must be assigned to Incident if IncidentStatus is on hold');
+        if($ticket->isStatus('on_hold') && $ticket->on_hold_reason_id === null){
+            throw new Exception('On hold reason must be assigned to Ticket if Status is on hold');
         }
 
-        if($incident->isStatus('resolved')){
-            $incident->resolved_at = Carbon::now();
+        if($ticket->isStatus('resolved')){
+            $ticket->resolved_at = Carbon::now();
         }
     }
 
-    public function created(Incident $incident): void
+    public function created(Ticket $ticket): void
     {
-        SlaService::createSla($incident);
+        SlaService::createSla($ticket);
     }
 
-    public function updating(Incident $incident): void{
-        if($incident->isArchived()){
-            throw new Exception('Incident state cannot be changed if Incident is archived');
+    public function updating(Ticket $ticket): void{
+        if($ticket->isArchived()){
+            throw new Exception('Ticket state cannot be changed if Ticket is archived');
         }
 
-        if($incident->isDirty('status_id')){
-            if(!$incident->isStatus('on_hold')){
-                $incident->on_hold_reason_id = null;
+        if($ticket->isDirty('status_id')){
+            if(!$ticket->isStatus('on_hold')){
+                $ticket->on_hold_reason_id = null;
             }
-            if($incident->isStatus('resolved')){
-                $incident->resolved_at = Carbon::now();
+            if($ticket->isStatus('resolved')){
+                $ticket->resolved_at = Carbon::now();
             } else {
-                $incident->resolved_at = null;
+                $ticket->resolved_at = null;
             }
         }
 
-        if(!$incident->isStatus('on_hold') && $incident->on_hold_reason_id !== null){
-            throw new Exception('On hold reason cannot be assigned to Incident if IncidentStatus is not on hold');
+        if(!$ticket->isStatus('on_hold') && $ticket->on_hold_reason_id !== null){
+            throw new Exception('On hold reason cannot be assigned to Ticket if Status is not on hold');
         }
     }
 
-    public function saved(Incident $incident): void
+    public function saved(Ticket $ticket): void
     {
-        if($incident->isDirty('priority')){
-            SlaService::closeSla($incident->sla);
-            SlaService::createSla($incident);
+        if($ticket->isDirty('priority')){
+            SlaService::closeSla($ticket->sla);
+            SlaService::createSla($ticket);
         }
     }
 }

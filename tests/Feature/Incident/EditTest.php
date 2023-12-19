@@ -11,7 +11,7 @@ use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\Incident\IncidentOnHoldReason;
-use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -62,7 +62,7 @@ class EditTest extends TestCase
         $category = IncidentCategory::firstOrFail();
         $item = IncidentItem::firstOrFail();
         $group = Group::firstOrFail();
-        $status = IncidentStatus::firstOrFail();
+        $status = Status::firstOrFail();
 
         $resolver = User::factory(['name' => 'John Doe'])->resolver(true)->create();
 
@@ -128,13 +128,13 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::CANCELLED)
+            ->set('status', Status::CANCELLED)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'status_id' => IncidentStatus::CANCELLED,
+            'status_id' => Status::CANCELLED,
         ]);
     }
 
@@ -196,7 +196,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->call('save')
-            ->assertDispatched('incident-updated');
+            ->assertDispatched('model-updated');
     }
 
     public function test_it_displays_incident_created_activity()
@@ -217,12 +217,12 @@ class EditTest extends TestCase
     public function test_it_displays_changes_activity_dynamically()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
+        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
@@ -237,14 +237,14 @@ class EditTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory([
-            'status_id' => IncidentStatus::OPEN,
+            'status_id' => Status::OPEN,
             'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
@@ -260,12 +260,12 @@ class EditTest extends TestCase
     public function test_it_displays_status_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
+        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
@@ -284,7 +284,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', IncidentOnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
@@ -359,12 +359,12 @@ class EditTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
 
-        $incident->status_id = IncidentStatus::IN_PROGRESS;
+        $incident->status_id = Status::IN_PROGRESS;
         $incident->save();
 
         ActivityService::comment($incident, 'Test Comment');
 
-        $incident->status_id = IncidentStatus::MONITORING;
+        $incident->status_id = Status::MONITORING;
         $incident->save();
 
         $incident->refresh();

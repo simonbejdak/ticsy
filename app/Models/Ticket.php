@@ -10,9 +10,11 @@ use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Request\RequestOnHoldReason;
 use App\Models\Request\RequestStatus;
+use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -22,16 +24,32 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
 
     protected $guarded = [];
     protected $appends = ['sla'];
+    protected $casts = [
+        'resolved_at' => 'datetime',
+    ];
+    protected $attributes = [
+        'status_id' => self::DEFAULT_STATUS,
+        'group_id' => self::DEFAULT_GROUP,
+        'priority' => self::DEFAULT_PRIORITY,
+    ];
 
+    const DEFAULT_STATUS = Status::OPEN;
+    const DEFAULT_GROUP = Group::SERVICE_DESK;
+    const DEFAULT_PRIORITY = 4;
     const ARCHIVE_AFTER_DAYS = 3;
     const PRIORITIES = [1, 2, 3, 4];
-    const DEFAULT_PRIORITY = 4;
     const PRIORITY_TO_SLA_MINUTES = [
         1 => 30,
         2 => 2 * 60,
         3 => 12 * 60,
         4 => 24 * 60,
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::observe( TicketObserver::class);
+    }
 
     function caller(): BelongsTo
     {
@@ -55,7 +73,7 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
 
     function status(): BelongsTo
     {
-        return $this->belongsTo($this->defineStatusClass(), 'status_id');
+        return $this->belongsTo(Status::class);
     }
 
     function onHoldReason(): BelongsTo
@@ -76,7 +94,7 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
     function isStatus(...$statuses): bool
     {
         foreach ($statuses as $status){
-            if($this->status_id == $this->defineStatusClass()::MAP[$status]){
+            if($this->status_id == Status::MAP[$status]){
                 return true;
             }
         }
@@ -85,14 +103,21 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
 
     abstract function defineCategoryClass(): string;
     abstract function defineItemClass(): string;
-    abstract function defineStatusClass(): string;
     abstract function defineOnHoldReasonClass(): string;
 
-    abstract function isArchived(): bool;
+    public function isArchived(): bool{
+        if($this->getOriginal('status_id') == Status::RESOLVED){
+            $archivalDate = $this->resolved_at->addDays(self::ARCHIVE_AFTER_DAYS);
+            if(isset($this->resolved_at) && Carbon::now()->greaterThan($archivalDate)){
+                return true;
+            }
+        }
+        return $this->getOriginal('status_id') == Status::CANCELLED;
+    }
 
     function calculateSlaMinutes(): int
     {
-        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
+        return $this::PRIORITY_TO_SLA_MINUTES[$this->priority];
     }
 
     function getSlaAttribute(): Sla
@@ -112,7 +137,7 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
 
     function statusChangedFrom(string $status): bool
     {
-        return $this->statusChanged() && $this->getOriginal('status_id') == RequestStatus::MAP[$status];
+        return $this->statusChanged() && $this->getOriginal('status_id') == Status::MAP[$status];
     }
 
     function priorityChanged(): bool
@@ -120,7 +145,30 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
         return $this->isDirty('priority');
     }
 
-    abstract function isFieldModifiable(string $name): bool;
+    function isFieldModifiable(string $name): bool
+    {
+        if($this->isArchived()){
+            return false;
+        }
+
+        return match($name){
+            'category', 'item', 'description' => !$this->exists,
+            'status' => auth()->user()->can('update', self::class),
+            'onHoldReason' =>
+                auth()->user()->can('update', self::class) && $this->isStatus('on_hold'),
+            'priority', 'group' =>
+                auth()->user()->can('update', self::class) && !$this->isStatus('resolved'),
+            'priorityChangeReason' =>
+                auth()->user()->can('update', self::class) &&
+                $this->priorityChanged() &&
+                !$this->isStatus('resolved'),
+            'resolver' =>
+                auth()->user()->can('update', self::class) &&
+                !$this->isStatus('resolved') &&
+                ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
+            default => false,
+        };
+    }
 
     function getActivityLogOptions(): LogOptions
     {
@@ -131,7 +179,8 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
                 'description',
                 'status.name',
                 'onHoldReason.name',
-                'priority', 'group.name',
+                'priority',
+                'group.name',
                 'resolver.name',
             ])
             ->logOnlyDirty();

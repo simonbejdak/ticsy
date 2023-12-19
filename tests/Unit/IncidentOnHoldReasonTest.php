@@ -4,6 +4,7 @@
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class IncidentOnHoldReasonTest extends TestCase
     public function test_it_has_many_tickets()
     {
         $onHoldReason = IncidentOnHoldReason::firstOrFail();
-        Incident::factory(2, ['on_hold_reason_id' => $onHoldReason,])->statusOnHold()->create();
+        Incident::factory(2, ['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
 
         $this->assertCount(2, $onHoldReason->incidents);
     }
@@ -32,9 +33,9 @@ class IncidentOnHoldReasonTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason cannot be assigned to Incident if IncidentStatus is not on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Ticket if Status is not on hold');
 
-        Incident::factory(['status_id' => IncidentStatus::OPEN,
+        Incident::factory(['status_id' => Status::OPEN,
             'on_hold_reason_id' => $onHoldReason
         ])->create();
     }
@@ -43,7 +44,7 @@ class IncidentOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason must be assigned to Incident if IncidentStatus is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to Ticket if Status is on hold');
 
         Incident::factory()->statusOnHold()->create();
     }

@@ -6,6 +6,7 @@ use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Request\RequestOnHoldReason;
 use App\Models\Request\RequestStatus;
+use App\Models\Status;
 use App\Models\Ticket;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -25,11 +26,11 @@ return new class extends Migration
             $table->text('description');
             $table->enum('category_id', RequestCategory::MAP);
             $table->enum('item_id', RequestItem::MAP);
-            $table->enum('status_id', RequestStatus::MAP);
+            $table->enum('status_id', Status::MAP);
             $table->enum('on_hold_reason_id', RequestOnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Ticket::PRIORITIES);
-            $table->timestamp('closed_at')->nullable();
+            $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         });
     }

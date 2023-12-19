@@ -7,7 +7,7 @@ use App\Models\Group;
 use App\Models\Incident\IncidentStatus;
 use App\Models\Request\Request;
 use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
+use App\Models\Status;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
 
@@ -32,7 +32,7 @@ class RequestEditForm extends Form
     {
         return [
             'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. IncidentStatus::ON_HOLD . '|nullable|numeric',
+            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
             'priority' => 'required|numeric',
             'priorityChangeReason' => $this->request->isDirty('priority') ? 'required|string' : 'present|max:0',
             'group' => 'required|numeric',
@@ -43,7 +43,7 @@ class RequestEditForm extends Form
     public function mount(Request $request){
         $this->request = $request;
 
-        $this->statuses = RequestStatus::all();
+        $this->statuses = Status::all();
         $this->status = $this->request->status_id;
 
         $this->onHoldReasons = RequestOnHoldReason::all();

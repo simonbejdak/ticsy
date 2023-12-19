@@ -6,7 +6,8 @@ use App\Livewire\RequestEditForm;
 use App\Models\Group;
 use App\Models\Request\Request;
 use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
+use App\Models\Status;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -23,7 +24,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->assertForbidden();
     }
 
@@ -34,12 +35,12 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->call('save');
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'status_id' => RequestStatus::IN_PROGRESS,
+            'status_id' => Status::IN_PROGRESS,
         ]);
     }
 
@@ -68,7 +69,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', $value)
             ->call('save')
             ->assertHasErrors(['onHoldReason' => $error]);
@@ -81,7 +82,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', '')
             ->call('save')
             ->assertHasErrors(['onHoldReason' => 'required_if']);
@@ -139,7 +140,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', RequestOnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
@@ -157,9 +158,9 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->call('save')
-            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . RequestStatus::ON_HOLD]);
+            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . Status::ON_HOLD]);
     }
 
     public function test_non_resolver_user_cannot_set_resolver()
@@ -228,7 +229,7 @@ class UpdateTest extends TestCase
         $group = Group::firstOrFail();
         $resolver = User::factory()->resolverAllGroups()->create();
         $request = Request::factory()->create();
-        $status = RequestStatus::findOrFail(RequestStatus::IN_PROGRESS);
+        $status = Status::findOrFail(Status::IN_PROGRESS);
         $priority = Request::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
@@ -251,7 +252,7 @@ class UpdateTest extends TestCase
 
     public function test_request_priority_cannot_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusClosed()->create();
+        $request = Request::factory()->statusResolved()->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
@@ -260,30 +261,30 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'priority' => Request::DEFAULT_PRIORITY,
+            'priority' => Ticket::DEFAULT_PRIORITY,
         ]);
     }
 
     public function test_request_status_can_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusClosed()->create();
+        $request = Request::factory()->statusResolved()->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Request::DEFAULT_STATUS)
+            ->set('status', Ticket::DEFAULT_STATUS)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('requests', [
            'id' => $request->id,
-           'status_id' => Request::DEFAULT_STATUS,
+           'status_id' => Ticket::DEFAULT_STATUS,
         ]);
     }
 
     public function test_request_resolver_cannot_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
         $request = Request::factory([
-            'status_id' => RequestStatus::CLOSED,
+            'status_id' => Status::RESOLVED,
             'resolver_id' => null,
         ])->create();
 
@@ -304,7 +305,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', Request::DEFAULT_PRIORITY - 1)
+            ->set('priority', Ticket::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
     }
 
@@ -314,12 +315,12 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Request::DEFAULT_STATUS)
+            ->set('status', Ticket::DEFAULT_STATUS)
             ->assertForbidden();
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'status_id' => RequestStatus::CANCELLED,
+            'status_id' => Status::CANCELLED,
         ]);
     }
 

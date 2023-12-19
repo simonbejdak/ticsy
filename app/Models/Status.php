@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Models\Incident;
+namespace App\Models;
 
 use App\Models\Enum;
+use App\Models\Incident\Incident;
+use App\Models\Request\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class IncidentStatus extends Enum
+class Status extends Enum
 {
     use HasFactory;
 
@@ -28,6 +30,11 @@ class IncidentStatus extends Enum
 
     public function incidents(): HasMany
     {
-        return $this->hasMany(Incident::class, 'status_id');
+        return $this->hasMany(Incident::class);
+    }
+
+    public function requests(): HasMany
+    {
+        return $this->hasMany(Request::class);
     }
 }

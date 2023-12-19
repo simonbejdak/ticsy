@@ -5,9 +5,8 @@ use App\Models\Group;
 use App\Models\Incident\Incident;
 use App\Models\Request\Request;
 use App\Models\Incident\IncidentOnHoldReason;
-use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
 use App\Models\Ticket;
 use App\Models\User;
 use Tests\TestCase;
@@ -32,8 +31,8 @@ class ActivityTest extends TestCase
 
     public function test_it_logs_incident_status_updated_event()
     {
-        $incident = Incident::factory(['status_id' => IncidentStatus::OPEN])->create();
-        $incident->status_id = IncidentStatus::IN_PROGRESS;
+        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
+        $incident->status_id = Status::IN_PROGRESS;
         $incident->save();
 
         $activity = $incident->activities->last();
@@ -45,8 +44,8 @@ class ActivityTest extends TestCase
 
     public function test_it_logs_request_status_updated_event()
     {
-        $request = Request::factory(['status_id' => RequestStatus::OPEN])->create();
-        $request->status_id = RequestStatus::IN_PROGRESS;
+        $request = Request::factory(['status_id' => Status::OPEN])->create();
+        $request->status_id = Status::IN_PROGRESS;
         $request->save();
 
         $activity = $request->activities->last();
@@ -59,7 +58,7 @@ class ActivityTest extends TestCase
     public function test_it_logs_incident_on_hold_reason_updated_event()
     {
         $incident = Incident::factory()->create();
-        $incident->status_id = IncidentStatus::ON_HOLD;
+        $incident->status_id = Status::ON_HOLD;
         $incident->on_hold_reason_id = IncidentOnHoldReason::CALLER_RESPONSE;
         $incident->save();
 
@@ -73,7 +72,7 @@ class ActivityTest extends TestCase
     public function test_it_logs_request_on_hold_reason_updated_event()
     {
         $request = Request::factory()->create();
-        $request->status_id = RequestStatus::ON_HOLD;
+        $request->status_id = Status::ON_HOLD;
         $request->on_hold_reason_id = RequestOnHoldReason::CALLER_RESPONSE;
         $request->save();
 

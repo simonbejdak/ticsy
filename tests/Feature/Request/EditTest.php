@@ -12,7 +12,7 @@ use App\Models\Request\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
+use App\Models\Status;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,7 +67,7 @@ class EditTest extends TestCase
         $category = RequestCategory::firstOrFail();
         $item = RequestItem::firstOrFail();
         $group = Group::firstOrFail();
-        $status = RequestStatus::firstOrFail();
+        $status = Status::firstOrFail();
 
         $caller = User::factory()->create();
         $resolver = User::factory(['name' => 'John Doe'])->resolverAllGroups()->create();
@@ -137,13 +137,13 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::CANCELLED)
+            ->set('status', Status::CANCELLED)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'status_id' => RequestStatus::CANCELLED,
+            'status_id' => Status::CANCELLED,
         ]);
     }
 
@@ -209,7 +209,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
             ->call('save')
-            ->assertDispatched('request-updated');
+            ->assertDispatched('model-updated');
     }
 
     /** @test */
@@ -236,7 +236,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
@@ -252,14 +252,14 @@ class EditTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         $request = Request::factory([
-            'status_id' => RequestStatus::OPEN,
+            'status_id' => Status::OPEN,
             'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
@@ -281,7 +281,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
-            ->set('status', RequestStatus::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
@@ -301,7 +301,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
-            ->set('status', IncidentStatus::ON_HOLD)
+            ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', IncidentOnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
@@ -380,12 +380,12 @@ class EditTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $request = Request::factory()->create();
 
-        $request->status_id = RequestStatus::IN_PROGRESS;
+        $request->status_id = Status::IN_PROGRESS;
         $request->save();
 
         ActivityService::comment($request, 'Test Comment');
 
-        $request->status_id = RequestStatus::MONITORING;
+        $request->status_id = Status::MONITORING;
         $request->save();
 
         $request->refresh();

@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\Ticket;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
@@ -32,7 +33,7 @@ class IncidentEditForm extends Form
     {
         return [
             'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. IncidentStatus::ON_HOLD . '|nullable|numeric',
+            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
             'priority' => 'required|numeric',
             'priorityChangeReason' => $this->incident->isDirty('priority') ? 'required|string' : 'present|max:0',
             'group' => 'required|numeric',
@@ -43,7 +44,7 @@ class IncidentEditForm extends Form
     public function mount(Incident $incident){
         $this->incident = $incident;
 
-        $this->statuses = IncidentStatus::all();
+        $this->statuses = Status::all();
         $this->status = $this->incident->status_id;
 
         $this->onHoldReasons = IncidentOnHoldReason::all();

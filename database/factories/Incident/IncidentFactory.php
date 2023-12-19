@@ -4,7 +4,7 @@ namespace Database\Factories\Incident;
 
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
-use App\Models\Incident\IncidentStatus;
+use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -35,7 +35,7 @@ class IncidentFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => IncidentStatus::IN_PROGRESS,
+                'status_id' => Status::IN_PROGRESS,
             ];
         });
     }
@@ -44,7 +44,7 @@ class IncidentFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => IncidentStatus::ON_HOLD,
+                'status_id' => Status::ON_HOLD,
             ];
         });
     }
@@ -53,7 +53,7 @@ class IncidentFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => IncidentStatus::RESOLVED,
+                'status_id' => Status::RESOLVED,
             ];
         });
     }
@@ -62,7 +62,7 @@ class IncidentFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => IncidentStatus::CANCELLED,
+                'status_id' => Status::CANCELLED,
             ];
         });
     }
