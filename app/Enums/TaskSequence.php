@@ -4,6 +4,6 @@ namespace App\Enums;
 
 enum TaskSequence: int
 {
-    case ONE_BY_ONE = 1;
-    case MULTIPLE_AT_ONCE = 2;
+    case GRADUAL = 1;
+    case AT_ONCE = 2;
 }

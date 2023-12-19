@@ -10,10 +10,10 @@ class Incident extends Ticket
     use HasFactory;
 
     const PRIORITY_TO_SLA_MINUTES = [
-        1 => 30,
-        2 => 2 * 60,
-        3 => 12 * 60,
-        4 => 24 * 60,
+        1 => 15,
+        2 => 60,
+        3 => 6 * 60,
+        4 => 12 * 60,
     ];
 
     public function defineCategoryClass(): string

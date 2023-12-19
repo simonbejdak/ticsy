@@ -5,11 +5,6 @@ namespace App\Models;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
-use App\Models\Incident\IncidentStatus;
-use App\Models\Request\RequestCategory;
-use App\Models\Request\RequestItem;
-use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
 use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,25 +12,15 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\Task;
 
 abstract class Ticket extends Model implements Slable, Fieldable, Activitable
 {
-    use LogsActivity;
+    use LogsActivity, Task;
 
     protected $guarded = [];
     protected $appends = ['sla'];
-    protected $casts = [
-        'resolved_at' => 'datetime',
-    ];
-    protected $attributes = [
-        'status_id' => self::DEFAULT_STATUS,
-        'group_id' => self::DEFAULT_GROUP,
-        'priority' => self::DEFAULT_PRIORITY,
-    ];
 
-    const DEFAULT_STATUS = Status::OPEN;
-    const DEFAULT_GROUP = Group::SERVICE_DESK;
-    const DEFAULT_PRIORITY = 4;
     const ARCHIVE_AFTER_DAYS = 3;
     const PRIORITIES = [1, 2, 3, 4];
     const PRIORITY_TO_SLA_MINUTES = [
@@ -71,21 +56,6 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
         return $this->belongsTo($this->defineItemClass(), 'item_id');
     }
 
-    function status(): BelongsTo
-    {
-        return $this->belongsTo(Status::class);
-    }
-
-    function onHoldReason(): BelongsTo
-    {
-        return $this->belongsTo($this->defineOnHoldReasonClass(), 'on_hold_reason_id');
-    }
-
-    function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class);
-    }
-
     function slas(): MorphMany
     {
         return $this->morphMany(Sla::class, 'slable');
@@ -103,7 +73,6 @@ abstract class Ticket extends Model implements Slable, Fieldable, Activitable
 
     abstract function defineCategoryClass(): string;
     abstract function defineItemClass(): string;
-    abstract function defineOnHoldReasonClass(): string;
 
     public function isArchived(): bool{
         if($this->getOriginal('status_id') == Status::RESOLVED){

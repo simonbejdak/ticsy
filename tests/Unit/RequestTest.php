@@ -256,6 +256,21 @@ class RequestTest extends TestCase
         $this->assertNotNull($sla->closed_at);
     }
 
+    /** @test */
+    function it_has_task_sequence_attribute(){
+
+    }
+
+    /** @test */
+    function if_task_sequence_is_gradual_second_task_starts_after_first_task_is_closed(){
+
+    }
+
+    /** @test */
+    function if_task_sequence_is_at_once_second_task_starts_after_taskable_is_created(){
+
+    }
+
     static function priorityToSlaMinutes(){
         return [
             [1, 30],

@@ -201,32 +201,15 @@ class IncidentTest extends TestCase
         $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority] - 1, $incident->sla->minutesTillExpires());
     }
 
-    public function test_sla_has_24_hours_if_priority_is_4()
+    /**
+     * @test
+     * @dataProvider priorityToSlaMinutes
+     */
+    public function sla_minutes_match_priorities_according_to_data_provider($priority, $slaMinutes)
     {
-        $incident = Incident::factory(['priority' => 4])->create();
+        $incident = Incident::factory(['priority' => $priority])->create();
 
-        $this->assertEquals(24 * 60, $incident->sla->minutes());
-    }
-
-    public function test_sla_has_12_hours_if_priority_is_3()
-    {
-        $incident = Incident::factory(['priority' => 3])->create();
-
-        $this->assertEquals(12 * 60, $incident->sla->minutes());
-    }
-
-    public function test_sla_has_2_hours_if_priority_is_2()
-    {
-        $incident = Incident::factory(['priority' => 2])->create();
-
-        $this->assertEquals(2 * 60, $incident->sla->minutes());
-    }
-
-    public function test_sla_has_30_minutes_if_priority_is_1()
-    {
-        $incident = Incident::factory(['priority' => 1])->create();
-
-        $this->assertEquals(30, $incident->sla->minutes());
+        $this->assertEquals($slaMinutes, $incident->sla->minutes());
     }
 
     public function test_sla_closes_itself_if_new_sla_is_created()
@@ -239,5 +222,14 @@ class IncidentTest extends TestCase
         $sla->refresh();
 
         $this->assertNotNull($sla->closed_at);
+    }
+
+    static function priorityToSlaMinutes(){
+        return [
+            [1, 15],
+            [2, 60],
+            [3, 360],
+            [4, 720],
+        ];
     }
 }
