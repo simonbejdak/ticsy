@@ -5,11 +5,11 @@ namespace Tests\Unit;
 
 use App\Interfaces\Slable;
 use App\Models\Group;
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
-use App\Models\Incident\Incident;
 use App\Models\User;
 use App\Services\SlaService;
 use Exception;
@@ -59,7 +59,7 @@ class IncidentTest extends TestCase
 
     public function test_it_belongs_to_status_on_hold_reason()
     {
-        $incident = Incident::factory(['on_hold_reason_id' => IncidentOnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
+        $incident = Incident::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
         $this->assertEquals('Caller Response', $incident->onHoldReason->name);
     }
@@ -177,7 +177,7 @@ class IncidentTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Item cannot be assigned to Ticket if it does not match Category');
+        $this->expectExceptionMessage('Item cannot be assigned to TicketTrait if it does not match Category');
 
         Incident::factory(['category_id' => $category, 'item_id' => $item])->create();
     }

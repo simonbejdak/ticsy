@@ -5,7 +5,7 @@ namespace Tests\Feature\Request;
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
 use App\Models\Request\Request;
-use App\Models\Request\RequestOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
@@ -141,13 +141,13 @@ class UpdateTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::ON_HOLD)
-            ->set('onHoldReason', RequestOnHoldReason::WAITING_FOR_VENDOR)
+            ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'on_hold_reason_id' => RequestOnHoldReason::WAITING_FOR_VENDOR,
+            'on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR,
         ]);
     }
 
@@ -261,7 +261,7 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'priority' => Ticket::DEFAULT_PRIORITY,
+            'priority' => Request::DEFAULT_PRIORITY,
         ]);
     }
 
@@ -271,13 +271,13 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Ticket::DEFAULT_STATUS)
+            ->set('status', Request::DEFAULT_STATUS)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('requests', [
            'id' => $request->id,
-           'status_id' => Ticket::DEFAULT_STATUS,
+           'status_id' => Request::DEFAULT_STATUS,
         ]);
     }
 
@@ -305,7 +305,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', Ticket::DEFAULT_PRIORITY - 1)
+            ->set('priority', Request::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
     }
 
@@ -315,7 +315,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Ticket::DEFAULT_STATUS)
+            ->set('status', Request::DEFAULT_STATUS)
             ->assertForbidden();
 
         $this->assertDatabaseHas('requests', [

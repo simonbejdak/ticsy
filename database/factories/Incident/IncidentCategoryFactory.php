@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Incident;
 
-use App\Models\Incident\IncidentCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 

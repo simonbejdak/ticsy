@@ -1,11 +1,13 @@
 <?php
 
 use App\Models\Group;
+use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
-use App\Models\Ticket;
+use App\Traits\TicketTrait;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,9 +23,9 @@ return new class extends Migration {
             $table->enum('category_id', IncidentCategory::MAP);
             $table->enum('item_id', IncidentItem::MAP);
             $table->enum('status_id', Status::MAP);
-            $table->enum('on_hold_reason_id', IncidentOnHoldReason::MAP)->nullable();
+            $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
-            $table->enum('priority', Ticket::PRIORITIES);
+            $table->enum('priority', Incident::PRIORITIES);
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         });

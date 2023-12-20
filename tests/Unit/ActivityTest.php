@@ -3,10 +3,9 @@
 
 use App\Models\Group;
 use App\Models\Incident\Incident;
+use App\Models\OnHoldReason;
 use App\Models\Request\Request;
-use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\Status;
-use App\Models\Request\RequestOnHoldReason;
 use App\Models\Ticket;
 use App\Models\User;
 use Tests\TestCase;
@@ -59,7 +58,7 @@ class ActivityTest extends TestCase
     {
         $incident = Incident::factory()->create();
         $incident->status_id = Status::ON_HOLD;
-        $incident->on_hold_reason_id = IncidentOnHoldReason::CALLER_RESPONSE;
+        $incident->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
         $incident->save();
 
         $activity = $incident->activities->last();
@@ -73,7 +72,7 @@ class ActivityTest extends TestCase
     {
         $request = Request::factory()->create();
         $request->status_id = Status::ON_HOLD;
-        $request->on_hold_reason_id = RequestOnHoldReason::CALLER_RESPONSE;
+        $request->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
         $request->save();
 
         $activity = $request->activities->last();
@@ -99,7 +98,7 @@ class ActivityTest extends TestCase
 
     public function test_it_logs_request_priority_updated_event()
     {
-        $request = Request::factory(['priority' => Ticket::DEFAULT_PRIORITY])->create();
+        $request = Request::factory(['priority' => Request::DEFAULT_PRIORITY])->create();
         $initialPriority = $request->priority;
         $request->priority = 3;
         $request->save();

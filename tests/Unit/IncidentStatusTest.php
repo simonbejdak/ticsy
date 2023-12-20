@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentStatus;
 use App\Models\Status;
-use App\Models\Ticket;
 use App\Models\TicketConfig;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

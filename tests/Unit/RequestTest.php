@@ -1,12 +1,14 @@
 <?php
 
+use App\Enums\TaskSequence;
 use App\Interfaces\Slable;
 use App\Models\Group;
 use App\Models\Request\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\Request\RequestOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\SlaService;
 use Illuminate\Database\QueryException;
@@ -50,6 +52,14 @@ class RequestTest extends TestCase
     }
 
     /** @test */
+    function it_has_many_tasks(){
+        $request = Request::factory()->create();
+        Task::factory(2, ['request_id' => $request])->create();
+
+        $this->assertCount(2, $request->tasks);
+    }
+
+    /** @test */
     public function it_belongs_to_status()
     {
         $status = Status::findOrFail(Status::OPEN);
@@ -61,7 +71,7 @@ class RequestTest extends TestCase
     /** @test */
     public function it_belongs_to_status_on_hold_reason()
     {
-        $onHoldReason = RequestOnHoldReason::firstOrFail();
+        $onHoldReason = OnHoldReason::firstOrFail();
         $request = Request::factory(['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
 
         $this->assertEquals($onHoldReason->id, $request->onHoldReason->id);
@@ -205,7 +215,7 @@ class RequestTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Item cannot be assigned to Ticket if it does not match Category');
+        $this->expectExceptionMessage('Item cannot be assigned to TicketTrait if it does not match Category');
 
         Request::factory(['category_id' => $category, 'item_id' => $item])->create();
     }
@@ -258,17 +268,19 @@ class RequestTest extends TestCase
 
     /** @test */
     function it_has_task_sequence_attribute(){
+        $request = Request::factory()->create();
 
+        $this->assertNotNull($request->task_sequence);
     }
 
     /** @test */
     function if_task_sequence_is_gradual_second_task_starts_after_first_task_is_closed(){
-
+        $this->markTestSkipped();
     }
 
     /** @test */
     function if_task_sequence_is_at_once_second_task_starts_after_taskable_is_created(){
-
+        $this->markTestSkipped();
     }
 
     static function priorityToSlaMinutes(){

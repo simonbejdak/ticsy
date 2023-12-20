@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\Incident;
+namespace App\Models;
 
-use App\Models\Enum;
-use App\Models\Ticket;
+use App\Models\Incident\Incident;
+use App\Models\Request\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class IncidentOnHoldReason extends Enum
+class OnHoldReason extends Enum
 {
     use HasFactory;
 
@@ -25,6 +25,11 @@ class IncidentOnHoldReason extends Enum
 
     public function incidents(): HasMany
     {
-        return $this->hasMany(Incident::class, 'on_hold_reason_id');
+        return $this->hasMany(Incident::class);
+    }
+
+    public function requests(): HasMany
+    {
+        return $this->hasMany(Request::class);
     }
 }

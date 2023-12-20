@@ -5,7 +5,7 @@ namespace Tests\Feature\Incident;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident\Incident;
-use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
@@ -141,13 +141,13 @@ class UpdateTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::ON_HOLD)
-            ->set('onHoldReason', IncidentOnHoldReason::WAITING_FOR_VENDOR)
+            ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'on_hold_reason_id' => IncidentOnHoldReason::WAITING_FOR_VENDOR,
+            'on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR,
         ]);
     }
 
@@ -254,16 +254,16 @@ class UpdateTest extends TestCase
 
     public function test_incident_priority_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['priority' => Ticket::DEFAULT_PRIORITY])->statusResolved()->create();
+        $incident = Incident::factory(['priority' => Incident::DEFAULT_PRIORITY])->statusResolved()->create();
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('priority', Ticket::DEFAULT_PRIORITY - 1)
+            ->set('priority', Incident::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'priority' => Ticket::DEFAULT_PRIORITY,
+            'priority' => Incident::DEFAULT_PRIORITY,
         ]);
     }
 

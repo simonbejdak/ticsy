@@ -4,9 +4,8 @@ namespace App\Livewire;
 
 use App\Interfaces\Fieldable;
 use App\Models\Group;
-use App\Models\Incident\IncidentStatus;
+use App\Models\OnHoldReason;
 use App\Models\Request\Request;
-use App\Models\Request\RequestOnHoldReason;
 use App\Models\Status;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
@@ -46,7 +45,7 @@ class RequestEditForm extends Form
         $this->statuses = Status::all();
         $this->status = $this->request->status_id;
 
-        $this->onHoldReasons = RequestOnHoldReason::all();
+        $this->onHoldReasons = OnHoldReason::all();
         $this->onHoldReason = $this->request->on_hold_reason_id;
 
         $this->priorities = Request::PRIORITIES;

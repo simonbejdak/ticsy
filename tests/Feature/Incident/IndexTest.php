@@ -6,7 +6,6 @@ namespace Tests\Feature\Incident;
 use App\Http\Controllers\IncidentsController;
 use App\Models\Incident\Incident;
 use App\Models\Resolver;
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

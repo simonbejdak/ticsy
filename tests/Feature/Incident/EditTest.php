@@ -5,12 +5,11 @@ namespace Tests\Feature\Incident;
 
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
-use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\ActivityService;
@@ -113,7 +112,7 @@ class EditTest extends TestCase
     public function test_on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['on_hold_reason_id' => IncidentOnHoldReason::WAITING_FOR_VENDOR])
+        $incident = Incident::factory(['on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR])
             ->statusOnHold()->create();
 
         Livewire::actingAs($resolver)
@@ -285,7 +284,7 @@ class EditTest extends TestCase
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::ON_HOLD)
-            ->set('onHoldReason', IncidentOnHoldReason::CALLER_RESPONSE)
+            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
 

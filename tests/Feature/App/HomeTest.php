@@ -4,7 +4,6 @@ namespace App;
 
 use App\Http\Controllers\HomeController;
 use App\Models\Incident\Incident;
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -60,7 +59,7 @@ class HomeTest extends TestCase
         for ($i = 1; $i <= HomeController::RECENT_INCIDENTS_COUNT; $i++){
             Incident::factory([
                 'caller_id' => $user,
-                'description' => 'Ticket Description ' . $i,
+                'description' => 'TicketTrait Description ' . $i,
             ])->create();
         }
 
@@ -69,9 +68,9 @@ class HomeTest extends TestCase
         $response = $this->get(route('home'));
 
         for ($i = 1; $i <= HomeController::RECENT_INCIDENTS_COUNT; $i++){
-            $response->assertSee('Ticket Description ' . $i);
+            $response->assertSee('TicketTrait Description ' . $i);
         }
 
-        $response->assertDontSee('Ticket Description ' . HomeController::RECENT_INCIDENTS_COUNT + 1);
+        $response->assertDontSee('TicketTrait Description ' . HomeController::RECENT_INCIDENTS_COUNT + 1);
     }
 }

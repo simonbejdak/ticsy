@@ -2,7 +2,7 @@
 
 
 use App\Models\Request\Request;
-use App\Models\Request\RequestOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,14 +12,14 @@ class RequestOnHoldReasonTest extends TestCase
     use RefreshDatabase;
     public function test_it_has_many_requests()
     {
-        $onHoldReason = RequestOnHoldReason::firstOrFail();
+        $onHoldReason = OnHoldReason::firstOrFail();
         Request::factory(2, ['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
         $this->assertCount(2, $onHoldReason->requests);
     }
 
     public function test_it_uppercases_name_and_replaces_underscores_by_spaces()
     {
-        $onHoldReason = RequestOnHoldReason::findOrFail(RequestOnHoldReason::WAITING_FOR_VENDOR);
+        $onHoldReason = OnHoldReason::findOrFail(OnHoldReason::WAITING_FOR_VENDOR);
 
         $this->assertEquals('Waiting For Vendor', $onHoldReason->name);
     }
@@ -28,11 +28,11 @@ class RequestOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason cannot be assigned to Ticket if Status is not on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to TicketTrait if Status is not on hold');
 
         Request::factory([
             'status_id' => Status::OPEN,
-            'on_hold_reason_id' => RequestOnHoldReason::CALLER_RESPONSE,
+            'on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE,
         ])->create();
     }
 
@@ -40,7 +40,7 @@ class RequestOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason must be assigned to Ticket if Status is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to TicketTrait if Status is on hold');
 
         Request::factory([
             'status_id' => Status::ON_HOLD,

@@ -2,32 +2,68 @@
 
 namespace App\Models\Request;
 
-use App\Models\Group;
-use App\Models\Incident\IncidentCategory;
-use App\Models\Incident\IncidentItem;
-use App\Models\Incident\IncidentOnHoldReason;
-use App\Models\Incident\IncidentStatus;
-use App\Models\Ticket;
+use App\Enums\TaskSequence;
+use App\Interfaces\Activitable;
+use App\Interfaces\Fieldable;
+use App\Interfaces\Slable;
+use App\Interfaces\Ticket;
+use App\Models\Task;
+use App\Traits\HasSla;
+use App\Traits\TicketTrait;
+use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
-use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Request extends Ticket
+class Request extends Model implements Ticket, Slable, Fieldable, Activitable
 {
-    use HasFactory;
+    use HasSla, HasFactory, TicketTrait;
 
-    public function defineCategoryClass(): string
+    protected $guarded = [];
+    protected $casts = [
+        'resolved_at' => 'datetime',
+        'task_sequence' => TaskSequence::class,
+    ];
+    protected $attributes = [
+        'status_id' => self::DEFAULT_STATUS,
+        'group_id' => self::DEFAULT_GROUP,
+        'priority' => self::DEFAULT_PRIORITY,
+        'task_sequence' => self::DEFAULT_TASK_SEQUENCE,
+    ];
+
+    const DEFAULT_TASK_SEQUENCE = TaskSequence::GRADUAL;
+    const PRIORITY_TO_SLA_MINUTES = [
+        1 => 30,
+        2 => 2 * 60,
+        3 => 12 * 60,
+        4 => 24 * 60,
+    ];
+
+    protected static function boot(): void
     {
-        return RequestCategory::class;
-    }
-    public function defineItemClass(): string
-    {
-        return RequestItem::class;
+        parent::boot();
+        static::observe(TicketObserver::class);
     }
 
-    public function defineOnHoldReasonClass(): string
+    function calculateSlaMinutes(): int
     {
-        return RequestOnHoldReason::class;
+        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
     }
+
+    function category(): BelongsTo
+    {
+        return $this->belongsTo(RequestCategory::class, 'category_id');
+    }
+
+    function item(): BelongsTo
+    {
+        return $this->belongsTo(RequestItem::class, 'item_id');
+    }
+
+    function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
 }

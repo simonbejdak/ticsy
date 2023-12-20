@@ -1,13 +1,11 @@
 <?php
 
 use App\Models\Group;
-use App\Models\Request\Request;
+use App\Models\OnHoldReason;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\Request\RequestOnHoldReason;
-use App\Models\Request\RequestStatus;
 use App\Models\Status;
-use App\Models\Ticket;
+use App\Models\Request\Request;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -27,9 +25,10 @@ return new class extends Migration
             $table->enum('category_id', RequestCategory::MAP);
             $table->enum('item_id', RequestItem::MAP);
             $table->enum('status_id', Status::MAP);
-            $table->enum('on_hold_reason_id', RequestOnHoldReason::MAP)->nullable();
+            $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
-            $table->enum('priority', Ticket::PRIORITIES);
+            $table->enum('priority', Request::PRIORITIES);
+            $table->unsignedInteger('task_sequence');
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         });

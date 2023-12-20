@@ -1,12 +1,11 @@
 <?php
 
-use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\ChangesController;
+use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RequestsController;
-use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
 /*

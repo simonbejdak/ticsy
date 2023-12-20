@@ -6,12 +6,10 @@ namespace Tests\Feature\Request;
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
-use App\Models\Incident\IncidentOnHoldReason;
-use App\Models\Incident\IncidentStatus;
+use App\Models\OnHoldReason;
 use App\Models\Request\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\Request\RequestOnHoldReason;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\ActivityService;
@@ -122,7 +120,7 @@ class EditTest extends TestCase
     public function on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['on_hold_reason_id' => RequestOnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
+        $request = Request::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
@@ -302,7 +300,7 @@ class EditTest extends TestCase
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::ON_HOLD)
-            ->set('onHoldReason', IncidentOnHoldReason::CALLER_RESPONSE)
+            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
 

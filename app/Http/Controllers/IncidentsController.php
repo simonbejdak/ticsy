@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
-use App\Models\Ticket;
 use App\Models\Type;
 use Illuminate\Support\Facades\Auth;
 

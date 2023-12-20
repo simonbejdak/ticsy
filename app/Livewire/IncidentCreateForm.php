@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Incident\Incident;
 use App\Models\Incident\IncidentCategory;
-use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\Type;
 use Illuminate\Support\Collection;

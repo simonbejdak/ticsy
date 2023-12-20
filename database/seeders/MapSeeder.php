@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\Incident\IncidentOnHoldReason;
+use App\Models\OnHoldReason;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Request\RequestOnHoldReason;
@@ -28,8 +29,8 @@ class MapSeeder extends Seeder
             Status::factory(['name' => $key])->create();
         }
 
-        foreach (IncidentOnHoldReason::MAP as $key => $value){
-            IncidentOnHoldReason::factory(['name' => $key])->create();
+        foreach (OnHoldReason::MAP as $key => $value){
+            OnHoldReason::factory(['name' => $key])->create();
         }
 
         foreach (RequestCategory::MAP as $key => $value){
@@ -38,10 +39,6 @@ class MapSeeder extends Seeder
 
         foreach (RequestItem::MAP as $key => $value){
             RequestItem::factory(['name' => $key])->create();
-        }
-
-        foreach (RequestOnHoldReason::MAP as $key => $value){
-            RequestOnHoldReason::factory(['name' => $key])->create();
         }
 
         foreach (Group::MAP as $key => $value){

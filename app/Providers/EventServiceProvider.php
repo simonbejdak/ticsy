@@ -4,9 +4,10 @@ namespace App\Providers;
 
 use App\Models\Incident\Incident;
 use App\Models\Request\Request;
-use App\Models\Ticket;
-use App\Observers\RequestObserver;
+use App\Models\Task;
 use App\Observers\IncidentObserver;
+use App\Observers\RequestObserver;
+use App\Observers\TaskObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -29,7 +30,9 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Incident::observe(IncidentObserver::class);
+        Request::observe(RequestObserver::class);
+        Task::observe(TaskObserver::class);
     }
 
     /**

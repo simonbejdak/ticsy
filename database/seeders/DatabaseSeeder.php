@@ -6,7 +6,6 @@ use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Incident\Incident;
 use App\Models\Request\Request;
-use App\Models\Ticket;
 use App\Models\TicketConfig;
 use App\Models\User;
 use Illuminate\Database\Seeder;

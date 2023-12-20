@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Enum;
 use App\Models\Incident\Incident;
 use App\Models\Request\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

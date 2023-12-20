@@ -18,7 +18,7 @@ class StoreTest extends TestCase
     use RefreshDatabase;
     function test_it_permits_authenticated_user_to_store_incident(){
         $user = User::factory()->create();
-        $description = 'Ticket Description';
+        $description = 'TicketTrait Description';
         $category = IncidentCategory::firstOrFail();
         $item = IncidentItem::firstOrFail();
 

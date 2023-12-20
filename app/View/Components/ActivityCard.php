@@ -4,7 +4,6 @@ namespace App\View\Components;
 
 use App\Helpers\App;
 use Closure;
-use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use Spatie\Activitylog\Models\Activity;

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('incident_on_hold_reasons', function (Blueprint $table) {
+        Schema::create('on_hold_reasons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('incident_on_hold_reasons');
+        Schema::dropIfExists('on_hold_reasons');
     }
 };

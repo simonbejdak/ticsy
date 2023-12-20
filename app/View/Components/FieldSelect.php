@@ -2,13 +2,8 @@
 
 namespace App\View\Components;
 
-use App\Livewire\Form;
-use App\Models\Ticket;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
-use Illuminate\View\Component;
-use InvalidArgumentException;
 
 class FieldSelect extends FieldElement
 {

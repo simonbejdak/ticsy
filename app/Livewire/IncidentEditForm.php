@@ -5,8 +5,7 @@ namespace App\Livewire;
 use App\Interfaces\Fieldable;
 use App\Models\Group;
 use App\Models\Incident\Incident;
-use App\Models\Incident\IncidentOnHoldReason;
-use App\Models\Incident\IncidentStatus;
+use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Services\ActivityService;
@@ -47,10 +46,10 @@ class IncidentEditForm extends Form
         $this->statuses = Status::all();
         $this->status = $this->incident->status_id;
 
-        $this->onHoldReasons = IncidentOnHoldReason::all();
+        $this->onHoldReasons = OnHoldReason::all();
         $this->onHoldReason = $this->incident->on_hold_reason_id;
 
-        $this->priorities = Ticket::PRIORITIES;
+        $this->priorities = Incident::PRIORITIES;
         $this->priority = $this->incident->priority;
 
         $this->groups = Group::all();

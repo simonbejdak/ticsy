@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Ticket;
+use App\Interfaces\Ticket;
 use App\Models\User;
 
 class TicketService

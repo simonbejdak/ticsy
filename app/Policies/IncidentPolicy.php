@@ -2,12 +2,12 @@
 
 namespace App\Policies;
 
-use App\Models\Ticket;
+use App\Models\Incident\Incident;
 use App\Models\User;
 
-class TicketPolicy
+class IncidentPolicy
 {
-    public function edit(User $user, Ticket $ticket): bool
+    public function edit(User $user, Incident $ticket): bool
     {
         return ($user->id === $ticket->caller_id || $user->hasPermissionTo('view_all_tickets'));
     }
@@ -22,7 +22,7 @@ class TicketPolicy
         return $user->hasPermissionTo('set_priority_one');
     }
 
-    public function addComment(User $user, Ticket $ticket): bool
+    public function addComment(User $user, Incident $ticket): bool
     {
         return $user->id === $ticket->caller_id || $user->hasPermissionTo('add_comments_to_all_tickets');
     }
