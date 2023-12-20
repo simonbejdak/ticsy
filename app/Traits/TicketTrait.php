@@ -27,12 +27,6 @@ trait TicketTrait
     const DEFAULT_GROUP = Group::SERVICE_DESK;
     const ARCHIVE_AFTER_DAYS = 3;
     const PRIORITIES = [1, 2, 3, 4];
-    protected array $priority_to_sla_minutes = [
-        1 => 30,
-        2 => 2 * 60,
-        3 => 12 * 60,
-        4 => 24 * 60,
-    ];
 
     function caller(): BelongsTo
     {
@@ -62,11 +56,6 @@ trait TicketTrait
         return $this->belongsTo(Group::class);
     }
 
-    function slas(): MorphMany
-    {
-        return $this->morphMany(Sla::class, 'slable');
-    }
-
     function isStatus(...$statuses): bool
     {
         foreach ($statuses as $status){
@@ -90,6 +79,11 @@ trait TicketTrait
             }
         }
         return $this->getOriginal('status_id') == Status::CANCELLED;
+    }
+
+    function calculateSlaMinutes(): int
+    {
+        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
     }
 
     function statusChanged(): bool

@@ -24,7 +24,7 @@ interface Ticket
     function group(): BelongsTo;
     function slas(): MorphMany;
     function isStatus(...$statuses): bool;
-    public function isArchived(): bool;
+    function isArchived(): bool;
     function statusChanged(): bool;
     function statusChangedTo(string $status): bool;
     function statusChangedFrom(string $status): bool;

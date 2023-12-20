@@ -6,9 +6,9 @@ use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
+use App\Observers\TicketObserver;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
-use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,18 +27,18 @@ class Incident extends Model implements Ticket, Slable, Fieldable, Activitable
         'priority' => self::DEFAULT_PRIORITY,
     ];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-        static::observe(TicketObserver::class);
-    }
-
     const PRIORITY_TO_SLA_MINUTES = [
         1 => 15,
         2 => 60,
         3 => 6 * 60,
         4 => 12 * 60,
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::observe(TicketObserver::class);
+    }
 
     function category(): BelongsTo
     {
@@ -48,10 +48,4 @@ class Incident extends Model implements Ticket, Slable, Fieldable, Activitable
     {
         return $this->belongsTo(IncidentItem::class, 'item_id');
     }
-
-    function calculateSlaMinutes(): int
-    {
-        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
-    }
-
 }

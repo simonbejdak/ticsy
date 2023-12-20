@@ -46,11 +46,6 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
         static::observe(TicketObserver::class);
     }
 
-    function calculateSlaMinutes(): int
-    {
-        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
-    }
-
     function category(): BelongsTo
     {
         return $this->belongsTo(RequestCategory::class, 'category_id');

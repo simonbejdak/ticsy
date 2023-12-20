@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\TaskSequence;
 use App\Interfaces\Ticket;
+use App\Observers\TicketObserver;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
 use App\Interfaces\Activitable;
@@ -39,9 +40,10 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
         4 => 24 * 60,
     ];
 
-    function calculateSlaMinutes(): int
+    protected static function boot(): void
     {
-        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
+        parent::boot();
+        static::observe(TicketObserver::class);
     }
 
     function request(): BelongsTo
