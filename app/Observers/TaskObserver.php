@@ -3,11 +3,15 @@
 namespace App\Observers;
 
 use App\Models\Task;
+use App\Services\RequestService;
+use App\Services\TaskService;
 
 class TaskObserver
 {
-    public function creating(Task $task): void
+    function updated(Task $task): void
     {
-        $task->priority = $task->request->priority;
+        if($task->statusChangedTo('resolved')){
+            RequestService::eventTaskResolved($task->request);
+        }
     }
 }

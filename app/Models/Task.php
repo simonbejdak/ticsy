@@ -12,6 +12,7 @@ use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +25,6 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
     protected $guarded = [];
     protected $casts = [
         'resolved_at' => 'datetime',
-        'task_sequence' => TaskSequence::class,
     ];
     protected $attributes = [
         'status_id' => self::DEFAULT_STATUS,
@@ -66,6 +66,11 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
             'request_id',
             'id'
         );
+    }
+
+    function scopeNotStarted(Builder $query): void
+    {
+        $query->where('started_at', '=', null);
     }
 
     public function isArchived(): bool{

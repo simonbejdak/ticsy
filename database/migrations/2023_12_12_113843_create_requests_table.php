@@ -28,7 +28,6 @@ return new class extends Migration
             $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Request::PRIORITIES);
-            $table->unsignedInteger('task_sequence');
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         });

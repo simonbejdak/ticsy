@@ -30,7 +30,7 @@ trait TicketTrait
 
     function caller(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'caller_id');
+        return $this->belongsTo(User::class);
     }
 
     function resolver(): BelongsTo

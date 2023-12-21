@@ -6,8 +6,8 @@ use App\Enums\TaskSequence;
 
 class TaskList
 {
-    protected array $tasks;
-    protected TaskSequence $sequence;
+    public array $tasks;
+    public TaskSequence $sequence;
 
     public function __construct(TaskSequence $sequence = TaskSequence::GRADUAL)
     {
@@ -17,12 +17,6 @@ class TaskList
     function addTask(string $description): self
     {
         $this->tasks[] = $description;
-        return $this;
-    }
-
-    function setSequence(TaskSequence $sequence): self
-    {
-        $this->sequence = $sequence;
         return $this;
     }
 }

@@ -12,6 +12,8 @@ use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,10 +32,8 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
         'status_id' => self::DEFAULT_STATUS,
         'group_id' => self::DEFAULT_GROUP,
         'priority' => self::DEFAULT_PRIORITY,
-        'task_sequence' => self::DEFAULT_TASK_SEQUENCE,
     ];
 
-    const DEFAULT_TASK_SEQUENCE = TaskSequence::GRADUAL;
     const PRIORITY_TO_SLA_MINUTES = [
         1 => 30,
         2 => 2 * 60,
@@ -45,11 +45,6 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
         [RequestCategory::COMPUTER, RequestItem::BACKUP],
         [RequestCategory::SERVER, RequestItem::ACCESS],
     ];
-
-    function taskList(): TaskList
-    {
-        return $this->initializeTaskList($this->category_id, $this->item->id);
-    }
 
     function category(): BelongsTo
     {
@@ -66,18 +61,25 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
         return $this->hasMany(Task::class);
     }
 
+    function taskList(): TaskList
+    {
+        return $this->initializeTaskList($this->category_id, $this->item->id);
+    }
+
     protected function initializeTaskList($category, $item): TaskList
     {
         $taskList = new TaskList();
 
         if($category == RequestCategory::COMPUTER){
             if($item == RequestItem::BACKUP){
-                $taskList->addTask('Backup computer of user '. $this->caller->name .'. ')
+                $taskList
+                    ->addTask('Backup computer of user '. $this->caller->name .'. ')
                     ->addTask('Verify if the backup from previous task is restorable.');
             }
         } elseif($category == RequestCategory::SERVER){
             if($item == RequestItem::BACKUP){
-                $taskList->addTask('Verify if '. $this->caller->name . ' is eligible for access to mentioned server.')
+                $taskList
+                    ->addTask('Verify if '. $this->caller->name . ' is eligible for access to mentioned server.')
                     ->addTask('Give the access to the user')
                     ->addTask('Verify with '. $this->caller->name .', that the access works.');
             }

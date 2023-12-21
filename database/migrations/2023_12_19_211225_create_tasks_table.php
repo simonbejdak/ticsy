@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Task::PRIORITIES);
+            $table->timestamp('started_at')->nullable();
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();
         });
