@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TaskSequence;
+use App\Helpers\TaskList;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
@@ -41,24 +42,14 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
     ];
 
     const CATEGORY_TO_ITEM = [
-        [RequestCategory::NETWORK, RequestItem::ISSUE],
-        [RequestCategory::NETWORK, RequestItem::FAILED_NODE],
-
-        [RequestCategory::SERVER, RequestItem::ISSUE],
-        [RequestCategory::SERVER, RequestItem::BACKUP],
-        [RequestCategory::SERVER, RequestItem::FAILURE],
-
-        [RequestCategory::COMPUTER, RequestItem::ISSUE],
-        [RequestCategory::COMPUTER, RequestItem::COMPUTER_IS_TOO_SLOW],
-        [RequestCategory::COMPUTER, RequestItem::APPLICATION_ERROR],
-        [RequestCategory::COMPUTER, RequestItem::FAILURE],
-
-        [RequestCategory::APPLICATION, RequestItem::ISSUE],
-        [RequestCategory::APPLICATION, RequestItem::APPLICATION_ERROR],
-
-        [RequestCategory::EMAIL, RequestItem::ISSUE],
-        [RequestCategory::EMAIL, RequestItem::BACKUP],
+        [RequestCategory::COMPUTER, RequestItem::BACKUP],
+        [RequestCategory::SERVER, RequestItem::ACCESS],
     ];
+
+    function taskList(): TaskList
+    {
+        return $this->initializeTaskList($this->category_id, $this->item->id);
+    }
 
     function category(): BelongsTo
     {
@@ -73,6 +64,27 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
     function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    protected function initializeTaskList($category, $item): TaskList
+    {
+        $taskList = new TaskList();
+
+        if($category == RequestCategory::COMPUTER){
+            if($item == RequestItem::BACKUP){
+                $taskList->addTask('Backup computer of user '. $this->caller->name .'. ')
+                    ->addTask('Verify if the backup from previous task is restorable.');
+            }
+        } elseif($category == RequestCategory::SERVER){
+            if($item == RequestItem::BACKUP){
+                $taskList->addTask('Verify if '. $this->caller->name . ' is eligible for access to mentioned server.')
+                    ->addTask('Give the access to the user')
+                    ->addTask('Verify with '. $this->caller->name .', that the access works.');
+            }
+        }
+
+        return $taskList;
+
     }
 
 }
