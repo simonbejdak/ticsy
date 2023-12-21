@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

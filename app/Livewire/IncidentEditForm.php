@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Interfaces\Fieldable;
 use App\Models\Group;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Models\Ticket;

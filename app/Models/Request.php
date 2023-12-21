@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models\Request;
+namespace App\Models;
 
 use App\Enums\TaskSequence;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
-use App\Models\Task;
+use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
-use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,11 +40,25 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
         4 => 24 * 60,
     ];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-        static::observe(TicketObserver::class);
-    }
+    const CATEGORY_TO_ITEM = [
+        [RequestCategory::NETWORK, RequestItem::ISSUE],
+        [RequestCategory::NETWORK, RequestItem::FAILED_NODE],
+
+        [RequestCategory::SERVER, RequestItem::ISSUE],
+        [RequestCategory::SERVER, RequestItem::BACKUP],
+        [RequestCategory::SERVER, RequestItem::FAILURE],
+
+        [RequestCategory::COMPUTER, RequestItem::ISSUE],
+        [RequestCategory::COMPUTER, RequestItem::COMPUTER_IS_TOO_SLOW],
+        [RequestCategory::COMPUTER, RequestItem::APPLICATION_ERROR],
+        [RequestCategory::COMPUTER, RequestItem::FAILURE],
+
+        [RequestCategory::APPLICATION, RequestItem::ISSUE],
+        [RequestCategory::APPLICATION, RequestItem::APPLICATION_ERROR],
+
+        [RequestCategory::EMAIL, RequestItem::ISSUE],
+        [RequestCategory::EMAIL, RequestItem::BACKUP],
+    ];
 
     function category(): BelongsTo
     {

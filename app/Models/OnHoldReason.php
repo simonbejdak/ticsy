@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Incident\Incident;
-use App\Models\Request\Request;
+use App\Models\Incident;
+use App\Models\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Comment;
 use App\Models\Group;
-use App\Models\Incident\Incident;
-use App\Models\Request\Request;
+use App\Models\Incident;
+use App\Models\Request;
 use App\Models\TicketConfig;
 use App\Models\User;
 use Illuminate\Database\Seeder;

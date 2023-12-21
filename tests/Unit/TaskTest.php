@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Status;
 use App\Models\Task;

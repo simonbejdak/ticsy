@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Interfaces\Fieldable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Status;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;

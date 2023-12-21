@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\OnHoldReason;
 use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,7 +31,7 @@ class IncidentOnHoldReasonTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason cannot be assigned to TicketTrait if Status is not on hold');
+        $this->expectExceptionMessage('On hold reason cannot be assigned to Incident if Status is not on hold');
 
         Incident::factory(['status_id' => Status::OPEN,
             'on_hold_reason_id' => $onHoldReason
@@ -42,7 +42,7 @@ class IncidentOnHoldReasonTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('On hold reason must be assigned to TicketTrait if Status is on hold');
+        $this->expectExceptionMessage('On hold reason must be assigned to Incident if Status is on hold');
 
         Incident::factory()->statusOnHold()->create();
     }

@@ -38,7 +38,7 @@ class ActivityCard extends Component
             $body = '<table class="border-separate border-spacing-x-2 w-1/2">';
 
             foreach ($this->activity->changes['attributes'] as $field => $value) {
-                $fieldName = App::makeDisplayName(str_replace('.name', '', $field));
+                $fieldName = makeDisplayName(str_replace('.name', '', $field));
                 $newFieldValue = ($value !== null) ? $value : 'empty';
 
                 $body .= '<tr class="border-spacing-y-3">';

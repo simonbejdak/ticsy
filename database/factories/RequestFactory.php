@@ -1,21 +1,24 @@
 <?php
 
-namespace Database\Factories\Incident;
+namespace Database\Factories;
 
-use App\Models\Incident\Incident;
-use App\Models\Incident\IncidentCategory;
+use App\Models\Request;
+use App\Models\Request\RequestCategory;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class IncidentFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Request\Request>
+ */
+class RequestFactory extends Factory
 {
-    public function definition()
+    public function definition(): array
     {
         return [
+            'category_id' => rand(1, RequestCategory::count()),
             'caller_id' => User::factory(),
-            'category_id' => rand(1, IncidentCategory::count()),
             'description' => fake()->realText(40),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -24,9 +27,9 @@ class IncidentFactory extends Factory
 
     public function configure()
     {
-        return $this->afterMaking(function (Incident $incident) {
-            if($incident->item_id === null){
-                $incident->item_id = $incident->category->randomItem()->id;
+        return $this->afterMaking(function (Request $request) {
+            if($request->item_id === null){
+                $request->item_id = $request->category->randomItem()->id;
             }
         });
     }

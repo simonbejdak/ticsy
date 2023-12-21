@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Models\Incident;
+namespace App\Models;
 
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
-use App\Observers\TicketObserver;
+use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,11 +35,25 @@ class Incident extends Model implements Ticket, Slable, Fieldable, Activitable
         4 => 12 * 60,
     ];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-        static::observe(TicketObserver::class);
-    }
+    const CATEGORY_TO_ITEM = [
+        [IncidentCategory::NETWORK, IncidentItem::ISSUE],
+        [IncidentCategory::NETWORK, IncidentItem::FAILED_NODE],
+
+        [IncidentCategory::SERVER, IncidentItem::ISSUE],
+        [IncidentCategory::SERVER, IncidentItem::BACKUP],
+        [IncidentCategory::SERVER, IncidentItem::FAILURE],
+
+        [IncidentCategory::COMPUTER, IncidentItem::ISSUE],
+        [IncidentCategory::COMPUTER, IncidentItem::COMPUTER_IS_TOO_SLOW],
+        [IncidentCategory::COMPUTER, IncidentItem::APPLICATION_ERROR],
+        [IncidentCategory::COMPUTER, IncidentItem::FAILURE],
+
+        [IncidentCategory::APPLICATION, IncidentItem::ISSUE],
+        [IncidentCategory::APPLICATION, IncidentItem::APPLICATION_ERROR],
+
+        [IncidentCategory::EMAIL, IncidentItem::ISSUE],
+        [IncidentCategory::EMAIL, IncidentItem::BACKUP],
+    ];
 
     function category(): BelongsTo
     {

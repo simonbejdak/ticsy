@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Http\Controllers\HomeController;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

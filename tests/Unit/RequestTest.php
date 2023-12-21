@@ -3,7 +3,7 @@
 use App\Enums\TaskSequence;
 use App\Interfaces\Slable;
 use App\Models\Group;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\OnHoldReason;
@@ -215,7 +215,7 @@ class RequestTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Item cannot be assigned to TicketTrait if it does not match Category');
+        $this->expectExceptionMessage('Item cannot be assigned to Request if it does not match Category');
 
         Request::factory(['category_id' => $category, 'item_id' => $item])->create();
     }

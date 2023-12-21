@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Incident\Incident;
-use App\Models\Request\Request;
+use App\Models\Incident;
+use App\Models\Request;
 use App\Models\Task;
 use App\Observers\IncidentObserver;
 use App\Observers\RequestObserver;

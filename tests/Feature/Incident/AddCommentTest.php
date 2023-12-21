@@ -4,7 +4,7 @@ namespace Tests\Feature\Incident;
 
 use App\Livewire\Activities;
 use App\Models\Comment;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

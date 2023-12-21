@@ -7,7 +7,7 @@ use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
 use App\Models\OnHoldReason;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Status;

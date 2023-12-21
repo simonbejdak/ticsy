@@ -4,10 +4,9 @@ namespace Tests\Feature\Request;
 
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\OnHoldReason;
 use App\Models\Status;
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

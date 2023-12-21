@@ -2,7 +2,7 @@
 
 namespace App\View\Components;
 
-use App\Models\Request\Request;
+use App\Models\Request;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;

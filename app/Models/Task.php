@@ -3,16 +3,15 @@
 namespace App\Models;
 
 use App\Enums\TaskSequence;
-use App\Interfaces\Ticket;
-use App\Observers\TicketObserver;
-use App\Traits\HasSla;
-use App\Traits\TicketTrait;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
-use App\Models\Request\Request;
+use App\Interfaces\Ticket;
+use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
+use App\Traits\HasSla;
+use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,12 +38,6 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
         3 => 12 * 60,
         4 => 24 * 60,
     ];
-
-    protected static function boot(): void
-    {
-        parent::boot();
-        static::observe(TicketObserver::class);
-    }
 
     function request(): BelongsTo
     {

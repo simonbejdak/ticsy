@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Request\RequestItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

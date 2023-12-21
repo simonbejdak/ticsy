@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Incident\IncidentCategory;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;

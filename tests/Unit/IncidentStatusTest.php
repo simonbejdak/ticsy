@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\Incident\IncidentStatus;
 use App\Models\Status;
 use App\Models\TicketConfig;

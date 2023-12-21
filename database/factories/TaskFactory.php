@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Incident\IncidentCategory;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;

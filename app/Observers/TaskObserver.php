@@ -3,8 +3,6 @@
 namespace App\Observers;
 
 use App\Models\Task;
-use App\Models\Ticket;
-use Exception;
 
 class TaskObserver
 {

@@ -3,6 +3,7 @@
 namespace App\Models\Incident;
 
 use App\Models\Enum;
+use App\Models\Incident;
 use App\Models\Request\RequestCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

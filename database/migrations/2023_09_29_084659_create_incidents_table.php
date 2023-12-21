@@ -1,10 +1,9 @@
 <?php
 
 use App\Models\Group;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\OnHoldReason;
 use App\Models\Status;
 use App\Traits\TicketTrait;

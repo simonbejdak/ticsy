@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\User;
 
 class RequestPolicy

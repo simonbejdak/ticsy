@@ -5,7 +5,7 @@ namespace Tests\Unit;
 
 use App\Interfaces\Slable;
 use App\Models\Group;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\OnHoldReason;
@@ -177,7 +177,7 @@ class IncidentTest extends TestCase
 
         $this->withoutExceptionHandling();
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Item cannot be assigned to TicketTrait if it does not match Category');
+        $this->expectExceptionMessage('Item cannot be assigned to Incident if it does not match Category');
 
         Incident::factory(['category_id' => $category, 'item_id' => $item])->create();
     }

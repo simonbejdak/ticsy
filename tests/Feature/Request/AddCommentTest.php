@@ -4,7 +4,7 @@ namespace Tests\Feature\Request;
 
 use App\Livewire\Activities;
 use App\Models\Comment;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

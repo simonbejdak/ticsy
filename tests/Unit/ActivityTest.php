@@ -2,9 +2,9 @@
 
 
 use App\Models\Group;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\OnHoldReason;
-use App\Models\Request\Request;
+use App\Models\Request;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;

@@ -36,8 +36,8 @@ class Field extends Component
                                 $displayName = null,
     ){
         $this->name = $name;
-        $this->value = is_string($value) ? $value : App::toIterable($value);
-        $this->displayName = $displayName ?? App::makeDisplayName($name);
+        $this->value = is_string($value) ? $value : toIterable($value);
+        $this->displayName = $displayName ?? makeDisplayName($name);
         $this->representedModel = $representedModel;
         $this->hasPermission = $hasPermission;
 //        $this->disabled = $disabled ?? $this->isDisabled();

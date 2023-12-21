@@ -2,18 +2,13 @@
 
 namespace App\Traits;
 
-use App\Interfaces\Activitable;
-use App\Interfaces\Fieldable;
-use App\Interfaces\Slable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
-use App\Models\Sla;
 use App\Models\Status;
 use App\Models\User;
 use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -21,6 +16,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
 trait TicketTrait
 {
     use LogsActivity;
+
+    protected static function bootTicketTrait(): void
+    {
+        static::observe(TicketObserver::class);
+    }
 
     const DEFAULT_PRIORITY = 4;
     const DEFAULT_STATUS = Status::OPEN;

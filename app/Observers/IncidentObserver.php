@@ -2,15 +2,15 @@
 
 namespace App\Observers;
 
-use App\Interfaces\Ticket;
+use App\Models\Incident;
 use Exception;
 
 class IncidentObserver
 {
-    public function creating(Ticket $ticket): void
+    public function creating(Incident $incident): void
     {
-        if ($ticket->category->hasItem($ticket->item)){
-            throw new Exception('Item cannot be assigned to TicketTrait if it does not match Category');
+        if ($incident->category->hasItem($incident->item)){
+            throw new Exception('Item cannot be assigned to '. get_class_name($incident) .' if it does not match Category');
         }
     }
 }

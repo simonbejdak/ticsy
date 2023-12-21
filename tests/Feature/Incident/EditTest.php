@@ -6,7 +6,7 @@ namespace Tests\Feature\Incident;
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
-use App\Models\Incident\Incident;
+use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\OnHoldReason;
