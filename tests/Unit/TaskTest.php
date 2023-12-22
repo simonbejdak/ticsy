@@ -65,7 +65,7 @@ class TaskTest extends TestCase
 
     /** @test */
     function as_soon_as_status_is_set_to_resolved_task_is_archived(){
-        $task = Task::factory()->create();
+        $task = Request::factory()->create()->tasks()->first();
 
         $task->status_id = Status::RESOLVED;
         $task->save();

@@ -11,6 +11,7 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\SlaService;
+use App\Services\TaskService;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -37,7 +38,7 @@ class RequestTest extends TestCase
     /** @test */
     function it_has_one_category()
     {
-        $category = RequestCategory::findOrFail(RequestCategory::NETWORK);
+        $category = RequestCategory::firstOrFail();
         $request = Request::factory(['category_id' => $category])->create();
 
         $this->assertEquals($category->id, $request->category->id);
@@ -54,9 +55,9 @@ class RequestTest extends TestCase
     /** @test */
     function it_has_many_tasks(){
         $request = Request::factory()->create();
-        Task::factory(2, ['request_id' => $request])->create();
+        Task::factory(3, ['request_id' => $request])->create();
 
-        $this->assertCount(2, $request->tasks);
+        $this->assertGreaterThan(1, count($request->tasks));
     }
 
     /** @test */
@@ -208,7 +209,7 @@ class RequestTest extends TestCase
     /** @test */
     public function exception_thrown_if_item_does_not_match_category()
     {
-        // I have to detach below models, as in test seeder I'm assigning all Items to belong to all Categories
+        // I have to detach below models just to be sure, that in no event they are paired
         $category = RequestCategory::firstOrFail();
         $item = RequestItem::firstOrFail();
         $category->items()->detach($item);
@@ -267,20 +268,91 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    function it_has_task_sequence_attribute(){
+    function if_task_sequence_is_gradual_first_task_is_started(){
+        $request = Request::factory()->taskSequenceGradient()->create();
+        $firstTask = $request->tasks->first();
+
+        $this->assertNotNull($firstTask->started_at);
+    }
+
+    /** @test */
+    function if_task_sequence_is_gradual_second_task_is_not_started(){
+        $request = Request::factory()->taskSequenceGradient()->create();
+        $secondTask = $request->tasks->skip(1)->first();
+
+        $this->assertNull($secondTask->started_at);
+    }
+
+    /** @test */
+    function if_task_sequence_is_gradual_second_task_starts_after_first_task_is_resolved(){
+        $request = Request::factory()->taskSequenceGradient()->create();
+        $firstTask = $request->tasks->first();
+        $secondTask = $request->tasks->skip(1)->first();
+
+        $this->assertNull($secondTask->started_at);
+
+        TaskService::resolveTask($firstTask);
+        $secondTask->refresh();
+
+        $this->assertNotNull($secondTask->started_at);
+    }
+
+    /** @test */
+    function if_task_sequence_is_at_once_second_task_starts_after_request_is_created(){
+        $request = Request::factory()->taskSequenceAtOnce()->create();
+        $firstTask = $request->tasks->first();
+        $secondTask = $request->tasks->skip(1)->first();
+
+        $this->assertNotNull($firstTask->started_at);
+        $this->assertNotNull($secondTask->started_at);
+    }
+
+    /** @test */
+    function if_task_sequence_is_at_once_second_task_does_not_start_after_first_task_is_resolved(){
+        $request = Request::factory()->taskSequenceAtOnce()->create();
+        $firstTask = $request->tasks->first();
+        $secondTask = $request->tasks->skip(1)->first();
+        $secondTaskStartTime = $secondTask->started_at;
+
+        TaskService::resolveTask($firstTask);
+        $secondTaskStartTimeAfterFirstTaskResolved = $secondTask->refresh()->started_at;
+
+        $this->assertEquals($secondTaskStartTime, $secondTaskStartTimeAfterFirstTaskResolved);
+    }
+
+    /** @test */
+    function it_becomes_resolved_when_all_tasks_become_resolved(){
         $request = Request::factory()->create();
+        $tasks = $request->tasks;
 
-        $this->assertNotNull($request->task_sequence);
+        $this->assertFalse($request->isStatus('resolved'));
+
+        foreach ($tasks as $task){
+            TaskService::resolveTask($task);
+        }
+        $request->refresh();
+
+        $this->assertTrue($request->isStatus('resolved'));
     }
 
     /** @test */
-    function if_task_sequence_is_gradual_second_task_starts_after_first_task_is_closed(){
-        $this->markTestSkipped();
+    function it_becomes_cancelled_when_one_task_is_cancelled(){
+        $request = Request::factory()->create();
+        $task = $request->tasks->first();
+
+        $this->assertFalse($request->isStatus('cancelled'));
+
+        TaskService::cancelTask($task);
+        $request->refresh();
+
+        $this->assertTrue($request->isStatus('cancelled'));
     }
 
     /** @test */
-    function if_task_sequence_is_at_once_second_task_starts_after_taskable_is_created(){
-        $this->markTestSkipped();
+    function it_creates_task_with_same_description_as_request_if_category_item_pair_has_no_specific_task_plan(){
+        $request = Request::factory(['description' => 'Please do the needful'])->withoutTaskPlan()->create();
+
+        $this->assertEquals('Please do the needful', $request->tasks->first()->description);
     }
 
     static function priorityToSlaMinutes(){

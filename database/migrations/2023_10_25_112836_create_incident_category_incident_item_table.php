@@ -14,8 +14,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('incident_category_incident_item', function (Blueprint $table) {
-            $table->enum('category_id', IncidentCategory::MAP);
-            $table->enum('item_id', IncidentItem::MAP);
+            $table->foreignId('category_id')->constrained()->references('id')->on('incident_categories');
+            $table->foreignId('item_id')->constrained()->references('id')->on('incident_items');
             $table->primary(['category_id', 'item_id']);
             $table->timestamps();
         });

@@ -13,18 +13,12 @@ class RequestCategory extends Enum
     use HasFactory;
 
     const MAP = [
-        'network' => 1,
-        'server' => 2,
-        'computer' => 3,
-        'application' => 4,
-        'email' => 5,
+        'server' => 1,
+        'computer' => 2,
     ];
 
-    const NETWORK = self::MAP['network'];
     const SERVER = self::MAP['server'];
     const COMPUTER = self::MAP['computer'];
-    const APPLICATION = self::MAP['application'];
-    const EMAIL = self::MAP['email'];
 
     function requests(): hasMany{
         return $this->hasMany(Request::class, 'category_id');
@@ -37,7 +31,7 @@ class RequestCategory extends Enum
 
     public function hasItem(RequestItem $item): bool
     {
-        if(count($this->items()->where('id', '=', $item->id)->get()) == 0){
+        if(count($this->items()->where('id', '=', $item->id)->get()) > 0){
             return true;
         }
         return false;

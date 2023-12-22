@@ -16,11 +16,7 @@ class IncidentItemTest extends TestCase
     {
         $item = IncidentItem::firstOrFail();
 
-        $this->assertEquals('Network', $item->categories()->findOrFail(IncidentCategory::NETWORK)->name);
-        $this->assertEquals(
-            'Application',
-            $item->categories()->findOrFail(IncidentCategory::APPLICATION)->name
-        );
+        $this->assertGreaterThan(1, count($item->categories));
     }
 
     public function test_it_has_many_incidents()

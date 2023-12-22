@@ -10,6 +10,7 @@ use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -145,5 +146,16 @@ trait TicketTrait
                 'resolver.name',
             ])
             ->logOnlyDirty();
+    }
+
+    protected function validateCategoryItemPair(): void
+    {
+        if($this->category->hasItem($this->item)){
+            return;
+        }
+
+        dd($this->category->hasItem($this->item));
+
+        throw new InvalidArgumentException('Invalid Category-Item pair: ' . $this->category->name . ' ' . $this->item->name);
     }
 }

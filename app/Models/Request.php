@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TaskSequence;
-use App\Helpers\TaskList;
+use App\Helpers\TaskPlan;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
@@ -43,7 +43,10 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
 
     const CATEGORY_TO_ITEM = [
         [RequestCategory::COMPUTER, RequestItem::BACKUP],
+        [RequestCategory::COMPUTER, RequestItem::CONFIGURE],
         [RequestCategory::SERVER, RequestItem::ACCESS],
+        [RequestCategory::SERVER, RequestItem::MAINTENANCE],
+        [RequestCategory::SERVER, RequestItem::CONFIGURE],
     ];
 
     function category(): BelongsTo
@@ -61,32 +64,40 @@ class Request extends Model implements Ticket, Slable, Fieldable, Activitable
         return $this->hasMany(Task::class);
     }
 
-    function taskList(): TaskList
+    function taskPlan(): TaskPlan
     {
-        return $this->initializeTaskList($this->category_id, $this->item->id);
+        return $this->initializeTaskPlan($this->category_id, $this->item->id);
     }
 
-    protected function initializeTaskList($category, $item): TaskList
+    protected function initializeTaskPlan($category, $item): TaskPlan
     {
-        $taskList = new TaskList();
+        $taskPlan = new TaskPlan();
 
         if($category == RequestCategory::COMPUTER){
             if($item == RequestItem::BACKUP){
-                $taskList
+                $taskPlan
                     ->addTask('Backup computer of user '. $this->caller->name .'. ')
                     ->addTask('Verify if the backup from previous task is restorable.');
             }
         } elseif($category == RequestCategory::SERVER){
-            if($item == RequestItem::BACKUP){
-                $taskList
+            if($item == RequestItem::ACCESS){
+                $taskPlan
                     ->addTask('Verify if '. $this->caller->name . ' is eligible for access to mentioned server.')
                     ->addTask('Give the access to the user')
                     ->addTask('Verify with '. $this->caller->name .', that the access works.');
+            } elseif($item == RequestItem::MAINTENANCE){
+                $taskPlan
+                    ->setSequence(TaskSequence::AT_ONCE)
+                    ->addTask('Restart database.')
+                    ->addTask('Restart respective services.');
             }
         }
 
-        return $taskList;
+        if(count($taskPlan->tasks) == 0){
+            $taskPlan->addTask($this->description);
+        }
 
+        return $taskPlan;
     }
 
 }

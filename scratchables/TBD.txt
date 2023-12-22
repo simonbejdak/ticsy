@@ -16,6 +16,9 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 14. Implement Requests -- done
 
 15. Implement multiple tasks support for requests
+
+-- make sure we as programmers always set correct pair for tasklist, and if we don't, an exception needs to be thrown
+
 16. E-mail notification on ticket update
 17. Watch list for tickets
 18. Statistics

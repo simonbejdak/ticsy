@@ -11,7 +11,7 @@ class TestDatabaseSeeder extends Seeder
         $this->call([
             MapSeeder::class,
             TestIncidentCategoryIncidentItemSeeder::class,
-            TestRequestCategoryRequestItemSeeder::class,
+            RequestCategoryRequestItemSeeder::class,
             PermissionSeeder::class,
             UserSeeder::class,
         ]);

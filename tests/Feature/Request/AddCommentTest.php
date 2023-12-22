@@ -17,7 +17,7 @@ class AddCommentTest extends TestCase
 
     public function test_it_throws_403_to_user_who_has_not_created_the_request()
     {
-        $request = Request::factory()->create();
+        $request = Request::factory()->make();
         $user = User::factory()->create();
 
         Livewire::actingAs($user)

@@ -19,8 +19,8 @@ return new class extends Migration {
             $table->foreignId('caller_id')->constrained()->references('id')->on('users');
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
             $table->text('description');
-            $table->enum('category_id', IncidentCategory::MAP);
-            $table->enum('item_id', IncidentItem::MAP);
+            $table->foreignId('category_id')->constrained()->references('id')->on('incident_categories');
+            $table->foreignId('item_id')->constrained()->references('id')->on('incident_items');
             $table->enum('status_id', Status::MAP);
             $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);

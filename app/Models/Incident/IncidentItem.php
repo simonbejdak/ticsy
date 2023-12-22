@@ -31,7 +31,7 @@ class IncidentItem extends Enum
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(RequestCategory::class, 'incident_category_incident_item', 'category_id', 'item_id');
+        return $this->belongsToMany(RequestCategory::class, 'incident_category_incident_item', 'item_id', 'category_id');
     }
 
     public function incidents(): HasMany
