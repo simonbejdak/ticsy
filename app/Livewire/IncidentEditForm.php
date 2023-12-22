@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Ticket;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Session;
 
 class IncidentEditForm extends Form
 {
@@ -84,7 +85,7 @@ class IncidentEditForm extends Form
         parent::updated($property);
     }
 
-    public function save(): void
+    public function save()
     {
         $this->syncTicket();
         $this->validate();
@@ -95,7 +96,8 @@ class IncidentEditForm extends Form
             $this->priorityChangeReason = '';
         }
 
-        $this->dispatch('model-updated');
+        Session::flash('success', 'You have successfully updated the incident');
+        return redirect()->route('requests.edit', $this->incident);
     }
 
     protected function syncTicket(): void

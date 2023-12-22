@@ -40,7 +40,6 @@ class Field extends Component
         $this->displayName = $displayName ?? makeDisplayName($name);
         $this->representedModel = $representedModel;
         $this->hasPermission = $hasPermission;
-//        $this->disabled = $disabled ?? $this->isDisabled();
         $this->modifiable = $modifiable ?? $representedModel->isFieldModifiable($this->name);
         $this->disabled = !$this->modifiable;
         $this->percentage = $percentage;
@@ -54,21 +53,6 @@ class Field extends Component
     {
         return view('components.field');
     }
-
-//    protected function isDisabled(): bool
-//    {
-//        if(!$this->hasPermission){
-//            return false;
-//        }
-//        if(is_string($this->hasPermission)){
-//            return !auth()->user()->hasPermissionTo($this->hasPermission);
-//        }
-//        if($this->fieldableModel === null){
-//            return !auth()->user()->hasPermissionTo('set_' . $this->name);
-//        }
-//
-//        return auth()->user()->cannot('set' . ucfirst($this->name), $this->fieldableModel);
-//    }
 
     protected function setType(): string{
         if(is_string($this->value)){

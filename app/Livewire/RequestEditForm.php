@@ -9,6 +9,7 @@ use App\Models\Request;
 use App\Models\Status;
 use App\Services\ActivityService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Session;
 
 class RequestEditForm extends Form
 {
@@ -83,7 +84,7 @@ class RequestEditForm extends Form
         parent::updated($property);
     }
 
-    public function save(): void
+    public function save()
     {
         $this->syncRequest();
         $this->validate();
@@ -94,7 +95,8 @@ class RequestEditForm extends Form
             $this->priorityChangeReason = '';
         }
 
-        $this->dispatch('model-updated');
+        Session::flash('success', 'You have successfully updated the request');
+        return redirect()->route('requests.edit', $this->request);
     }
 
     protected function syncRequest(): void

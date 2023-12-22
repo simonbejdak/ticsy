@@ -147,15 +147,4 @@ trait TicketTrait
             ])
             ->logOnlyDirty();
     }
-
-    protected function validateCategoryItemPair(): void
-    {
-        if($this->category->hasItem($this->item)){
-            return;
-        }
-
-        dd($this->category->hasItem($this->item));
-
-        throw new InvalidArgumentException('Invalid Category-Item pair: ' . $this->category->name . ' ' . $this->item->name);
-    }
 }

@@ -17,7 +17,9 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 
 15. Implement multiple tasks support for requests
 
--- make sure we as programmers always set correct pair for tasklist, and if we don't, an exception needs to be thrown
+-- build TaskEditForm
+-- integrate list of tasks to the bottom of RequestEditForm
+-- make Task model have a Morphs Taskable relationship instead of having Request relationship
 
 16. E-mail notification on ticket update
 17. Watch list for tickets

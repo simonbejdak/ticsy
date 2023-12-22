@@ -107,6 +107,19 @@ class CreateTest extends TestCase
             ->assertHasNoErrors(['description' => 'required']);
     }
 
+    /** @test */
+    function correct_categories_are_visible(){
+        $user = User::factory()->create();
+        $categories = RequestCategory::all();
+
+        Livewire::actingAs($user);
+
+        foreach ($categories as $category){
+            Livewire::test(RequestCreateForm::class)
+                ->assertSee($category->name);
+        }
+    }
+
     static function invalidCategories(){
         return [
             ['ASAP', 'numeric'],

@@ -31,7 +31,7 @@ class RequestCreateForm extends Form
         $this->category = null;
         $this->item = null;
         $this->description = null;
-        $this->categories = IncidentCategory::all();
+        $this->categories = RequestCategory::all();
         $this->items = collect([]);
     }
 
