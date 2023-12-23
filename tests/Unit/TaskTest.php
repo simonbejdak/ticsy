@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Status;

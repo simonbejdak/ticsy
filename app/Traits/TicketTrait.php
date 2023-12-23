@@ -67,7 +67,7 @@ trait TicketTrait
         return false;
     }
 
-    function getNumberAttribute(): int
+    function getNumberAttribute()
     {
         return $this->id;
     }

@@ -406,4 +406,23 @@ class EditTest extends TestCase
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSee($incident->sla->minutesTillExpires() . ' minutes');
     }
+
+    public function test_it_allows_to_add_comment_to_user_who_has_created_the_incident()
+    {
+        $user = User::factory()->create();
+        $incident = Incident::factory(['caller_id' => $user])->create();
+
+        Livewire::actingAs($user)
+            ->test(Activities::class, ['model' => $incident])
+            ->set('body', 'Comment Body')
+            ->call('addComment')
+            ->assertSee('Comment Body');
+
+        $this->assertDatabaseHas('activity_log', [
+            'subject_id' => $incident->id,
+            'causer_id' => $user->id,
+            'event' => 'comment',
+            'description' => 'Comment Body'
+        ]);
+    }
 }

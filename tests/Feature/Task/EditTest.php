@@ -1,14 +1,13 @@
 <?php
 
 
-namespace Tests\Feature\Request;
+namespace Tests\Feature\Task;
 
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
-use App\Models\Incident;
 use App\Models\OnHoldReason;
-use App\Models\Request;
+use App\Models\Task;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\Status;
@@ -26,7 +25,7 @@ class EditTest extends TestCase
     /** @test */
     function it_redirect_guests_to_login_page()
     {
-        $response = $this->get(route('requests.edit', Request::factory()->create()));
+        $response = $this->get(route('tasks.edit', Task::factory()->create()));
 
         $response->assertRedirectToRoute('login');
     }
@@ -35,72 +34,58 @@ class EditTest extends TestCase
     function it_errors_to_403_to_unauthorized_users()
     {
         $this->actingAs(User::factory()->create());
-        $response = $this->get(route('requests.edit', Request::factory()->create()));
+        $response = $this->get(route('tasks.edit', Task::factory()->create()));
 
         $response->assertForbidden();
     }
 
     /** @test */
-    function it_authorizes_caller_to_view(){
-        $caller = User::factory()->create();
-        $request = Request::factory(['caller_id' => $caller])->create();
+    function it_errors_to_403_to_caller(){
+        $task = Task::factory()->create();
+        $caller = $task->caller;
 
         $this->actingAs($caller);
-        $response = $this->get(route('requests.edit', $request));
-        $response->assertSuccessful();
+        $response = $this->get(route('tasks.edit', $task));
+
+        $response->assertForbidden();
     }
 
     /** @test */
     function it_authorizes_resolver_to_view(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('requests.edit', $request));
+        $response = $this->get(route('tasks.edit', $task));
         $response->assertSuccessful();
     }
 
     /** @test */
-    public function it_displays_request_data()
+    public function it_displays_task_data()
     {
-        $category = RequestCategory::firstOrFail();
-        $item = RequestItem::firstOrFail();
-        $group = Group::firstOrFail();
-        $status = Status::firstOrFail();
+        $resolver = User::factory()->resolver()->create();
+        $task = Task::factory()->create();
 
-        $caller = User::factory()->create();
-        $resolver = User::factory(['name' => 'John Doe'])->resolverAllGroups()->create();
-        $request = Request::factory([
-            'category_id' => $category,
-            'item_id' => $item,
-            'group_id' => $group,
-            'resolver_id' => $resolver,
-            'status_id' => $status,
-            'caller_id' => $caller,
-        ])->create();
+        $this->actingAs($resolver);
+        $response = $this->get(route('tasks.edit', $task));
 
-
-        $this->actingAs($caller);
-
-        $response = $this->get(route('requests.edit', $request));
         $response->assertSuccessful();
-        $response->assertSee($category->name);
-        $response->assertSee($item->name);
-        $response->assertSee($group->name);
-        $response->assertSee($resolver->name);
-        $response->assertSee($status->name);
+        $response->assertSee($task->category->name);
+        $response->assertSee($task->item->name);
+        $response->assertSee($task->group->name);
+        $response->assertSee($task->status->name);
     }
 
     /** @test */
     public function it_displays_comments()
     {
-        $caller = User::factory()->create();
-        $request = Request::factory(['caller_id' => $caller])->create();
+        $resolver = User::factory()->resolver()->create();
+        $task = Task::factory()->create();
 
-        $this->actingAs($caller);
-        ActivityService::comment($request, 'Comment Body');
+        $this->actingAs($resolver);
+        ActivityService::comment($task, 'Comment Body');
 
-        $response = $this->get(route('requests.edit', $request));
+        $response = $this->get(route('tasks.edit', $task));
 
         $response->assertSuccessful();
         $response->assertSee('Comment Body');
@@ -428,24 +413,5 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
             ->assertSee($request->sla->minutesTillExpires() . ' minutes');
-    }
-
-    public function test_it_allows_to_add_comment_to_user_who_has_created_the_request()
-    {
-        $user = User::factory()->create();
-        $request = Request::factory(['caller_id' => $user])->create();
-
-        Livewire::actingAs($user)
-            ->test(Activities::class, ['model' => $request])
-            ->set('body', 'Comment Body')
-            ->call('addComment')
-            ->assertSee('Comment Body');
-
-        $this->assertDatabaseHas('activity_log', [
-            'subject_id' => $request->id,
-            'causer_id' => $user->id,
-            'event' => 'comment',
-            'description' => 'Comment Body'
-        ]);
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('requests', function (Blueprint $table) {
-            $table->id();
+            $table->id()->startingValue(10000001);
             $table->foreignId('caller_id')->references('id')->on('users');
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
             $table->text('description');

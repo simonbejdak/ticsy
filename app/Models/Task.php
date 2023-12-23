@@ -44,28 +44,14 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
         return $this->belongsTo(Request::class);
     }
 
-    function category(): HasOneThrough
+    function category(): BelongsTo
     {
-        return $this->hasOneThrough(
-            RequestCategory::class,
-            Request::class,
-            'category_id',
-            'id',
-            'request_id',
-            'id'
-        );
+        return $this->request->category();
     }
 
-    function item(): HasOneThrough
+    function item(): BelongsTo
     {
-        return $this->hasOneThrough(
-            RequestItem::class,
-            Request::class,
-            'item_id',
-            'id',
-            'request_id',
-            'id'
-        );
+        return $this->request->item();
     }
 
     function scopeNotStarted(Builder $query): void
