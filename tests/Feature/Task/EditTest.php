@@ -5,6 +5,7 @@ namespace Tests\Feature\Task;
 
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
+use App\Livewire\TaskEditForm;
 use App\Models\Group;
 use App\Models\OnHoldReason;
 use App\Models\Task;
@@ -61,7 +62,7 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function it_displays_task_data()
+    function it_displays_task_data()
     {
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory()->create();
@@ -77,7 +78,7 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function it_displays_comments()
+    function it_displays_comments()
     {
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory()->create();
@@ -92,118 +93,106 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
+    function on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusInProgress()->create();
+        $task = Task::factory()->statusInProgress()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->assertDontSee('On hold reason');
     }
 
     /** @test */
-    public function on_hold_reason_field_is_shown_when_status_is_on_hold()
+    function on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
+        $task = Task::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->assertSee('On hold reason');
     }
 
     /** @test */
-    public function status_can_be_set_to_cancelled_if_previous_status_is_different()
+    function status_can_be_set_to_cancelled_if_previous_status_is_different()
     {
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::CANCELLED)
             ->call('save')
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'status_id' => Status::CANCELLED,
         ]);
     }
 
     /** @test */
-    public function it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_request()
+    function it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_task()
     {
         // resolver does not have a permisssion to set priority one
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 1)
             ->assertForbidden();
     }
 
     /** @test */
-    public function it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_request()
+    function it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_request()
     {
         // manager has a permisssion to set priority one
         $manager = User::factory()->manager()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($manager)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 1)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('requests', [
-           'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+           'id' => $task->id,
            'priority' => 1,
         ]);
     }
 
     /** @test */
-    public function it_allows_user_with_permission_to_set_priority_one_to_also_set_lower_priorities()
+    function it_allows_user_with_permission_to_set_priority_one_to_also_set_lower_priorities()
     {
         // manager has a permisssion to set priority one
         $manager = User::factory()->manager()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($manager)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 2)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'priority' => 2,
         ]);
     }
 
     /** @test */
-    public function it_emits_request_updated_on_save_call()
+    function it_displays_task_created_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->call('save')
-            ->assertDispatched('model-updated');
-    }
-
-    /** @test */
-    public function it_displays_request_created_activity()
-    {
-        $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
-
-        Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $request])
+            ->test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder([
                 'Status:', 'Open',
@@ -213,169 +202,169 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function it_displays_changes_activity_dynamically()
+    function it_displays_changes_activity_dynamically()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     /** @test */
-    public function it_displays_multiple_activity_changes()
+    function it_displays_multiple_activity_changes()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory([
+        $task = Task::factory([
             'status_id' => Status::OPEN,
             'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS)
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
     /** @test */
-    public function it_displays_status_changes_activity()
+    function it_displays_status_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS)
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
     /** @test */
-    public function it_displays_on_hold_reason_changes_activity()
+    function it_displays_on_hold_reason_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
 
     /** @test */
-    public function it_displays_priority_changes_activity()
+    function it_displays_priority_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['priority' => Request::DEFAULT_PRIORITY])->create();
+        $task = Task::factory(['priority' => Task::DEFAULT_PRIORITY])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 3)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Priority:', '3', 'was', Request::DEFAULT_PRIORITY]);
+            ->assertSeeInOrder(['Priority:', '3', 'was', Task::DEFAULT_PRIORITY]);
     }
 
     /** @test */
-    public function it_displays_group_changes_activity()
+    function it_displays_group_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['group_id' => Group::SERVICE_DESK])->create();
+        $task = Task::factory(['group_id' => Group::SERVICE_DESK])->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
     }
 
     /** @test */
-    public function it_displays_resolver_changes_activity()
+    function it_displays_resolver_changes_activity()
     {
         $resolver = User::factory(['name' => 'Average Joe'])->resolverAllGroups()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
-        $request->refresh();
+        $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(Activities::class, ['model' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
 
     /** @test */
-    public function it_displays_activities_in_descending_order()
+    function it_displays_activities_in_descending_order()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
-        $request->status_id = Status::IN_PROGRESS;
-        $request->save();
+        $task->status_id = Status::IN_PROGRESS;
+        $task->save();
 
-        ActivityService::comment($request, 'Test Comment');
+        ActivityService::comment($task, 'Test Comment');
 
-        $request->status_id = Status::MONITORING;
-        $request->save();
+        $task->status_id = Status::MONITORING;
+        $task->save();
 
-        $request->refresh();
+        $task->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $request])
+            ->test(Activities::class, ['model' => $task])
             ->assertSeeInOrder([
                 'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
@@ -385,14 +374,14 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function it_requires_priority_change_reason_if_priority_changes()
+    function it_requires_priority_change_reason_if_priority_changes()
     {
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 3)
             ->call('save')
             ->assertHasErrors(['priorityChangeReason' => 'required'])
@@ -402,16 +391,16 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function sla_bar_shows_correct_minutes()
+    function sla_bar_shows_correct_minutes()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         $date = Carbon::now()->addMinutes(10);
         Carbon::setTestNow($date);
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->assertSee($request->sla->minutesTillExpires() . ' minutes');
+            ->test(taskEditForm::class, ['task' => $task])
+            ->assertSee($task->sla->minutesTillExpires() . ' minutes');
     }
 }

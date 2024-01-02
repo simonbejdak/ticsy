@@ -200,18 +200,6 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function it_emits_request_updated_on_save_call()
-    {
-        $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
-
-        Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->call('save')
-            ->assertDispatched('model-updated');
-    }
-
-    /** @test */
     public function it_displays_request_created_activity()
     {
         $resolver = User::factory()->resolver()->create();

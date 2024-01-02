@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Request;
+namespace Tests\Feature\Task;
 
-use App\Livewire\RequestEditForm;
+use App\Livewire\TaskEditForm;
 use App\Models\Group;
-use App\Models\Request;
 use App\Models\OnHoldReason;
 use App\Models\Status;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -19,10 +19,10 @@ class UpdateTest extends TestCase
     public function test_non_resolver_user_cannot_set_status()
     {
         $user = User::factory()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS)
             ->assertForbidden();
     }
@@ -30,15 +30,15 @@ class UpdateTest extends TestCase
     public function test_resolver_can_set_status()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS)
             ->call('save');
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'status_id' => Status::IN_PROGRESS,
         ]);
     }
@@ -49,10 +49,10 @@ class UpdateTest extends TestCase
     public function test_it_fails_validation_when_invalid_status_is_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', $value)
             ->call('save')
             ->assertHasErrors(['status' => $error]);
@@ -64,10 +64,10 @@ class UpdateTest extends TestCase
     public function test_it_fails_validation_when_invalid_on_hold_reason_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', $value)
             ->call('save')
@@ -77,10 +77,10 @@ class UpdateTest extends TestCase
     public function test_it_fails_validation_if_status_on_hold_and_on_hold_reason_is_null()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', '')
             ->call('save')
@@ -93,10 +93,10 @@ class UpdateTest extends TestCase
     public function test_it_fails_validation_when_invalid_priority_is_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', $value)
             ->call('save')
             ->assertHasErrors(['priority' => $error]);
@@ -108,10 +108,10 @@ class UpdateTest extends TestCase
     public function test_it_fails_validation_when_invalid_group_is_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('group', $value)
             ->call('save')
             ->assertHasErrors(['group' => $error]);
@@ -123,10 +123,10 @@ class UpdateTest extends TestCase
     public function test_it_fails_validation_if_invalid_resolver_is_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $value)
             ->call('save')
             ->assertHasErrors(['resolver' => $error]);
@@ -135,17 +135,17 @@ class UpdateTest extends TestCase
     public function test_resolver_is_able_to_set_on_hold_reason()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD)
             ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR,
         ]);
     }
@@ -153,10 +153,10 @@ class UpdateTest extends TestCase
     public function test_it_forbids_to_save_ticket_if_status_on_hold_and_on_hold_reason_empty()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD)
             ->call('save')
             ->assertHasErrors(['onHoldReason' => 'required_if:status,' . Status::ON_HOLD]);
@@ -166,10 +166,10 @@ class UpdateTest extends TestCase
     {
         $user = User::factory()->create();
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $resolver->id)
             ->assertForbidden();
     }
@@ -177,15 +177,15 @@ class UpdateTest extends TestCase
     public function test_resolver_user_can_set_resolver()
     {
         $resolver = User::factory()->resolverAllGroups()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $resolver->id)
             ->call('save');
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'resolver_id' => $resolver->id,
         ]);
     }
@@ -193,16 +193,16 @@ class UpdateTest extends TestCase
     function test_user_can_change_priority_with_permission()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['priority' => 4])->create();
+        $task = Task::factory(['priority' => 4])->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 2)
             ->set('priorityChangeReason', 'Production issue')
             ->call('save');
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'priority' => 2,
         ]);
     }
@@ -210,29 +210,29 @@ class UpdateTest extends TestCase
     function test_user_cannot_change_priority_without_permission()
     {
         $user = User::factory()->create();
-        $request = Request::factory(['priority' => 4])->create();
+        $task = Task::factory(['priority' => 4])->create();
 
         Livewire::actingAs($user)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 2)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'priority' => 4,
         ]);
     }
 
-    public function test_it_updates_request_when_correct_data_submitted()
+    public function test_it_updates_task_when_correct_data_submitted()
     {
         $group = Group::firstOrFail();
         $resolver = User::factory()->resolverAllGroups()->create();
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
         $status = Status::findOrFail(Status::IN_PROGRESS);
-        $priority = Request::DEFAULT_PRIORITY - 1;
+        $priority = Task::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', $status->id)
             ->set('priority', $priority)
             ->set('priorityChangeReason', 'Production issue')
@@ -240,8 +240,8 @@ class UpdateTest extends TestCase
             ->set('resolver', $resolver->id)
             ->call('save');
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'priority' => $priority,
             'status_id' => $status->id,
             'group_id' => $group->id,
@@ -249,86 +249,80 @@ class UpdateTest extends TestCase
         ]);
     }
 
-    public function test_request_priority_cannot_be_changed_when_status_is_closed(){
+    public function test_task_priority_cannot_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusResolved()->create();
+        $task = Task::factory()->statusResolved()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', Request::DEFAULT_PRIORITY - 1)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->set('priority', Task::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
-            'priority' => Request::DEFAULT_PRIORITY,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'priority' => Task::DEFAULT_PRIORITY,
         ]);
     }
 
-    public function test_request_status_can_be_changed_when_status_is_closed(){
+    public function test_task_status_can_not_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusResolved()->create();
+        $task = Task::factory()->statusResolved()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Request::DEFAULT_STATUS)
-            ->call('save')
-            ->assertSuccessful();
-
-        $this->assertDatabaseHas('requests', [
-           'id' => $request->id,
-           'status_id' => Request::DEFAULT_STATUS,
-        ]);
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->set('status', Task::DEFAULT_STATUS)
+            ->assertForbidden();
     }
 
-    public function test_request_resolver_cannot_be_changed_when_status_is_closed(){
+    public function test_task_resolver_cannot_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory([
+        $task = Task::factory([
             'status_id' => Status::RESOLVED,
             'resolver_id' => null,
         ])->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $resolver->id)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'resolver_id' => null,
         ]);
     }
 
-    public function test_request_priority_cannot_be_changed_when_status_is_cancelled(){
+    public function test_task_priority_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusCancelled()->create();
+        $task = Task::factory()->statusCancelled()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', Request::DEFAULT_PRIORITY - 1)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->set('priority', Task::DEFAULT_PRIORITY - 1)
             ->assertForbidden();
     }
 
-    public function test_request_status_cannot_be_changed_when_status_is_cancelled(){
+    public function test_task_status_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusCancelled()->create();
+        $task = Task::factory()->statusCancelled()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
-            ->set('status', Request::DEFAULT_STATUS)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->set('status', Task::DEFAULT_STATUS)
             ->assertForbidden();
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'status_id' => Status::CANCELLED,
         ]);
     }
 
-    public function test_request_resolver_cannot_be_changed_when_status_is_cancelled(){
+    public function test_task_resolver_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusCancelled()->create();
+        $task = Task::factory()->statusCancelled()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $resolver->id)
             ->assertForbidden();
     }
@@ -346,30 +340,30 @@ class UpdateTest extends TestCase
         $groupTwo = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
         $groupTwo->resolvers()->attach($resolverThree);
 
-        $request = Request::factory(['group_id' => $groupOne])->create();
+        $task = Task::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolverOne)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('group', $groupOne->id)
             ->assertSee('John Doe')
             ->assertSee('Joe Rogan')
             ->assertDontSee('Fred Flinstone');
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('group', $groupTwo->id)
             ->assertDontSee('John Doe')
             ->assertDontSee('Joe Rogan')
             ->assertSee('Fred Flinstone');
     }
 
-    public function test_resolver_from_not_selected_group_cannot_be_assigned_to_the_request_as_resolver()
+    public function test_resolver_from_not_selected_group_cannot_be_assigned_to_the_task_as_resolver()
     {
         $resolver = User::factory()->resolver()->create();
         $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
-        $request = Request::factory()->create();
+        $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
@@ -383,25 +377,25 @@ class UpdateTest extends TestCase
         $groupOne = Group::findOrFail(Group::SERVICE_DESK);
         $groupTwo = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
 
-        $request = Request::factory(['group_id' => $groupOne])->create();
+        $task = Task::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolver)
-            ->test(RequestEditForm::class, ['request' => $request])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->set('resolver', $resolver->id)
             ->call('save');
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'group_id' => $groupOne->id,
             'resolver_id' => $resolver->id,
         ]);
 
-        Livewire::test(RequestEditForm::class, ['request' => $request])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('group', $groupTwo->id)
             ->call('save');
 
-        $this->assertDatabaseHas('requests', [
-            'id' => $request->id,
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
             'group_id' => $groupTwo->id,
             'resolver_id' => null,
         ]);

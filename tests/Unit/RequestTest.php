@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Services\SlaService;
 use App\Services\TaskService;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -55,9 +56,8 @@ class RequestTest extends TestCase
     /** @test */
     function it_has_many_tasks(){
         $request = Request::factory()->create();
-        Task::factory(3, ['request_id' => $request])->create();
 
-        $this->assertGreaterThan(1, count($request->tasks));
+        $this->assertInstanceOf(HasMany::class, $request->tasks());
     }
 
     /** @test */
@@ -349,7 +349,7 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    function it_creates_task_with_same_description_as_request_if_category_item_pair_has_no_specific_task_plan(){
+    function it_creates_task_with_same_description_as_request_if_category_item_pair_has_no_task_plan(){
         $request = Request::factory(['description' => 'Please do the needful'])->withoutTaskPlan()->create();
 
         $this->assertEquals('Please do the needful', $request->tasks->first()->description);

@@ -2,6 +2,9 @@
 
 namespace App\Traits;
 
+use App\Enums\FieldPosition;
+use App\Helpers\Field;
+use App\Helpers\Fields;
 use App\Models\Group;
 use App\Models\OnHoldReason;
 use App\Models\Status;
@@ -130,6 +133,48 @@ trait TicketTrait
                 ($this->resolver == null || $this->resolver->isGroupMember($this->group)),
             default => false,
         };
+    }
+
+    function fields(): Fields
+    {
+        return new Fields(
+            Field::text($name = 'number', value: $this->number, modifiable: $this->isFieldModifiable($name)),
+            Field::text($name = 'caller', value: $this->caller->name, modifiable: $this->isFieldModifiable($name)),
+            Field::text($name = 'created', value: $this->created_at, modifiable: $this->isFieldModifiable($name)),
+            Field::text($name = 'updated', value: $this->updated_at, modifiable: $this->isFieldModifiable($name)),
+            Field::text($name = 'request', value: $this->request->number, modifiable: $this->isFieldModifiable($name)),
+            Field::text($name = 'category', value: $this->category->name, modifiable: $this->isFieldModifiable($name)),
+            Field::text($name = 'item', value: $this->item->name, modifiable: $this->isFieldModifiable($name)),
+            Field::select($name = 'status', options: Status::all(), modifiable: $this->isFieldModifiable($name)),
+            Field::select(
+                $name = 'onHoldReason',
+                options: OnHoldReason::all(),
+                hideable: true,
+                blank: true,
+                modifiable: $this->isFieldModifiable($name)
+            ),
+            Field::select($name = 'priority', options: self::PRIORITIES, modifiable: $this->isFieldModifiable($name)),
+            Field::select($name = 'group', options: Group::all(), modifiable: $this->isFieldModifiable($name)),
+            Field::select($name = 'resolver', options: $this->group->resolvers, modifiable: $this->isFieldModifiable($name)),
+            Field::bar(
+                name: 'sla',
+                percentage: $this->sla->toPercentage(),
+                displayName: 'SLA expires at',
+                value: $this->sla->minutesTillExpires(),
+            ),
+            Field::text(
+                $name = 'priorityChangeReason',
+                position: FieldPosition::OUTSIDE_GRID,
+                hideable: true,
+                modifiable: $this->isFieldModifiable($name),
+            ),
+            Field::text(
+                $name = 'description',
+                position: FieldPosition::OUTSIDE_GRID,
+                value: $this->description,
+                modifiable: $this->isFieldModifiable($name)
+            )
+        );
     }
 
     function getActivityLogOptions(): LogOptions

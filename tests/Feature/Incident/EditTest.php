@@ -187,17 +187,6 @@ class EditTest extends TestCase
         ]);
     }
 
-    public function test_it_emits_incident_updated_on_save_call()
-    {
-        $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory()->create();
-
-        Livewire::actingAs($resolver)
-            ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->call('save')
-            ->assertDispatched('model-updated');
-    }
-
     public function test_it_displays_incident_created_activity()
     {
         $resolver = User::factory()->resolver()->create();

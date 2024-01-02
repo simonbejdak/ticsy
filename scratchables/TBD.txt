@@ -17,10 +17,9 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 
 15. Implement multiple tasks support for requests
 
--- build TaskEditForm
+-- build TaskEditForm -- done
 -- integrate list of tasks to the bottom of RequestEditForm
 -- make Task model have a Morphs Taskable relationship instead of having Request relationship
--- toIterable function can be replaced by making objects Iterable by themselves
 -- make sure all Interfaces are really necessary
 
 16. E-mail notification on ticket update
@@ -39,6 +38,9 @@ Refactor ideas:
 - adding new activity type to the system is cumbersome, too many places to manage.. (view, controller, permissions, policies)
 - Category-Item pairing is disgusting.. please find a better solution
 - i noticed there is a lot of duplication on all EditForms so far.. investigate if it is possible to remove the duplication
+- toIterable function can be replaced by making objects Iterable by themselves
+- find a way to share varaibles between livewire/blade components without specifying them (< :represented-model=$request /> for instance)
+- implement a universal EditForm, which will accept a Ticket model, and it'll render fields based on specification on Model level
 
 Bugs:
 

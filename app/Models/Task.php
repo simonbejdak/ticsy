@@ -3,22 +3,26 @@
 namespace App\Models;
 
 use App\Enums\TaskSequence;
+use App\Helpers\Field;
+use App\Helpers\Fields;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
+use App\Interfaces\Viewable;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-class Task extends Model implements Ticket, Slable, Fieldable, Activitable
+class Task extends Model implements Ticket, Slable, Fieldable, Activitable, Viewable
 {
     use HasSla, HasFactory, TicketTrait;
 
@@ -44,14 +48,28 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
         return $this->belongsTo(Request::class);
     }
 
-    function category(): BelongsTo
+    function category(): HasOneThrough
     {
-        return $this->request->category();
+        return $this->hasOneThrough(
+            RequestCategory::class,
+            Request::class,
+            'id',
+            'id',
+            'request_id',
+            'category_id',
+        );
     }
 
-    function item(): BelongsTo
+    function item(): HasOneThrough
     {
-        return $this->request->item();
+        return $this->hasOneThrough(
+            RequestItem::class,
+            Request::class,
+            'id',
+            'id',
+            'request_id',
+            'category_id',
+        );
     }
 
     function scopeNotStarted(Builder $query): void
@@ -70,5 +88,4 @@ class Task extends Model implements Ticket, Slable, Fieldable, Activitable
             $this->getOriginal('status_id') == Status::CANCELLED
         ;
     }
-
 }

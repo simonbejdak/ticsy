@@ -7,6 +7,7 @@ use App\Http\Controllers\IncidentsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RequestsController;
 use App\Http\Controllers\TasksController;
+use App\Models\Task;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/default', function(){ return view('default', ['task' => Task::first()]); });
 
 Route::middleware('auth')->group(function (){
 
