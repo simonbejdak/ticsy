@@ -17,7 +17,7 @@ class User extends Authenticatable
     use HasRoles;
     use HasFactory;
     use HasApiTokens, HasFactory, Notifiable;
-    public const DEFAULT_PROFILE_PICTURE = 'default_profile_picture.jpg';
+    public const DEFAULT_PROFILE_PICTURE = 'default_profile_picture.png';
 
     protected $casts = [
         'email_verified_at' => 'datetime',

@@ -7,6 +7,7 @@ use App\Helpers\TaskPlan;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
+use App\Interfaces\Taskable;
 use App\Interfaces\Ticket;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Request extends Model implements Ticket, Slable, Fieldable, Activitable
+class Request extends Model implements Ticket, Slable, Fieldable, Activitable, Taskable
 {
     use HasSla, HasFactory, TicketTrait;
 

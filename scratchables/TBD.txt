@@ -42,6 +42,10 @@ Refactor ideas:
 - find a way to share varaibles between livewire/blade components without specifying them (< :represented-model=$request /> for instance)
 - implement a universal EditForm, which will accept a Ticket model, and it'll render fields based on specification on Model level
 
+Design ideas:
+- make SLA bar always show at least a little bit of red color to indicate, that colors represent time left
+- make tasks table have rounded corners on Tasks component
+
 Bugs:
 
 - OnHoldReason validation error not audible if reason is empty

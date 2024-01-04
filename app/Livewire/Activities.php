@@ -17,11 +17,6 @@ class Activities extends Component
     public string $body = '';
     protected $listeners = ['ticket-updated'];
 
-    public function mount(Activitable|Model $model): void
-    {
-        $this->model = $model;
-    }
-
     public function render(){
         $this->activities = $this->model->activities()->orderByDesc('id')->get();
 
