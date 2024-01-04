@@ -8,7 +8,7 @@ use Livewire\Component;
 class RequestTabs extends Component
 {
     public Request $request;
-    public string $viewedTab = 'tasks';
+    public string $viewedTab = 'activities';
 
     function render()
     {

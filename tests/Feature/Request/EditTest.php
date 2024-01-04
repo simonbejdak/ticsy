@@ -5,6 +5,7 @@ namespace Tests\Feature\Request;
 
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
+use App\Livewire\RequestTabs;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\OnHoldReason;
@@ -435,5 +436,22 @@ class EditTest extends TestCase
             'event' => 'comment',
             'description' => 'Comment Body'
         ]);
+    }
+
+    /** @test */
+    function it_shows_task_list(){
+        $request = Request::factory()->create();
+        $resolver = User::factory()->create();
+        $tasks = $request->tasks;
+
+        Livewire::actingAs($resolver);
+
+        foreach ($tasks as $task){
+            Livewire::test(RequestTabs::class, ['request' => $request])
+                ->call('setViewedTab', 'tasks')
+                ->assertSee($task->number)
+                ->assertSee($task->description)
+                ->assertSee($task->status->name);
+        }
     }
 }
