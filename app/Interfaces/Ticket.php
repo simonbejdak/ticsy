@@ -24,6 +24,5 @@ interface Ticket
     function statusChangedFrom(string $status): bool;
     function priorityChanged(): bool;
     function calculateSlaMinutes(): int;
-    function isFieldModifiable(string $name): bool;
     function getActivityLogOptions(): LogOptions;
 }

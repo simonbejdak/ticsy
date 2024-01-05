@@ -2,20 +2,16 @@
 
 namespace App\Models;
 
-use App\Enums\TaskSequence;
 use App\Helpers\Field;
-use App\Helpers\Fields;
 use App\Interfaces\Activitable;
 use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
 use App\Interfaces\Viewable;
-use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

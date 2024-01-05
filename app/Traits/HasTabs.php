@@ -2,11 +2,15 @@
 
 namespace App\Traits;
 
+use App\Enums\Tab;
+use App\Livewire\Tabs;
 use InvalidArgumentException;
 
 trait HasTabs
 {
     public array $validTabs = ['activities', 'tasks'];
+
+    abstract function tabs(Tab ...$tabs): Tabs;
 
     function bootHasTabs(): void
     {

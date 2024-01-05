@@ -2,22 +2,26 @@
 
 namespace App\Livewire;
 
+use App\Enums\Tab;
+use App\Helpers\Fields\Field;
+use App\Helpers\Fields\Fields;
+use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextInput;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
-use App\Models\TicketConfig;
-use App\Models\Type;
+use App\Traits\HasFields;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class IncidentCreateForm extends Form
 {
+    use HasFields;
+
     public string $typeName;
     public $category;
     public $item;
     public $description;
-    public Collection $categories;
-    public Collection $items;
 
     public function rules()
     {
@@ -33,14 +37,11 @@ class IncidentCreateForm extends Form
         $this->category = null;
         $this->item = null;
         $this->description = null;
-        $this->categories = IncidentCategory::all();
-        $this->items = collect([]);
     }
 
     public function updated($property): void
     {
         $this->validateOnly('category');
-        $this->items = $this->category ? IncidentCategory::findOrFail($this->category)->items()->get() : collect([]);
     }
 
     public function render()
@@ -61,5 +62,21 @@ class IncidentCreateForm extends Form
 
         Session::flash('success', 'You have successfully created an incident');
         return redirect()->route('incidents.edit', $incident);
+    }
+
+    function fields(): Fields
+    {
+        return new Fields(
+            Select::make()
+                ->name('category')
+                ->options(IncidentCategory::all())
+                ->blank(),
+            Select::make()
+                ->name('item')
+                ->options($this->category ? IncidentCategory::findOrFail($this->category)->items()->get() : collect([]))
+                ->blank(),
+            TextInput::make()
+                ->name('description')
+        );
     }
 }
