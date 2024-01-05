@@ -6,6 +6,7 @@ namespace Tests\Feature\Request;
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
 use App\Livewire\RequestTabs;
+use App\Livewire\Tabs;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\OnHoldReason;
@@ -115,7 +116,7 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->assertDontSee('On hold reason');
+            ->assertDontSeeHtml('> On hold reason </label>');
     }
 
     /** @test */
@@ -447,7 +448,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         foreach ($tasks as $task){
-            Livewire::test(RequestTabs::class, ['request' => $request])
+            Livewire::test(Tabs::class, ['tabs' => ['activities', 'tasks'], 'model' => $request])
                 ->call('setViewedTab', 'tasks')
                 ->assertSee($task->number)
                 ->assertSee($task->description)

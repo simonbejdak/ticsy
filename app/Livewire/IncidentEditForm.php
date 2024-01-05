@@ -2,19 +2,20 @@
 
 namespace App\Livewire;
 
-use App\Helpers\TabList;
 use App\Interfaces\Fieldable;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\OnHoldReason;
 use App\Models\Status;
-use App\Models\Ticket;
 use App\Services\ActivityService;
+use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
 class IncidentEditForm extends Form
 {
+    use HasTabs;
+
     public Incident $incident;
     public array $tabs = ['activities'];
     public Collection $activities;
@@ -70,7 +71,7 @@ class IncidentEditForm extends Form
     public function updating($property, $value): void
     {
         if($property === 'priority' && $value == 1){
-            $this->authorize('setPriorityOne', Ticket::class);
+            $this->authorize('setPriorityOne', Incident::class);
         }
     }
 

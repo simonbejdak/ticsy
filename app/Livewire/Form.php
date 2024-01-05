@@ -10,11 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Form extends Component
 {
     public Fieldable|null $fieldableModel = null;
-    public array $tabs;
-
-    function boot(){
-        $this->checkIfTabsAreValid($this->tabs);
-    }
 
     public function updated($property): void
     {
@@ -32,16 +27,5 @@ abstract class Form extends Component
     protected function fieldableModel(): Fieldable|null
     {
         return null;
-    }
-
-    protected function checkIfTabsAreValid(array $tabs): void
-    {
-        $validTabs = ['activities', 'tasks'];
-
-        foreach ($tabs as $tab){
-            if(!in_array($tab, $validTabs)){
-                throw new \InvalidArgumentException('The ' . $tab . ' does not exist in ticketing system.');
-            }
-        }
     }
 }

@@ -2,18 +2,20 @@
 
 namespace App\Livewire;
 
-use App\Helpers\TabList;
 use App\Interfaces\Fieldable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
 use App\Models\Request;
 use App\Models\Status;
 use App\Services\ActivityService;
+use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
 class RequestEditForm extends Form
 {
+    use HasTabs;
+
     public Request $request;
     public array $tabs = ['activities', 'tasks'];
     public Collection $activities;

@@ -10,11 +10,14 @@ use App\Models\Request;
 use App\Models\Status;
 use App\Models\Task;
 use App\Services\ActivityService;
+use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
 class TaskEditForm extends Form
 {
+    use HasTabs;
+
     public Task $task;
     public array $tabs = ['activities'];
     public Collection $activities;

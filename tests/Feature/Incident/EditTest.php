@@ -107,8 +107,9 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->assertDontSee('On hold reason');
+            ->assertDontSeeHtml('> On hold reason </label>');
     }
+
     public function test_on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();

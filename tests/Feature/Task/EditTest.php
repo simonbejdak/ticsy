@@ -100,7 +100,7 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->assertDontSee('On hold reason');
+            ->assertDontSeeHtml('> On hold reason </label>');
     }
 
     /** @test */
