@@ -18,7 +18,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 15. Implement multiple tasks support for requests
 
 -- build TaskEditForm -- done
--- integrate list of tasks to the bottom of RequestEditForm
+-- integrate list of tasks to the bottom of RequestEditForm -- done
 -- make Task model have a Morphs Taskable relationship instead of having Request relationship
 -- make sure all Interfaces are really necessary
 

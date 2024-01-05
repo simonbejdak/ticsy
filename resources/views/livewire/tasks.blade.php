@@ -7,11 +7,13 @@
                 <th class="text-right pr-4">Status</th>
             </tr>
             @foreach($tasks as $task)
-                <tr class="border border-gray-300" >
-                    <td class="text-left pl-3 py-2"><a href="{{ route('tasks.edit', $task) }}">{{ $task->number }}</a></td>
-                    <td class="text-left">{{ $task->description }}</td>
-                    <td class="text-right pr-4">{{ $task->status->name }}</td>
-                </tr>
+                <a href="{{ route('tasks.edit', $task) }}">
+                    <tr class="border border-gray-300 hover:bg-gray-200 hover:cursor-pointer ease-in transition duration-70" >
+                        <td class="text-left pl-3 py-2">{{ $task->number }}</td>
+                        <td class="text-left">{{ $task->description }}</td>
+                        <td class="text-right pr-4">{{ $task->status->name }}</td>
+                    </tr>
+                </a>
             @endforeach
         </table>
     @endif

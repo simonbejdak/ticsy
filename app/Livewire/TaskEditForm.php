@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Helpers\TabList;
 use App\Interfaces\Fieldable;
 use App\Models\Group;
 use App\Models\OnHoldReason;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Session;
 class TaskEditForm extends Form
 {
     public Task $task;
+    public array $tabs = ['activities'];
     public Collection $activities;
     public $status;
     public $onHoldReason;

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Helpers\TabList;
 use App\Interfaces\Fieldable;
 use App\Models\Group;
 use App\Models\Incident;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Session;
 class IncidentEditForm extends Form
 {
     public Incident $incident;
+    public array $tabs = ['activities'];
     public Collection $activities;
     public $status;
     public $onHoldReason;

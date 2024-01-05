@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Interfaces\Activitable;
-use App\Models\Comment;
 use App\Services\ActivityService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
