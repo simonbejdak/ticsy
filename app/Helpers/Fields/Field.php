@@ -9,21 +9,25 @@ use Illuminate\Database\Eloquent\Collection;
 abstract class Field
 {
     public string $name;
-    public string $value = '';
+    public string $value;
     public string $rules;
     protected string $displayName;
-    public bool $hideable = false;
-    public bool $disabled = false;
+    public bool $hideable;
+    public bool $disabled;
 
-    static function make(): static
+    protected function __construct()
     {
-        return new static;
+        $this->value = '';
+        $this->hideable = false;
+        $this->disabled = false;
     }
 
-    function name(string $name): self
+    static function make(string $name): static
     {
-        $this->name = $name;
-        return $this;
+        $static = new static;
+        $static->name = $name;
+
+        return $static;
     }
 
     function value(string $value): self

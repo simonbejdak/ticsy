@@ -2,15 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Enums\Tab;
-use App\Helpers\Fields\Field;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Traits\HasFields;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -67,16 +64,13 @@ class IncidentCreateForm extends Form
     function fields(): Fields
     {
         return new Fields(
-            Select::make()
-                ->name('category')
+            Select::make('category')
                 ->options(IncidentCategory::all())
                 ->blank(),
-            Select::make()
-                ->name('item')
-                ->options($this->category ? IncidentCategory::findOrFail($this->category)->items()->get() : collect([]))
+            Select::make('item')
+                ->options($this->category ? IncidentCategory::findOrFail($this->category)->items()->get() : [])
                 ->blank(),
-            TextInput::make()
-                ->name('description')
+            TextInput::make('description'),
         );
     }
 }

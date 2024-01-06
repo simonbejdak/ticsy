@@ -1,3 +1,10 @@
-@props(['modifiable' => false])
-
-<input {{ $modifiable ? 'modifiable' : '' }} {!! $attributes->merge(['class' => 'border border-gray-300  focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm']) !!}>
+<x-field-layout :hidden="$field->isHidden()">
+    <x-field-label :value="$field->getDisplayName()"/>
+        <x-field-input
+            class="p-2"
+            :name="$field->name"
+            :value="$field->value"
+            :error="$errors->has($field->name)"
+            :disabled="$field->disabled"
+        />
+</x-field-layout>

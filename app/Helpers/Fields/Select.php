@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Collection;
 class Select extends Field
 {
     public array $options;
-    public string $value;
-    public bool $blank = false;
+    public bool $blank;
+
+    protected function __construct()
+    {
+        parent::__construct();
+        $this->options = [];
+        $this->blank = false;
+    }
 
     function options(array|Collection $options): self
     {

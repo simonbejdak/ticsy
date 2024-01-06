@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\TaskSequence;
 use App\Helpers\TaskPlan;
 use App\Interfaces\Activitable;
-use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Taskable;
 use App\Interfaces\Ticket;
@@ -20,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Request extends Model implements Ticket, Slable, Fieldable, Activitable, Taskable
+class Request extends Model implements Ticket, Slable, Activitable, Taskable
 {
     use HasSla, HasFactory, TicketTrait;
 

@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
-use App\Helpers\Field;
 use App\Interfaces\Activitable;
-use App\Interfaces\Fieldable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
-use App\Interfaces\Viewable;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
@@ -18,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-class Task extends Model implements Ticket, Slable, Fieldable, Activitable, Viewable
+class Task extends Model implements Ticket, Slable, Activitable
 {
     use HasSla, HasFactory, TicketTrait;
 
