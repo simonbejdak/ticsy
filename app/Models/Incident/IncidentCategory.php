@@ -48,4 +48,9 @@ class IncidentCategory extends Enum
         }
         return false;
     }
+
+    public function getItemIds(): array
+    {
+        return $this->items()->select('id')->get()->pluck('id')->toArray();
+    }
 }

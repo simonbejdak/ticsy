@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\Rule;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -376,7 +377,8 @@ class UpdateTest extends TestCase
             ->assertSuccessful()
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
-            ->assertForbidden();
+            ->call('save')
+            ->assertHasErrors(['resolver' => 'in']);
     }
 
     public function test_selected_resolver_is_empty_when_resolver_group_changes()
@@ -412,34 +414,34 @@ class UpdateTest extends TestCase
 
     static function invalidStatuses(){
         return [
-            ['word', 'numeric'],
+            ['word', 'in'],
             ['', 'required'],
         ];
     }
 
     static function invalidOnHoldReasons(){
         return [
-            ['word', 'numeric'],
+            ['word', 'in'],
         ];
     }
 
     static function invalidPriorities(){
         return [
-            ['word', 'numeric'],
+            ['word', 'in'],
             ['', 'required'],
         ];
     }
 
     static function invalidGroups(){
         return [
-            ['word', 'numeric'],
+            ['word', 'in'],
             ['', 'required'],
         ];
     }
 
     static function invalidResolvers(){
         return [
-            ['word', 'numeric'],
+            ['word', 'in'],
         ];
     }
 }

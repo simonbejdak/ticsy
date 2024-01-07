@@ -5,11 +5,14 @@ namespace App\Livewire;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
+use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
+use App\Models\Incident\IncidentItem;
 use App\Traits\HasFields;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class IncidentCreateForm extends Form
 {
@@ -23,8 +26,13 @@ class IncidentCreateForm extends Form
     public function rules()
     {
         return [
-            'category' => 'numeric|required',
-            'item' => 'numeric|required',
+            'category' => ['required', Rule::in(IncidentCategory::MAP)],
+            'item' => [
+                'required',
+                Rule::in(
+                    IncidentCategory::find($this->category) ? IncidentCategory::find($this->category)->getItemIds() : []
+                )
+            ],
             'description' => 'string|required',
         ];
     }
@@ -34,11 +42,6 @@ class IncidentCreateForm extends Form
         $this->category = null;
         $this->item = null;
         $this->description = null;
-    }
-
-    public function updated($property): void
-    {
-        $this->validateOnly('category');
     }
 
     public function render()
@@ -68,7 +71,7 @@ class IncidentCreateForm extends Form
                 ->options(IncidentCategory::all())
                 ->blank(),
             Select::make('item')
-                ->options($this->category ? IncidentCategory::findOrFail($this->category)->items()->get() : [])
+                ->options(IncidentCategory::find($this->category) ? IncidentCategory::find($this->category)->items()->get() : [])
                 ->blank(),
             TextInput::make('description'),
         );

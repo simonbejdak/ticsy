@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
 
-class Tabs extends Component
+class TempTabs extends Component
 {
     public Model $model;
     public array $tabs;
     public string $viewedTab;
+
+    function render(){
+        return view('livewire.tabs');
+    }
 
     function mount(): void
     {

@@ -2,19 +2,28 @@
 
 namespace App\Livewire;
 
-use App\Interfaces\Fieldable;
+use App\Enums\Tab;
+use App\Helpers\Fields\Bar;
+use App\Helpers\Fields\Fields;
+use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextInput;
+use App\Helpers\Tabs;
 use App\Models\Group;
 use App\Models\Incident;
+use App\Models\Incident\IncidentCategory;
 use App\Models\OnHoldReason;
 use App\Models\Status;
+use App\Models\User;
 use App\Services\ActivityService;
+use App\Traits\HasFields;
 use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class IncidentEditForm extends Form
 {
-    use HasTabs;
+    use HasFields, HasTabs;
 
     public Incident $incident;
     public array $tabs = ['activities'];
@@ -35,31 +44,33 @@ class IncidentEditForm extends Form
     public function rules()
     {
         return [
-            'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
-            'priority' => 'required|numeric',
-            'priorityChangeReason' => $this->incident->isDirty('priority') ? 'required|string' : 'present|max:0',
-            'group' => 'required|numeric',
-            'resolver' => 'nullable|numeric',
+            'status' => ['required', Rule::in(Status::MAP)],
+            'onHoldReason' => [
+                'required_if:status,' . Status::ON_HOLD,
+                'nullable',
+                Rule::in(OnHoldReason::MAP)
+            ],
+            'priority' => ['required', Rule::in(Incident::PRIORITIES)],
+            'priorityChangeReason' => [
+                Rule::requiredIf($this->priority != $this->incident->priority),
+                'string',
+            ],
+            'group' => ['required', Rule::in(Group::MAP)],
+            'resolver' => [
+                'nullable',
+                Rule::in(
+                    Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
+                )
+            ],
         ];
     }
 
     public function mount(Incident $incident){
         $this->incident = $incident;
-
-        $this->statuses = Status::all();
         $this->status = $this->incident->status_id;
-
-        $this->onHoldReasons = OnHoldReason::all();
         $this->onHoldReason = $this->incident->on_hold_reason_id;
-
-        $this->priorities = Incident::PRIORITIES;
         $this->priority = $this->incident->priority;
-
-        $this->groups = Group::all();
         $this->group = $this->incident->group_id;
-
-        $this->resolvers = Group::find($this->group)->resolvers()->get();
         $this->resolver = $this->incident->resolver_id;
     }
 
@@ -84,14 +95,17 @@ class IncidentEditForm extends Form
             $this->onHoldReason = null;
         }
 
-        $this->syncTicket();
         parent::updated($property);
     }
 
     public function save()
     {
-        $this->syncTicket();
         $this->validate();
+        $this->incident->status_id = $this->status;
+        $this->incident->on_hold_reason_id = $this->onHoldReason;
+        $this->incident->priority = $this->priority;
+        $this->incident->group_id = $this->group;
+        $this->incident->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->incident->save();
 
         if($this->priorityChangeReason !== ''){
@@ -100,20 +114,84 @@ class IncidentEditForm extends Form
         }
 
         Session::flash('success', 'You have successfully updated the incident');
-        return redirect()->route('requests.edit', $this->incident);
+        return redirect()->route('incidents.edit', $this->incident);
     }
 
-    protected function syncTicket(): void
+    function fields(): Fields
     {
-        $this->incident->status_id = $this->status;
-        $this->incident->on_hold_reason_id = $this->onHoldReason;
-        $this->incident->priority = $this->priority;
-        $this->incident->group_id = $this->group;
-        $this->incident->resolver_id = ($this->resolver === '') ? null : $this->resolver;
-        $this->resolvers = $this->incident->group ? $this->incident->group->resolvers : collect([]);
+        return new Fields(
+            TextInput::make('number')
+                ->value($this->incident->id)
+                ->disabled(),
+            TextInput::make('caller')
+                ->value($this->incident->caller->name)
+                ->disabled(),
+            TextInput::make('created')
+                ->displayName('Created at')
+                ->value($this->incident->created_at)
+                ->disabled(),
+            TextInput::make('updated')
+                ->displayName('Updated at')
+                ->value($this->incident->updated_at)
+                ->disabled(),
+            TextInput::make('category')
+                ->value($this->incident->category->name)
+                ->disabled(),
+            TextInput::make('item')
+                ->value($this->incident->item->name)
+                ->disabled(),
+            Select::make('status')
+                ->options(Status::all())
+                ->disabledCondition($this->isFieldDisabled('status')),
+            Select::make('onHoldReason')
+                ->options(OnHoldReason::all())
+                ->hideable()
+                ->blank()
+                ->disabledCondition($this->isFieldDisabled('onHoldReason')),
+            Select::make('priority')
+                ->options(Incident::PRIORITIES)
+                ->disabledCondition($this->isFieldDisabled('priority')),
+            Select::make('group')
+                ->options(Group::all())
+                ->disabledCondition($this->isFieldDisabled('group')),
+            Select::make('resolver')
+                ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
+                ->disabledCondition($this->isFieldDisabled('resolver'))
+                ->blank(),
+            Bar::make('sla')
+                ->displayName('SLA expires at')
+                ->percentage($this->incident->sla->toPercentage())
+                ->value($this->incident->sla->minutesTillExpires() . ' minutes'),
+            TextInput::make('priorityChangeReason')
+                ->hideable()
+                ->disabledCondition($this->isFieldDisabled('priorityChangeReason'))
+                ->outsideGrid(),
+            TextInput::make('description')
+                ->value($this->incident->description)
+                ->disabled()
+                ->outsideGrid(),
+        );
     }
 
-    protected function fieldableModel(): Fieldable{
-        return $this->incident;
+    function tabs(Tab ...$tabs): Tabs
+    {
+        return new Tabs(Tab::ACTIVITIES);
+    }
+
+    protected function isFieldDisabled(string $name): bool
+    {
+        if($this->incident->isArchived() || auth()->user()->cannot('update', Incident::class)){
+            return true;
+        }
+
+        return match($name){
+            'onHoldReason' =>
+                $this->status != Status::ON_HOLD,
+            'priority', 'group', 'resolver' =>
+                $this->status == Status::RESOLVED,
+            'priorityChangeReason' =>
+                $this->priority == $this->incident->priority,
+            default => false,
+        };
     }
 }

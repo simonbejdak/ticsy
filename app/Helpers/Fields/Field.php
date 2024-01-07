@@ -2,6 +2,7 @@
 
 namespace App\Helpers\Fields;
 
+use App\Enums\FieldPosition;
 use App\Interfaces\Fieldable;
 use App\Models\Status;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,12 +15,14 @@ abstract class Field
     protected string $displayName;
     public bool $hideable;
     public bool $disabled;
+    public FieldPosition $position;
 
     protected function __construct()
     {
         $this->value = '';
         $this->hideable = false;
         $this->disabled = false;
+        $this->position = FieldPosition::INSIDE_GRID;
     }
 
     static function make(string $name): static
@@ -61,7 +64,7 @@ abstract class Field
 
     function disabledCondition(bool $condition): self
     {
-        $this->disabled = $condition;
+        $this->disabled = !$condition;
         return $this;
     }
 
@@ -111,6 +114,12 @@ abstract class Field
     function max(int $value): self
     {
         $this->rules .= '|max:' . $value;
+        return $this;
+    }
+
+    public function outsideGrid(): self
+    {
+        $this->position = FieldPosition::OUTSIDE_GRID;
         return $this;
     }
 

@@ -46,3 +46,8 @@ function toIterable(Collection|array $object): array{
 
     throw new InvalidArgumentException('Method toIterable() only accepts arguments of type Collection or array');
 }
+
+function hasTrait($object, $traitName){
+    $reflection = new ReflectionObject($object);
+    return in_array($traitName, $reflection->getTraitNames());
+}

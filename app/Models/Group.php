@@ -33,4 +33,9 @@ class Group extends Enum
     {
         return $this->hasMany(Request::class);
     }
+
+    public function getResolverIds(): array
+    {
+        return $this->resolvers()->select('id')->get()->pluck('id')->toArray();
+    }
 }

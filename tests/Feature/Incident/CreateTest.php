@@ -102,7 +102,7 @@ class CreateTest extends TestCase
 
     static function invalidCategories(){
         return [
-            ['ASAP', 'numeric'],
+            ['ASAP', 'in'],
             ['', 'required'],
         ];
     }
@@ -110,7 +110,7 @@ class CreateTest extends TestCase
     static function invalidItems(){
         return [
             ['', 'required'],
-            ['ASAP', 'numeric'],
+            ['ASAP', 'in'],
         ];
     }
 

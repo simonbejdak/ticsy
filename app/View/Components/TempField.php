@@ -22,7 +22,7 @@ class TempField extends Component
     public function render(): View|Closure|string
     {
         if($this->field instanceof TextInput){
-            return view('components.text-input');
+            return view('components.temp-text-input');
         } elseif($this->field instanceof Select){
             return view('components.select');
         } elseif($this->field instanceof Bar){
