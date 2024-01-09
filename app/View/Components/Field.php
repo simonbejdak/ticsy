@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 use InvalidArgumentException;
 
-class TempField extends Component
+class Field extends Component
 {
     public \App\Helpers\Fields\Field $field;
 
@@ -22,7 +22,7 @@ class TempField extends Component
     public function render(): View|Closure|string
     {
         if($this->field instanceof TextInput){
-            return view('components.temp-text-input');
+            return view('components.text-input');
         } elseif($this->field instanceof Select){
             return view('components.select');
         } elseif($this->field instanceof Bar){

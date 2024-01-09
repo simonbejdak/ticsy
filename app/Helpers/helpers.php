@@ -1,5 +1,6 @@
 <?php
 
+use App\Traits\HasFields;
 use Illuminate\Database\Eloquent\Collection;
 
 function get_class_name($object): string
@@ -47,7 +48,7 @@ function toIterable(Collection|array $object): array{
     throw new InvalidArgumentException('Method toIterable() only accepts arguments of type Collection or array');
 }
 
-function hasTrait($object, $traitName){
-    $reflection = new ReflectionObject($object);
-    return in_array($traitName, $reflection->getTraitNames());
+function hasTrait(string $class, $object): bool
+{
+    return in_array($class, class_uses_recursive($object));
 }
