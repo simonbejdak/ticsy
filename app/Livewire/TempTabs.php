@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Enums\Tab;
+use App\Helpers\Tabs;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,21 +11,32 @@ use Symfony\Component\HttpFoundation\Response;
 class TempTabs extends Component
 {
     public Model $model;
-    public array $tabs;
-    public string $viewedTab;
+    protected Tabs $tabs;
+    protected Tab $viewedTab;
 
     function render(){
         return view('livewire.tabs');
     }
 
-    function mount(): void
+    function mount(Tabs $tabs): void
     {
-        $this->viewedTab = $this->tabs[0];
+        $this->tabs = $tabs;
+        $this->viewedTab = $this->tabs->first();
     }
 
-    function setViewedTab(string $tab): void
+    function tabs(): Tabs
     {
-        if(!in_array($tab, $this->tabs)){
+        return $this->tabs;
+    }
+
+    function viewedTab(): Tab
+    {
+        return $this->viewedTab;
+    }
+
+    function setViewedTab(Tab $tab): void
+    {
+        if(!$this->tabs->has($tab)){
             abort(Response::HTTP_NOT_FOUND);
         }
         $this->viewedTab = $tab;

@@ -64,7 +64,7 @@ abstract class Field
 
     function disabledCondition(bool $condition): self
     {
-        $this->disabled = !$condition;
+        $this->disabled = $condition;
         return $this;
     }
 

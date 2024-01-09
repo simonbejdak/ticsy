@@ -18,7 +18,22 @@ class Tabs implements IteratorAggregate
         }
     }
 
-    public function getIterator(): Traversable
+    function first(): Tab
+    {
+        return $this->tabs[0];
+    }
+
+    function tabKey(Tab $tab): int
+    {
+        return array_search($tab, $this->tabs);
+    }
+
+    function has(Tab $tab): bool
+    {
+        return in_array($tab, $this->tabs);
+    }
+
+    function getIterator(): Traversable
     {
         return new ArrayIterator($this->tabs);
     }
