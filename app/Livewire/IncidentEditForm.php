@@ -7,12 +7,11 @@ use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
-use App\Helpers\Tabs;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 use App\Services\ActivityService;
 use App\Traits\HasFields;
@@ -37,9 +36,9 @@ class IncidentEditForm extends Form
     public function rules()
     {
         return [
-            'status' => ['required', Rule::in(Status::MAP)],
+            'status' => ['required', Rule::enum(Status::class)],
             'onHoldReason' => [
-                'required_if:status,' . Status::ON_HOLD,
+                Rule::requiredIf($this->status == Status::ON_HOLD),
                 'nullable',
                 Rule::in(OnHoldReason::MAP)
             ],
@@ -61,7 +60,7 @@ class IncidentEditForm extends Form
     public function mount(Incident $incident){
         $this->incident = $incident;
         $this->model = $incident;
-        $this->status = $this->incident->status_id;
+        $this->status = $this->incident->status;
         $this->onHoldReason = $this->incident->on_hold_reason_id;
         $this->priority = $this->incident->priority;
         $this->group = $this->incident->group_id;
@@ -95,7 +94,7 @@ class IncidentEditForm extends Form
     public function save()
     {
         $this->validate();
-        $this->incident->status_id = $this->status;
+        $this->incident->status = $this->status;
         $this->incident->on_hold_reason_id = $this->onHoldReason;
         $this->incident->priority = $this->priority;
         $this->incident->group_id = $this->group;
@@ -135,7 +134,7 @@ class IncidentEditForm extends Form
                 ->value($this->incident->item->name)
                 ->disabled(),
             Select::make('status')
-                ->options(Status::all())
+                ->options(Status::class)
                 ->disabledCondition($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
                 ->options(OnHoldReason::all())

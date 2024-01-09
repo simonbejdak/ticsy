@@ -62,7 +62,7 @@ class RequestEditForm extends Form
     public function mount(Request $request){
         $this->request = $request;
         $this->model = $request;
-        $this->status = $this->request->status_id;
+        $this->status = $this->request->status;
         $this->onHoldReason = $this->request->on_hold_reason_id;
         $this->priority = $this->request->priority;
         $this->group = $this->request->group_id;
@@ -96,7 +96,7 @@ class RequestEditForm extends Form
     public function save()
     {
         $this->validate();
-        $this->request->status_id = $this->status;
+        $this->request->status = $this->status;
         $this->request->on_hold_reason_id = $this->onHoldReason;
         $this->request->priority = $this->priority;
         $this->request->group_id = $this->group;

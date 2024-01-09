@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->text('description');
             $table->foreignId('category_id')->constrained()->references('id')->on('incident_categories');
             $table->foreignId('item_id')->constrained()->references('id')->on('incident_items');
-            $table->enum('status_id', Status::MAP);
+            $table->integer('status');
             $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Incident::PRIORITIES);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use App\Enums\TaskSequence;
 use App\Helpers\TaskPlan;
 use App\Interfaces\Activitable;
@@ -12,8 +13,6 @@ use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,11 +24,12 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
 
     protected $guarded = [];
     protected $casts = [
+        'status' => Status::class,
         'resolved_at' => 'datetime',
         'task_sequence' => TaskSequence::class,
     ];
     protected $attributes = [
-        'status_id' => self::DEFAULT_STATUS,
+        'status' => self::DEFAULT_STATUS,
         'group_id' => self::DEFAULT_GROUP,
         'priority' => self::DEFAULT_PRIORITY,
     ];

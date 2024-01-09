@@ -2,11 +2,9 @@
 
 namespace App\Traits;
 
-use App\Enums\FieldPosition;
-use App\Helpers\Field;
 use App\Models\Group;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,11 +41,6 @@ trait TicketTrait
     abstract function category(): BelongsTo|HasOneThrough;
     abstract function item(): BelongsTo|HasOneThrough;
 
-    function status(): BelongsTo
-    {
-        return $this->belongsTo(Status::class);
-    }
-
     function onHoldReason(): BelongsTo
     {
         return $this->belongsTo(OnHoldReason::class);
@@ -58,14 +51,9 @@ trait TicketTrait
         return $this->belongsTo(Group::class);
     }
 
-    function isStatus(...$statuses): bool
+    function isStatus(Status ...$statuses): bool
     {
-        foreach ($statuses as $status){
-            if($this->status_id == Status::MAP[$status]){
-                return true;
-            }
-        }
-        return false;
+        return in_array($this->status, $statuses);
     }
 
     function getNumberAttribute()
@@ -93,14 +81,14 @@ trait TicketTrait
         return $this->isDirty('status_id');
     }
 
-    function statusChangedTo(string $status): bool
+    function statusChangedTo(Status $status): bool
     {
         return $this->statusChanged() && $this->isStatus($status);
     }
 
-    function statusChangedFrom(string $status): bool
+    function statusChangedFrom(Status $status): bool
     {
-        return $this->statusChanged() && $this->getOriginal('status_id') == Status::MAP[$status];
+        return $this->statusChanged() && $this->getOriginal('status') == $status;
     }
 
     function priorityChanged(): bool

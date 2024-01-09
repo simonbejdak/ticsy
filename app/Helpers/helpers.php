@@ -19,8 +19,12 @@ function makeDisplayName($name): string{
     return ucfirst($name);
 }
 
-function toIterable(Collection|array $object): array{
+function toIterable(string|Collection|array $object): array{
     $return = [];
+
+    if($object instanceof UnitEnum){
+        dd($object);
+    }
 
     if($object instanceof Collection){
         foreach ($object->all() as $value){

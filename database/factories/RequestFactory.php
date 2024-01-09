@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -66,7 +66,7 @@ class RequestFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => Status::IN_PROGRESS,
+                'status' => Status::IN_PROGRESS,
             ];
         });
     }
@@ -75,7 +75,7 @@ class RequestFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => Status::ON_HOLD,
+                'status' => Status::ON_HOLD,
             ];
         });
     }
@@ -84,7 +84,7 @@ class RequestFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => Status::RESOLVED,
+                'status' => Status::RESOLVED,
             ];
         });
     }
@@ -93,7 +93,7 @@ class RequestFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status_id' => Status::CANCELLED,
+                'status' => Status::CANCELLED,
             ];
         });
     }

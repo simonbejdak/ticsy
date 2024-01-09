@@ -10,7 +10,7 @@ use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -61,9 +61,9 @@ class EditTest extends TestCase
         $category = IncidentCategory::firstOrFail();
         $item = IncidentItem::firstOrFail();
         $group = Group::firstOrFail();
-        $status = Status::firstOrFail();
+        $status = Status::OPEN;
 
-        $resolver = User::factory(['name' => 'John Doe'])->resolver(true)->create();
+        $resolver = User::factory(['name' => 'John Doe'])->resolverAllGroups()->create();
 
         $user = User::factory()->create();
         $incident = Incident::factory([
@@ -71,7 +71,7 @@ class EditTest extends TestCase
             'item_id' => $item,
             'group_id' => $group,
             'resolver_id' => $resolver,
-            'status_id' => $status,
+            'status' => $status,
             'caller_id' => $user,
         ])->create();
 

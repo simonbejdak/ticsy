@@ -2,9 +2,9 @@
 
 namespace App\Observers;
 
+use App\Enums\Status;
 use App\Models\Task;
 use App\Services\RequestService;
-use App\Services\TaskService;
 
 class TaskObserver
 {
@@ -16,10 +16,10 @@ class TaskObserver
 
     function updated(Task $task): void
     {
-        if($task->statusChangedTo('resolved')){
+        if($task->statusChangedTo(Status::RESOLVED)){
             RequestService::eventTaskResolved($task->request);
         }
-        if($task->statusChangedTo('cancelled')){
+        if($task->statusChangedTo(Status::CANCELLED)){
             RequestService::eventTaskCancelled($task->request);
         }
     }

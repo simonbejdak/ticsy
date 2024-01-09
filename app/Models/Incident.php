@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use App\Interfaces\Activitable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
@@ -19,10 +20,12 @@ class Incident extends Model implements Ticket, Slable, Activitable
 
     protected $guarded = [];
     protected $casts = [
+        'status' => Status::class,
         'resolved_at' => 'datetime',
     ];
+
     protected $attributes = [
-        'status_id' => self::DEFAULT_STATUS,
+        'status' => self::DEFAULT_STATUS,
         'group_id' => self::DEFAULT_GROUP,
         'priority' => self::DEFAULT_PRIORITY,
     ];

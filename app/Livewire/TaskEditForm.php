@@ -67,7 +67,7 @@ class TaskEditForm extends Form
     public function mount(Task $task){
         $this->task = $task;
         $this->model = $task;
-        $this->status = $this->task->status_id;
+        $this->status = $this->task->status;
         $this->onHoldReason = $this->task->on_hold_reason_id;
         $this->priority = $this->task->priority;
         $this->group = $this->task->group_id;
@@ -101,7 +101,7 @@ class TaskEditForm extends Form
     public function save()
     {
         $this->validate();
-        $this->task->status_id = $this->status;
+        $this->task->status = $this->status;
         $this->task->on_hold_reason_id = $this->onHoldReason;
         $this->task->priority = $this->priority;
         $this->task->group_id = $this->group;

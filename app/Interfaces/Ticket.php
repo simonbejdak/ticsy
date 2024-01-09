@@ -2,6 +2,7 @@
 
 namespace App\Interfaces;
 
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -13,15 +14,14 @@ interface Ticket
     function resolver(): BelongsTo;
     function category(): BelongsTo|HasOneThrough;
     function item(): BelongsTo|HasOneThrough;
-    function status(): BelongsTo;
     function onHoldReason(): BelongsTo;
     function group(): BelongsTo;
     function slas(): MorphMany;
-    function isStatus(...$statuses): bool;
+    function isStatus(Status ...$statuses): bool;
     function isArchived(): bool;
     function statusChanged(): bool;
-    function statusChangedTo(string $status): bool;
-    function statusChangedFrom(string $status): bool;
+    function statusChangedTo(Status $status): bool;
+    function statusChangedFrom(Status $status): bool;
     function priorityChanged(): bool;
     function calculateSlaMinutes(): int;
     function getActivityLogOptions(): LogOptions;

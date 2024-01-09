@@ -16,7 +16,7 @@ class Select extends Field
         $this->blank = false;
     }
 
-    function options(array|Collection $options): self
+    function options(string|array|Collection $options): self
     {
         $this->options = toIterable($options);
         return $this;
