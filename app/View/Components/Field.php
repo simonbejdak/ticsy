@@ -2,69 +2,34 @@
 
 namespace App\View\Components;
 
-use App\Helpers\App;
-use App\Interfaces\Fieldable;
+use App\Helpers\Fields\Bar;
+use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextInput;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
+use InvalidArgumentException;
 
-class Field extends Component
+class TempField extends Component
 {
-    public Fieldable|null $representedModel;
-    public string $name;
-    public string $displayName;
-    public string|array|Collection $value;
-    public bool $hideable;
-    public bool|string $hasPermission;
-    public bool $modifiable;
-    public bool $disabled;
-    public bool $blank;
-    public int|null $percentage;
-    public $error;
-    public bool $hidden;
-    public string $type;
+    public \App\Helpers\Fields\Field $field;
 
-    public function __construct($name,
-                                $representedModel = null,
-                                $hideable = false,
-                                $hasPermission = true,
-                                string|array|Collection $value = '',
-                                $modifiable = null,
-                                $percentage = null,
-                                $blank = false,
-                                $displayName = null,
-    ){
-        $this->name = $name;
-        $this->value = is_string($value) ? $value : toIterable($value);
-        $this->displayName = $displayName ?? makeDisplayName($name);
-        $this->representedModel = $representedModel;
-        $this->hasPermission = $hasPermission;
-        $this->modifiable = $modifiable ?? $representedModel->isFieldModifiable($this->name);
-        $this->disabled = !$this->modifiable;
-        $this->percentage = $percentage;
-        $this->blank = $blank;
-        $this->hideable = $hideable;
-        $this->hidden = $this->hideable && !$this->modifiable;
-        $this->type = $this->setType();
+    public function __construct(\App\Helpers\Fields\Field $field){
+        $this->field = $field;
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.field');
-    }
-
-    protected function setType(): string{
-        if(is_string($this->value)){
-            if($this->percentage !== null){
-                $type = 'bar';
-            } else {
-                $type = 'input';
-            }
-        } else {
-            $type = 'select';
+        if($this->field instanceof TextInput){
+            return view('components.temp-text-input');
+        } elseif($this->field instanceof Select){
+            return view('components.select');
+        } elseif($this->field instanceof Bar){
+            return view('components.bar');
         }
 
-        return $type;
+        throw new InvalidArgumentException('Field ' . get_class($this->field) . ' cannot be rendered. ');
     }
+
 }
