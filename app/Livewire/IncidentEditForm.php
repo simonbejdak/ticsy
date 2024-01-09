@@ -26,7 +26,6 @@ class IncidentEditForm extends Form
     use HasFields, HasTabs;
 
     public Incident $incident;
-    public array $tabs = ['activities'];
     public Collection $activities;
     public $status;
     public $onHoldReason;
@@ -34,12 +33,6 @@ class IncidentEditForm extends Form
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
-
-    public Collection $statuses;
-    public Collection $onHoldReasons;
-    public array $priorities;
-    public Collection $groups;
-    public Collection $resolvers;
 
     public function rules()
     {
@@ -76,7 +69,7 @@ class IncidentEditForm extends Form
 
     public function render()
     {
-        return view('livewire.incident-edit-form');
+        return view('livewire.edit-form');
     }
 
     public function updating($property, $value): void
@@ -91,7 +84,7 @@ class IncidentEditForm extends Form
         if($property === 'group'){
             $this->resolver = null;
         }
-        if($property === 'status' &&  !$this->incident->isStatus('on_hold')){
+        if($property === 'status' && $this->status != Status::ON_HOLD){
             $this->onHoldReason = null;
         }
 

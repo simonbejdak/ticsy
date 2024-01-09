@@ -2,22 +2,23 @@
 
 namespace App\Livewire;
 
-use App\Interfaces\Fieldable;
+use App\Helpers\Fields\Fields;
+use App\Helpers\Tabs;
 use App\Models\Group;
 use App\Models\OnHoldReason;
 use App\Models\Request;
 use App\Models\Status;
 use App\Services\ActivityService;
+use App\Traits\HasFields;
 use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
 class RequestEditForm extends Form
 {
-    use HasTabs;
+    use HasFields, HasTabs;
 
     public Request $request;
-    public array $tabs = ['activities', 'tasks'];
     public Collection $activities;
     public $status;
     public $onHoldReason;
@@ -25,12 +26,6 @@ class RequestEditForm extends Form
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
-
-    public Collection $statuses;
-    public Collection $onHoldReasons;
-    public array $priorities;
-    public Collection $groups;
-    public Collection $resolvers;
 
     public function rules()
     {
@@ -46,20 +41,10 @@ class RequestEditForm extends Form
 
     public function mount(Request $request){
         $this->request = $request;
-
-        $this->statuses = Status::all();
         $this->status = $this->request->status_id;
-
-        $this->onHoldReasons = OnHoldReason::all();
         $this->onHoldReason = $this->request->on_hold_reason_id;
-
-        $this->priorities = Request::PRIORITIES;
         $this->priority = $this->request->priority;
-
-        $this->groups = Group::all();
         $this->group = $this->request->group_id;
-
-        $this->resolvers = Group::find($this->group)->resolvers()->get();
         $this->resolver = $this->request->resolver_id;
     }
 
@@ -80,18 +65,21 @@ class RequestEditForm extends Form
         if($property === 'group'){
             $this->resolver = null;
         }
-        if($property === 'status' &&  !$this->request->isStatus('on_hold')){
+        if($property === 'status' && $this->status != Status::ON_HOLD){
             $this->onHoldReason = null;
         }
 
-        $this->syncRequest();
         parent::updated($property);
     }
 
     public function save()
     {
-        $this->syncRequest();
         $this->validate();
+        $this->request->status_id = $this->status;
+        $this->request->on_hold_reason_id = $this->onHoldReason;
+        $this->request->priority = $this->priority;
+        $this->request->group_id = $this->group;
+        $this->request->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->request->save();
 
         if($this->priorityChangeReason !== ''){
@@ -103,17 +91,13 @@ class RequestEditForm extends Form
         return redirect()->route('requests.edit', $this->request);
     }
 
-    protected function syncRequest(): void
+    function fields(): Fields
     {
-        $this->request->status_id = $this->status;
-        $this->request->on_hold_reason_id = $this->onHoldReason;
-        $this->request->priority = $this->priority;
-        $this->request->group_id = $this->group;
-        $this->request->resolver_id = ($this->resolver === '') ? null : $this->resolver;
-        $this->resolvers = $this->request->group ? $this->request->group->resolvers : collect([]);
+        // TODO: Implement fields() method.
     }
 
-    protected function fieldableModel(): Fieldable{
-        return $this->request;
+    function tabs(): Tabs
+    {
+        // TODO: Implement tabs() method.
     }
 }
