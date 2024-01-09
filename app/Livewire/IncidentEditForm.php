@@ -9,10 +9,8 @@ use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\Incident\IncidentCategory;
 use App\Models\OnHoldReason;
 use App\Enums\Status;
-use App\Models\User;
 use App\Services\ActivityService;
 use App\Traits\HasFields;
 use App\Traits\HasTabs;
@@ -26,7 +24,7 @@ class IncidentEditForm extends Form
 
     public Incident $incident;
     public Collection $activities;
-    public $status;
+    public Status $status;
     public $onHoldReason;
     public $priority;
     public string $priorityChangeReason = '';

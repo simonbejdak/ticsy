@@ -3,7 +3,7 @@
 
 use App\Models\Request;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -31,7 +31,7 @@ class RequestOnHoldReasonTest extends TestCase
         $this->expectExceptionMessage('On hold reason cannot be assigned to Request if Status is not on hold');
 
         Request::factory([
-            'status_id' => Status::OPEN,
+            'status' => Status::OPEN,
             'on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE,
         ])->create();
     }
@@ -43,7 +43,7 @@ class RequestOnHoldReasonTest extends TestCase
         $this->expectExceptionMessage('On hold reason must be assigned to Request if Status is on hold');
 
         Request::factory([
-            'status_id' => Status::ON_HOLD,
+            'status' => Status::ON_HOLD,
         ])->create();
     }
 }

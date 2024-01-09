@@ -3,7 +3,7 @@
 use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -68,7 +68,7 @@ class TaskTest extends TestCase
     function as_soon_as_status_is_set_to_resolved_task_is_archived(){
         $task = Request::factory()->create()->tasks()->first();
 
-        $task->status_id = Status::RESOLVED;
+        $task->status = Status::RESOLVED;
         $task->save();
         $task->refresh();
 
@@ -79,7 +79,7 @@ class TaskTest extends TestCase
     function as_soon_as_status_is_set_to_cancelled_task_is_archived(){
         $task = Task::factory()->create();
 
-        $task->status_id = Status::CANCELLED;
+        $task->status = Status::CANCELLED;
         $task->save();
         $task->refresh();
 

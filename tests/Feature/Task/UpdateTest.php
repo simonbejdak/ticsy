@@ -5,12 +5,13 @@ namespace Tests\Feature\Task;
 use App\Livewire\TaskEditForm;
 use App\Models\Group;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
+use ValueError;
 
 class UpdateTest extends TestCase
 {
@@ -23,7 +24,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->assertForbidden();
     }
 
@@ -34,28 +35,28 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->call('save');
 
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'status_id' => Status::IN_PROGRESS,
+            'status' => Status::IN_PROGRESS,
         ]);
     }
 
     /**
      * @dataProvider invalidStatuses
      */
-    public function test_it_fails_validation_when_invalid_status_is_set($value, $error)
+    public function test_it_fails_validation_when_invalid_status_is_set($value)
     {
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory()->create();
 
+        $this->expectException(ValueError::class);
+
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', $value)
-            ->call('save')
-            ->assertHasErrors(['status' => $error]);
+            ->set('status', $value);
     }
 
     /**
@@ -68,7 +69,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', $value)
             ->call('save')
             ->assertHasErrors(['onHoldReason' => $error]);
@@ -81,10 +82,10 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', '')
             ->call('save')
-            ->assertHasErrors(['onHoldReason' => 'required_if']);
+            ->assertHasErrors(['onHoldReason' => 'required']);
     }
 
     /**
@@ -139,7 +140,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR)
             ->call('save')
             ->assertSuccessful();
@@ -157,9 +158,9 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', Status::ON_HOLD->value)
             ->call('save')
-            ->assertHasErrors(['onHoldReason' => 'required_if:status,' . Status::ON_HOLD]);
+            ->assertHasErrors(['onHoldReason' => 'required']);
     }
 
     public function test_non_resolver_user_cannot_set_resolver()
@@ -228,12 +229,12 @@ class UpdateTest extends TestCase
         $group = Group::firstOrFail();
         $resolver = User::factory()->resolverAllGroups()->create();
         $task = Task::factory()->create();
-        $status = Status::findOrFail(Status::IN_PROGRESS);
+        $status = Status::IN_PROGRESS;
         $priority = Task::DEFAULT_PRIORITY - 1;
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', $status->id)
+            ->set('status', $status->value)
             ->set('priority', $priority)
             ->set('priorityChangeReason', 'Production issue')
             ->set('group', $group->id)
@@ -243,7 +244,7 @@ class UpdateTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
             'priority' => $priority,
-            'status_id' => $status->id,
+            'status' => $status->value,
             'group_id' => $group->id,
             'resolver_id' => $resolver->id,
         ]);
@@ -270,14 +271,14 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Task::DEFAULT_STATUS)
+            ->set('status', Task::DEFAULT_STATUS->value)
             ->assertForbidden();
     }
 
     public function test_task_resolver_cannot_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory([
-            'status_id' => Status::RESOLVED,
+            'status' => Status::RESOLVED,
             'resolver_id' => null,
         ])->create();
 
@@ -308,12 +309,12 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Task::DEFAULT_STATUS)
+            ->set('status', Task::DEFAULT_STATUS->value)
             ->assertForbidden();
 
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'status_id' => Status::CANCELLED,
+            'status' => Status::CANCELLED,
         ]);
     }
 
@@ -403,10 +404,7 @@ class UpdateTest extends TestCase
     }
 
     static function invalidStatuses(){
-        return [
-            ['word', 'in'],
-            ['', 'required'],
-        ];
+        return ['word', ''];
     }
 
     static function invalidOnHoldReasons(){

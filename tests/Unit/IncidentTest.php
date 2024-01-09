@@ -9,7 +9,7 @@ use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 use App\Services\SlaService;
 use Exception;
@@ -47,14 +47,6 @@ class IncidentTest extends TestCase
         $incident = Incident::factory(['resolver_id' => $resolver])->create();
 
         $this->assertEquals('John Doe', $incident->resolver->name);
-    }
-
-    public function test_it_belongs_to_status()
-    {
-        $status = Status::findOrFail(Status::OPEN);
-        $incident = Incident::factory(['status_id' => $status])->create();
-
-        $this->assertEquals('Open', $incident->status->name);
     }
 
     public function test_it_belongs_to_status_on_hold_reason()
@@ -129,10 +121,10 @@ class IncidentTest extends TestCase
 
     function test_it_has_resolved_at_timestamp_null_when_status_changes_from_resolved_to_different_status(){
         $incident = Incident::factory()->create();
-        $incident->status_id = Status::RESOLVED;
+        $incident->status = Status::RESOLVED;
         $incident->save();
 
-        $incident->status_id = Status::IN_PROGRESS;
+        $incident->status = Status::IN_PROGRESS;
         $incident->save();
 
         $this->assertEquals(null, $incident->resolved_at);
@@ -140,7 +132,7 @@ class IncidentTest extends TestCase
 
     function test_it_cannot_have_status_resolved_and_resolved_at_timestamp_null(){
         $incident = Incident::factory()->create();
-        $incident->status_id = Status::RESOLVED;
+        $incident->status = Status::RESOLVED;
         $incident->save();
 
         $this->assertNotEquals(null, $incident->resolved_at);
@@ -148,7 +140,7 @@ class IncidentTest extends TestCase
 
     function test_it_is_not_archived_when_resolved_status_does_not_exceed_archival_period(){
         $incident = Incident::factory()->create();
-        $incident->status_id = Status::RESOLVED;
+        $incident->status = Status::RESOLVED;
         $incident->save();
 
         $date = Carbon::now()->addDays(Incident::ARCHIVE_AFTER_DAYS - 1);
@@ -159,7 +151,7 @@ class IncidentTest extends TestCase
 
     function test_it_is_archived_when_resolved_status_exceeds_archival_period(){
         $incident = Incident::factory()->create();
-        $incident->status_id = Status::RESOLVED;
+        $incident->status = Status::RESOLVED;
         $incident->save();
 
         $date = Carbon::now()->addDays(Incident::ARCHIVE_AFTER_DAYS);

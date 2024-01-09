@@ -11,7 +11,7 @@ use App\Models\Group;
 use App\Models\Incident;
 use App\Models\OnHoldReason;
 use App\Models\Request;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Task;
 use App\Services\ActivityService;
 use App\Traits\HasFields;
@@ -27,7 +27,7 @@ class TaskEditForm extends Form
     public Task $task;
     public array $tabs = ['activities'];
     public Collection $activities;
-    public $status;
+    public Status $status;
     public $onHoldReason;
     public $priority;
     public string $priorityChangeReason = '';
@@ -43,9 +43,9 @@ class TaskEditForm extends Form
     public function rules()
     {
         return [
-            'status' => ['required', Rule::in(Status::MAP)],
+            'status' => ['required', Rule::enum(Status::class)],
             'onHoldReason' => [
-                'required_if:status,' . Status::ON_HOLD,
+                Rule::requiredIf($this->status == Status::ON_HOLD),
                 'nullable',
                 Rule::in(OnHoldReason::MAP)
             ],
@@ -141,7 +141,7 @@ class TaskEditForm extends Form
                 ->value($this->task->item->name)
                 ->disabled(),
             Select::make('status')
-                ->options(Status::all())
+                ->options(Status::class)
                 ->disabledCondition($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
                 ->options(OnHoldReason::all())

@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\Status;
 use App\Traits\HasFields;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection;
 
 function get_class_name($object): string
@@ -22,8 +24,14 @@ function makeDisplayName($name): string{
 function toIterable(string|Collection|array $object): array{
     $return = [];
 
-    if($object instanceof UnitEnum){
-        dd($object);
+    if(is_a($object, UnitEnum::class, true)){
+        foreach($object::cases() as $case){
+            $return[] = [
+                'id' => $case->value,
+                'name' => $case->value,
+            ];
+        }
+        return $return;
     }
 
     if($object instanceof Collection){
@@ -35,6 +43,7 @@ function toIterable(string|Collection|array $object): array{
         }
         return $return;
     }
+
     if(is_array($object)){
         if(array_is_list($object)){
             foreach ($object as $value){
@@ -49,7 +58,7 @@ function toIterable(string|Collection|array $object): array{
         return $return;
     }
 
-    throw new InvalidArgumentException('Method toIterable() only accepts arguments of type Collection or array');
+    throw new InvalidArgumentException('Method toIterable() only accepts either enums, or arguments of type Collection, and array.');
 }
 
 function hasTrait(string $class, $object): bool

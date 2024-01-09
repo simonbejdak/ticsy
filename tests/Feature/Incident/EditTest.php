@@ -84,7 +84,7 @@ class EditTest extends TestCase
         $response->assertSee($item->name);
         $response->assertSee($group->name);
         $response->assertSee($resolver->name);
-        $response->assertSee($status->name);
+        $response->assertSee($status->value);
     }
 
     public function test_it_displays_comments()
@@ -128,13 +128,13 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', Status::CANCELLED)
+            ->set('status', Status::CANCELLED->value)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'status_id' => Status::CANCELLED,
+            'status' => Status::CANCELLED,
         ]);
     }
 
@@ -206,12 +206,12 @@ class EditTest extends TestCase
     public function test_it_displays_changes_activity_dynamically()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
+        $incident = Incident::factory(['status' => Status::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->call('save')
             ->assertSuccessful();
 
@@ -226,14 +226,14 @@ class EditTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory([
-            'status_id' => Status::OPEN,
+            'status' => Status::OPEN,
             'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
@@ -249,12 +249,12 @@ class EditTest extends TestCase
     public function test_it_displays_status_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
+        $incident = Incident::factory(['status' => Status::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->call('save')
             ->assertSuccessful();
 
@@ -273,7 +273,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
@@ -348,12 +348,12 @@ class EditTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
 
-        $incident->status_id = Status::IN_PROGRESS;
+        $incident->status = Status::IN_PROGRESS;
         $incident->save();
 
         ActivityService::comment($incident, 'Test Comment');
 
-        $incident->status_id = Status::MONITORING;
+        $incident->status = Status::MONITORING;
         $incident->save();
 
         $incident->refresh();

@@ -13,7 +13,7 @@ abstract class Form extends Component
 
     public function updated($property): void
     {
-        if(in_array(HasFields::class, class_uses_recursive($this))){
+        if(hasTrait(HasFields::class, $this)){
             if($this->isFieldDisabled($property)){
                 abort(Response::HTTP_FORBIDDEN);
             }

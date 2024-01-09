@@ -2,12 +2,14 @@
 
 namespace App\Enums;
 
-enum Status: int
+use Illuminate\Contracts\Support\Arrayable;
+
+enum Status: string
 {
-    case OPEN = 1;
-    case IN_PROGRESS = 2;
-    case ON_HOLD = 3;
-    case MONITORING = 4;
-    case RESOLVED = 5;
-    case CANCELLED = 6;
+    case OPEN = 'Open';
+    case IN_PROGRESS = 'In Progress';
+    case ON_HOLD = 'On Hold';
+    case MONITORING = 'Monitoring';
+    case RESOLVED = 'Resolved';
+    case CANCELLED = 'Cancelled';
 }

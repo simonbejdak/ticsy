@@ -11,7 +11,7 @@ use App\Models\OnHoldReason;
 use App\Models\Task;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -74,7 +74,7 @@ class EditTest extends TestCase
         $response->assertSee($task->category->name);
         $response->assertSee($task->item->name);
         $response->assertSee($task->group->name);
-        $response->assertSee($task->status->name);
+        $response->assertSee($task->status->value);
     }
 
     /** @test */
@@ -122,13 +122,13 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::CANCELLED)
+            ->set('status', Status::CANCELLED->value)
             ->call('save')
             ->assertSuccessful();
 
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'status_id' => Status::CANCELLED,
+            'status' => Status::CANCELLED,
         ]);
     }
 
@@ -209,7 +209,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->call('save')
             ->assertSuccessful();
 
@@ -225,14 +225,14 @@ class EditTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory([
-            'status_id' => Status::OPEN,
+            'status' => Status::OPEN,
             'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->set('group', Group::LOCAL_6445_NEW_YORK)
             ->call('save')
             ->assertSuccessful();
@@ -254,7 +254,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::IN_PROGRESS)
+            ->set('status', Status::IN_PROGRESS->value)
             ->call('save')
             ->assertSuccessful();
 
@@ -274,7 +274,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
-            ->set('status', Status::ON_HOLD)
+            ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
             ->call('save')
             ->assertSuccessful();
@@ -353,12 +353,12 @@ class EditTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory()->create();
 
-        $task->status_id = Status::IN_PROGRESS;
+        $task->status = Status::IN_PROGRESS;
         $task->save();
 
         ActivityService::comment($task, 'Test Comment');
 
-        $task->status_id = Status::MONITORING;
+        $task->status = Status::MONITORING;
         $task->save();
 
         $task->refresh();

@@ -74,13 +74,13 @@ class Task extends Model implements Ticket, Slable, Activitable
 
     function scopeNotClosed(Builder $query): void
     {
-        $query->where('status_id', '!=', Status::RESOLVED)->where('status_id', '!=', Status::CANCELLED);
+        $query->where('status', '!=', Status::RESOLVED)->where('status', '!=', Status::CANCELLED);
     }
 
     public function isArchived(): bool{
         return
-            $this->getOriginal('status_id') == Status::RESOLVED ||
-            $this->getOriginal('status_id') == Status::CANCELLED
+            $this->getOriginal('status') == Status::RESOLVED ||
+            $this->getOriginal('status') == Status::CANCELLED
         ;
     }
 }

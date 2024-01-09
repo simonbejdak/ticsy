@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\Ticket;
 use App\Models\Request;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -27,13 +27,13 @@ class TaskService
 
     static function resolveTask(Task $task): void
     {
-        $task->status_id = Status::RESOLVED;
+        $task->status = Status::RESOLVED;
         $task->save();
     }
 
     static function cancelTask(Task $task): void
     {
-        $task->status_id = Status::CANCELLED;
+        $task->status = Status::CANCELLED;
         $task->save();
     }
 

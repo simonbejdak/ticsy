@@ -7,7 +7,7 @@ use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\SlaService;
@@ -61,15 +61,6 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    public function it_belongs_to_status()
-    {
-        $status = Status::findOrFail(Status::OPEN);
-        $request = Request::factory(['status_id' => $status])->create();
-
-        $this->assertEquals($status->id, $request->status->id);
-    }
-
-    /** @test */
     public function it_belongs_to_status_on_hold_reason()
     {
         $onHoldReason = OnHoldReason::firstOrFail();
@@ -116,7 +107,7 @@ class RequestTest extends TestCase
     function it_has_correct_default_statuss(){
         $request = new Request();
 
-        $this->assertEquals(Request::DEFAULT_STATUS, $request->status->id);
+        $this->assertEquals(Request::DEFAULT_STATUS, $request->status);
     }
 
     /** @test */
@@ -171,7 +162,7 @@ class RequestTest extends TestCase
         $request = Request::factory()->statusResolved()->create();
         $this->assertNotNull($request->resolved_at);
 
-        $request->status_id = Status::IN_PROGRESS;
+        $request->status = Status::IN_PROGRESS;
         $request->save();
 
         $this->assertNull($request->resolved_at);
@@ -182,7 +173,7 @@ class RequestTest extends TestCase
         $request = Request::factory()->create();
         $this->assertNull($request->resolved_at);
 
-        $request->status_id = Status::RESOLVED;
+        $request->status = Status::RESOLVED;
         $request->save();
 
         $this->assertNotNull($request->resolved_at);
@@ -325,14 +316,14 @@ class RequestTest extends TestCase
         $request = Request::factory()->create();
         $tasks = $request->tasks;
 
-        $this->assertFalse($request->isStatus('resolved'));
+        $this->assertFalse($request->isStatus(Status::RESOLVED));
 
         foreach ($tasks as $task){
             TaskService::resolveTask($task);
         }
         $request->refresh();
 
-        $this->assertTrue($request->isStatus('resolved'));
+        $this->assertTrue($request->isStatus(Status::RESOLVED));
     }
 
     /** @test */
@@ -340,12 +331,12 @@ class RequestTest extends TestCase
         $request = Request::factory()->create();
         $task = $request->tasks->first();
 
-        $this->assertFalse($request->isStatus('cancelled'));
+        $this->assertFalse($request->isStatus(Status::CANCELLED));
 
         TaskService::cancelTask($task);
         $request->refresh();
 
-        $this->assertTrue($request->isStatus('cancelled'));
+        $this->assertTrue($request->isStatus(Status::CANCELLED));
     }
 
     /** @test */

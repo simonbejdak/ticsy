@@ -3,7 +3,7 @@
 
 use App\Models\Incident;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -33,7 +33,7 @@ class IncidentOnHoldReasonTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('On hold reason cannot be assigned to Incident if Status is not on hold');
 
-        Incident::factory(['status_id' => Status::OPEN,
+        Incident::factory(['status' => Status::OPEN,
             'on_hold_reason_id' => $onHoldReason
         ])->create();
     }

@@ -5,12 +5,10 @@ namespace Database\Seeders;
 use App\Models\Group;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\Incident\IncidentOnHoldReason;
 use App\Models\OnHoldReason;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\Request\RequestOnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use Illuminate\Database\Seeder;
 
 class MapSeeder extends Seeder
@@ -23,10 +21,6 @@ class MapSeeder extends Seeder
 
         foreach (IncidentItem::MAP as $key => $value){
             IncidentItem::factory(['name' => $key])->create();
-        }
-
-        foreach (Status::MAP as $key => $value){
-            Status::factory(['name' => $key])->create();
         }
 
         foreach (OnHoldReason::MAP as $key => $value){

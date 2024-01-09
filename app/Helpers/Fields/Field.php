@@ -4,7 +4,7 @@ namespace App\Helpers\Fields;
 
 use App\Enums\FieldPosition;
 use App\Interfaces\Fieldable;
-use App\Models\Status;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Collection;
 
 abstract class Field

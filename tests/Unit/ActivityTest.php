@@ -5,7 +5,7 @@ use App\Models\Group;
 use App\Models\Incident;
 use App\Models\OnHoldReason;
 use App\Models\Request;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Tests\TestCase;
@@ -30,34 +30,34 @@ class ActivityTest extends TestCase
 
     public function test_it_logs_incident_status_updated_event()
     {
-        $incident = Incident::factory(['status_id' => Status::OPEN])->create();
-        $incident->status_id = Status::IN_PROGRESS;
+        $incident = Incident::factory(['status' => Status::OPEN])->create();
+        $incident->status = Status::IN_PROGRESS;
         $incident->save();
 
         $activity = $incident->activities->last();
 
         $this->assertEquals('updated', $activity->event);
-        $this->assertEquals('In Progress', $activity->changes['attributes']['status.name']);
-        $this->assertEquals('Open', $activity->changes['old']['status.name']);
+        $this->assertEquals('In Progress', $activity->changes['attributes']['status']);
+        $this->assertEquals('Open', $activity->changes['old']['status']);
     }
 
     public function test_it_logs_request_status_updated_event()
     {
-        $request = Request::factory(['status_id' => Status::OPEN])->create();
-        $request->status_id = Status::IN_PROGRESS;
+        $request = Request::factory(['status' => Status::OPEN])->create();
+        $request->status = Status::IN_PROGRESS;
         $request->save();
 
         $activity = $request->activities->last();
 
         $this->assertEquals('updated', $activity->event);
-        $this->assertEquals('In Progress', $activity->changes['attributes']['status.name']);
-        $this->assertEquals('Open', $activity->changes['old']['status.name']);
+        $this->assertEquals('In Progress', $activity->changes['attributes']['status']);
+        $this->assertEquals('Open', $activity->changes['old']['status']);
     }
 
     public function test_it_logs_incident_on_hold_reason_updated_event()
     {
         $incident = Incident::factory()->create();
-        $incident->status_id = Status::ON_HOLD;
+        $incident->status = Status::ON_HOLD;
         $incident->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
         $incident->save();
 
@@ -71,7 +71,7 @@ class ActivityTest extends TestCase
     public function test_it_logs_request_on_hold_reason_updated_event()
     {
         $request = Request::factory()->create();
-        $request->status_id = Status::ON_HOLD;
+        $request->status = Status::ON_HOLD;
         $request->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
         $request->save();
 

@@ -2,7 +2,7 @@
 
 use App\Models\Group;
 use App\Models\OnHoldReason;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\Task;
 use App\Models\Ticket;
 use Illuminate\Database\Migrations\Migration;
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
             $table->foreignId('request_id')->constrained();
             $table->text('description');
-            $table->integer('status');
+            $table->string('status');
             $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Task::PRIORITIES);

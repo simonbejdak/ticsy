@@ -62,13 +62,13 @@ trait TicketTrait
     }
 
     public function isArchived(): bool{
-        if($this->getOriginal('status_id') == Status::RESOLVED){
+        if($this->getOriginal('status') == Status::RESOLVED){
             $archivalDate = $this->resolved_at->addDays(self::ARCHIVE_AFTER_DAYS);
             if(isset($this->resolved_at) && Carbon::now()->greaterThan($archivalDate)){
                 return true;
             }
         }
-        return $this->getOriginal('status_id') == Status::CANCELLED;
+        return $this->getOriginal('status') == Status::CANCELLED;
     }
 
     function calculateSlaMinutes(): int
@@ -78,7 +78,7 @@ trait TicketTrait
 
     function statusChanged(): bool
     {
-        return $this->isDirty('status_id');
+        return $this->isDirty('status');
     }
 
     function statusChangedTo(Status $status): bool
@@ -103,7 +103,7 @@ trait TicketTrait
                 'category.name',
                 'item.name',
                 'description',
-                'status.name',
+                'status',
                 'onHoldReason.name',
                 'priority',
                 'group.name',

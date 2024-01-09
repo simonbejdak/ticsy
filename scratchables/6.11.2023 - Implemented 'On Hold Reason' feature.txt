@@ -48,7 +48,7 @@ Refactor ideas:
 - reduce TicketTest unit test, move i.e. resolver tests into resolver test file
 - statusOnHoldReason should be IMO renamed, too many characters..
 - refactor TicketObserver creating, too verbose call
-- instead of checking for status like "$ticket->status_id(TicketConfig::STATUSES['open'])" we should use model function isStatus()
+- instead of checking for status like "$ticket->status(TicketConfig::STATUSES['open'])" we should use model function isStatus()
 - delete unnecessary map factories
 - onHold() state should also assing on hold reason
 - share the code <template x-data="{ hidden: @json($hideable) && @json($modifiable) }" x-if="!hidden"> between ticket field and ticket field select components

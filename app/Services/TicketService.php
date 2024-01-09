@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\Ticket;
 use App\Models\Request;
-use App\Models\Status;
+use App\Enums\Status;
 use App\Models\User;
 
 class TicketService
@@ -17,13 +17,13 @@ class TicketService
 
     static function resolveTicket(Ticket $ticket): void
     {
-        $ticket->status_id = Status::RESOLVED;
+        $ticket->status = Status::RESOLVED;
         $ticket->save();
     }
 
     public static function cancelTicket(Ticket $ticket)
     {
-        $ticket->status_id = Status::CANCELLED;
+        $ticket->status = Status::CANCELLED;
         $ticket->save();
     }
 }
