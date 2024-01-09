@@ -32,14 +32,16 @@ Refactor ideas:
 - adding new activity type to the system is cumbersome, too many places to manage.. (view, controller, permissions, policies)
 - Category-Item pairing is disgusting.. please find a better solution -- done
 - toIterable function can be replaced by making objects Iterable by themselves
-- i noticed there is a lot of duplication on all EditForms so far.. investigate if it is possible to remove the duplication
+- i noticed there is a lot of duplication on all EditForms so far.. investigate if it is possible to remove the duplication -- done
 - find a way to share varaibles between livewire/blade components without specifying them (< :represented-model=$request /> for instance) -- done
-- implement a universal EditForm, which will accept a Ticket model, and it'll render fields based on specification on Model level -- cancelled
+- implement a universal EditForm, which will accept a Ticket model, and it'll render fields based on specification on Controller level -- done
 - make Task model have a Morphs Taskable relationship instead of having Request relationship
+- we should start using enums instead of mappable models due to further extensibility
 
 Design ideas:
 - make SLA bar always show at least a little bit of red color to indicate, that colors represent time left
 - make tasks table have rounded corners on Tasks component
+- breadcrumbs
 
 Bugs:
 

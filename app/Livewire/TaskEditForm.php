@@ -18,6 +18,7 @@ use App\Traits\HasFields;
 use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class TaskEditForm extends Form
 {
@@ -42,12 +43,24 @@ class TaskEditForm extends Form
     public function rules()
     {
         return [
-            'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
-            'priority' => 'required|numeric',
-            'priorityChangeReason' => $this->task->isDirty('priority') ? 'required|string' : 'present|max:0',
-            'group' => 'required|numeric',
-            'resolver' => 'nullable|numeric',
+            'status' => ['required', Rule::in(Status::MAP)],
+            'onHoldReason' => [
+                'required_if:status,' . Status::ON_HOLD,
+                'nullable',
+                Rule::in(OnHoldReason::MAP)
+            ],
+            'priority' => ['required', Rule::in(Request::PRIORITIES)],
+            'priorityChangeReason' => [
+                Rule::requiredIf($this->priority != $this->task->priority),
+                'string',
+            ],
+            'group' => ['required', Rule::in(Group::MAP)],
+            'resolver' => [
+                'nullable',
+                Rule::in(
+                    Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
+                )
+            ],
         ];
     }
 
@@ -158,6 +171,23 @@ class TaskEditForm extends Form
                 ->disabled()
                 ->outsideGrid(),
         );
+    }
+
+    protected function isFieldDisabled(string $name): bool
+    {
+        if($this->task->isArchived() || auth()->user()->cannot('update', Task::class)){
+            return true;
+        }
+
+        return match($name){
+            'onHoldReason' =>
+                $this->status != Status::ON_HOLD,
+            'priority', 'group', 'resolver' =>
+                $this->status == Status::RESOLVED,
+            'priorityChangeReason' =>
+                $this->priority == $this->task->priority,
+            default => false,
+        };
     }
 
     function tabs(): array

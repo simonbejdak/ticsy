@@ -3,6 +3,7 @@
 
 namespace Tests\Feature\Request;
 
+use App\Enums\Tab;
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
 use App\Livewire\RequestTabs;
@@ -448,7 +449,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         foreach ($tasks as $task){
-            Livewire::test(TempTabs::class, ['tabs' => ['activities', 'tasks'], 'model' => $request])
+            Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
                 ->call('setViewedTab', 'tasks')
                 ->assertSee($task->number)
                 ->assertSee($task->description)
