@@ -9,6 +9,6 @@
     </div>
     <div class="bg-white border border-gray-300 -mt-1 p-4">
 {{--        Due to Livewire nature we need to have a key defined for such dynamic Livewire component rendering, otherwise the component does not get refreshed properly after clicking on another tab --}}
-        @livewire($this->viewedTab()->value, ['model' => $model], key($this->tabs()->tabKey($this->viewedTab())))
+        @livewire($this->viewedTab()->value, ['model' => $model], key(array_search($this->viewedTab(), $this->tabs())))
     </div>
 </div>

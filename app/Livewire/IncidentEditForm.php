@@ -60,6 +60,7 @@ class IncidentEditForm extends Form
 
     public function mount(Incident $incident){
         $this->incident = $incident;
+        $this->model = $incident;
         $this->status = $this->incident->status_id;
         $this->onHoldReason = $this->incident->on_hold_reason_id;
         $this->priority = $this->incident->priority;
@@ -166,9 +167,9 @@ class IncidentEditForm extends Form
         );
     }
 
-    function tabs(Tab ...$tabs): Tabs
+    function tabs(): array
     {
-        return new Tabs(Tab::ACTIVITIES);
+        return [Tab::ACTIVITIES];
     }
 
     protected function isFieldDisabled(string $name): bool

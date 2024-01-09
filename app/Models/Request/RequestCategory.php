@@ -37,6 +37,11 @@ class RequestCategory extends Enum
         return false;
     }
 
+    public function getItemIds(): array
+    {
+        return $this->items()->select('id')->get()->pluck('id')->toArray();
+    }
+
     public function randomItem()
     {
         return $this->items()->inRandomOrder()->first();

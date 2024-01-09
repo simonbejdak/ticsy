@@ -2,9 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Enums\Tab;
+use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
-use App\Helpers\Tabs;
+use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextInput;
 use App\Models\Group;
+use App\Models\Incident;
 use App\Models\OnHoldReason;
 use App\Models\Request;
 use App\Models\Status;
@@ -13,12 +17,16 @@ use App\Traits\HasFields;
 use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 
 class RequestEditForm extends Form
 {
     use HasFields, HasTabs;
 
     public Request $request;
+    #[Locked]
+    public array $tabs;
     public Collection $activities;
     public $status;
     public $onHoldReason;
@@ -30,17 +38,30 @@ class RequestEditForm extends Form
     public function rules()
     {
         return [
-            'status' => 'required|numeric',
-            'onHoldReason' => 'required_if:status,'. Status::ON_HOLD . '|nullable|numeric',
-            'priority' => 'required|numeric',
-            'priorityChangeReason' => $this->request->isDirty('priority') ? 'required|string' : 'present|max:0',
-            'group' => 'required|numeric',
-            'resolver' => 'nullable|numeric',
+            'status' => ['required', Rule::in(Status::MAP)],
+            'onHoldReason' => [
+                'required_if:status,' . Status::ON_HOLD,
+                'nullable',
+                Rule::in(OnHoldReason::MAP)
+            ],
+            'priority' => ['required', Rule::in(Request::PRIORITIES)],
+            'priorityChangeReason' => [
+                Rule::requiredIf($this->priority != $this->request->priority),
+                'string',
+            ],
+            'group' => ['required', Rule::in(Group::MAP)],
+            'resolver' => [
+                'nullable',
+                Rule::in(
+                    Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
+                )
+            ],
         ];
     }
 
     public function mount(Request $request){
         $this->request = $request;
+        $this->model = $request;
         $this->status = $this->request->status_id;
         $this->onHoldReason = $this->request->on_hold_reason_id;
         $this->priority = $this->request->priority;
@@ -50,7 +71,7 @@ class RequestEditForm extends Form
 
     public function render()
     {
-        return view('livewire.request-edit-form');
+        return view('livewire.edit-form');
     }
 
     public function updating($property, $value): void
@@ -93,11 +114,79 @@ class RequestEditForm extends Form
 
     function fields(): Fields
     {
-        // TODO: Implement fields() method.
+        return new Fields(
+            TextInput::make('number')
+                ->value($this->request->id)
+                ->disabled(),
+            TextInput::make('caller')
+                ->value($this->request->caller->name)
+                ->disabled(),
+            TextInput::make('created')
+                ->displayName('Created at')
+                ->value($this->request->created_at)
+                ->disabled(),
+            TextInput::make('updated')
+                ->displayName('Updated at')
+                ->value($this->request->updated_at)
+                ->disabled(),
+            TextInput::make('category')
+                ->value($this->request->category->name)
+                ->disabled(),
+            TextInput::make('item')
+                ->value($this->request->item->name)
+                ->disabled(),
+            Select::make('status')
+                ->options(Status::all())
+                ->disabledCondition($this->isFieldDisabled('status')),
+            Select::make('onHoldReason')
+                ->options(OnHoldReason::all())
+                ->hideable()
+                ->blank()
+                ->disabledCondition($this->isFieldDisabled('onHoldReason')),
+            Select::make('priority')
+                ->options(Request::PRIORITIES)
+                ->disabledCondition($this->isFieldDisabled('priority')),
+            Select::make('group')
+                ->options(Group::all())
+                ->disabledCondition($this->isFieldDisabled('group')),
+            Select::make('resolver')
+                ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
+                ->disabledCondition($this->isFieldDisabled('resolver'))
+                ->blank(),
+            Bar::make('sla')
+                ->displayName('SLA expires at')
+                ->percentage($this->request->sla->toPercentage())
+                ->value($this->request->sla->minutesTillExpires() . ' minutes'),
+            TextInput::make('priorityChangeReason')
+                ->hideable()
+                ->disabledCondition($this->isFieldDisabled('priorityChangeReason'))
+                ->outsideGrid(),
+            TextInput::make('description')
+                ->value($this->request->description)
+                ->disabled()
+                ->outsideGrid(),
+        );
     }
 
-    function tabs(): Tabs
+    function tabs(): array
     {
-        // TODO: Implement tabs() method.
+        return [Tab::ACTIVITIES, Tab::TASKS];
+    }
+
+    protected function isFieldDisabled(string $name): bool
+    {
+        if($this->request->isArchived() || auth()->user()->cannot('update', Incident::class)){
+            return true;
+        }
+
+        return match($name){
+            'onHoldReason' =>
+                $this->status != Status::ON_HOLD,
+            'priority', 'group', 'resolver' =>
+                $this->status == Status::RESOLVED,
+            'priorityChangeReason' =>
+                $this->priority == $this->request->priority,
+            default => false,
+        };
     }
 }

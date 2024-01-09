@@ -14,5 +14,5 @@
             </div>
         </div>
     </form>
-    <livewire:temp-tabs :tabs="$this->tabs()" :model="$incident"/>
+    <livewire:temp-tabs :tabs="$this->tabs()" :model="$model"/>
 </div>

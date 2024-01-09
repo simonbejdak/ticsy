@@ -2,50 +2,52 @@
 
 namespace App\Livewire;
 
+use App\Helpers\Fields\Fields;
+use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextInput;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
+use App\Traits\HasFields;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class RequestCreateForm extends Form
 {
+    use HasFields;
+
+    public $formName;
     public $category;
     public $item;
     public $description;
-    public Collection $categories;
-    public Collection $items;
 
     public function rules()
     {
         return [
-            'category' => 'numeric|required',
-            'item' => 'numeric|required',
+            'category' => ['required', Rule::in(RequestCategory::MAP)],
+            'item' => [
+                'required',
+                Rule::in(
+                    RequestCategory::find($this->category) ? RequestCategory::find($this->category)->getItemIds() : []
+                )
+            ],
             'description' => 'string|required',
         ];
     }
 
     public function mount()
     {
+        $this->formName = 'Create Request';
         $this->category = null;
         $this->item = null;
         $this->description = null;
-        $this->categories = RequestCategory::all();
-        $this->items = collect([]);
-    }
-
-    public function updated($property): void
-    {
-        $this->validateOnly('category');
-        if($this->category !== null){
-            $this->items = RequestCategory::findOrFail($this->category)->items()->get();
-        }
     }
 
     public function render()
     {
-        return view('livewire.request-create-form');
+        return view('livewire.create-form');
     }
 
     public function create()
@@ -61,5 +63,18 @@ class RequestCreateForm extends Form
 
         Session::flash('success', 'You have successfully created a request');
         return redirect()->route('requests.edit', $request);
+    }
+
+    function fields(): Fields
+    {
+        return new Fields(
+            Select::make('category')
+                ->options(RequestCategory::all())
+                ->blank(),
+            Select::make('item')
+                ->options(RequestCategory::find($this->category) ? RequestCategory::find($this->category)->items()->get() : [])
+                ->blank(),
+            TextInput::make('description'),
+        );
     }
 }

@@ -18,7 +18,7 @@ class IncidentCreateForm extends Form
 {
     use HasFields;
 
-    public string $typeName;
+    public $formName;
     public $category;
     public $item;
     public $description;
@@ -39,6 +39,7 @@ class IncidentCreateForm extends Form
 
     public function mount()
     {
+        $this->formName = 'Create Incident';
         $this->category = null;
         $this->item = null;
         $this->description = null;
@@ -46,7 +47,7 @@ class IncidentCreateForm extends Form
 
     public function render()
     {
-        return view('livewire.incident-create-form');
+        return view('livewire.create-form');
     }
 
     public function create()

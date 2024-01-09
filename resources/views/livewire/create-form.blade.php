@@ -1,7 +1,7 @@
 <form wire:submit="create">
     <div class="flex flex-row w-full items-center justify-center">
         <div class="flex flex-col space-y-2 w-3/5">
-            <div class="font-light text-3xl mt-16 mb-4 text-center">Create Incident</div>
+            <div class="font-light text-3xl mt-16 mb-4 text-center">{{ $formName }}</div>
             @foreach($this->fields() as $field)
                 <x-temp-field :field="$field" />
             @endforeach
