@@ -2,7 +2,7 @@
 
 
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,7 +13,7 @@ class IncidentOnHoldReasonTest extends TestCase
     public function test_it_has_many_tickets()
     {
         $onHoldReason = OnHoldReason::firstOrFail();
-        Incident::factory(2, ['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
+        Incident::factory(2, ['on_hold_reason' => $onHoldReason])->statusOnHold()->create();
 
         $this->assertCount(2, $onHoldReason->incidents);
     }
@@ -34,7 +34,7 @@ class IncidentOnHoldReasonTest extends TestCase
         $this->expectExceptionMessage('On hold reason cannot be assigned to Incident if Status is not on hold');
 
         Incident::factory(['status' => Status::OPEN,
-            'on_hold_reason_id' => $onHoldReason
+            'on_hold_reason' => $onHoldReason
         ])->create();
     }
 

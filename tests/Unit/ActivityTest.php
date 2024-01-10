@@ -3,7 +3,7 @@
 
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Enums\Status;
 use App\Models\Ticket;
@@ -58,7 +58,7 @@ class ActivityTest extends TestCase
     {
         $incident = Incident::factory()->create();
         $incident->status = Status::ON_HOLD;
-        $incident->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
+        $incident->on_hold_reason = OnHoldReason::CALLER_RESPONSE;
         $incident->save();
 
         $activity = $incident->activities->last();
@@ -72,7 +72,7 @@ class ActivityTest extends TestCase
     {
         $request = Request::factory()->create();
         $request->status = Status::ON_HOLD;
-        $request->on_hold_reason_id = OnHoldReason::CALLER_RESPONSE;
+        $request->on_hold_reason = OnHoldReason::CALLER_RESPONSE;
         $request->save();
 
         $activity = $request->activities->last();

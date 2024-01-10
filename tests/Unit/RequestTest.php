@@ -6,7 +6,7 @@ use App\Models\Group;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\Task;
 use App\Models\User;
@@ -64,7 +64,7 @@ class RequestTest extends TestCase
     public function it_belongs_to_status_on_hold_reason()
     {
         $onHoldReason = OnHoldReason::firstOrFail();
-        $request = Request::factory(['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
+        $request = Request::factory(['on_hold_reason' => $onHoldReason])->statusOnHold()->create();
 
         $this->assertEquals($onHoldReason->id, $request->onHoldReason->id);
     }

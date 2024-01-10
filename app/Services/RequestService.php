@@ -29,9 +29,9 @@ class RequestService
 
     static function eventTaskResolved(Request $request): void
     {
-        if(count(($request->tasks()->notStarted()->get())) > 0){
+        if($request->hasNonStartedTask()){
             self::startNextTask($request);
-        } elseif(count($request->tasks()->notClosed()->get()) == 0) {
+        } elseif($request->hasAllTasksClosed()) {
             TicketService::resolveTicket($request);
         }
     }

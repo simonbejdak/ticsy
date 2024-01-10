@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Group;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->references('id')->on('request_categories');
             $table->foreignId('item_id')->constrained()->references('id')->on('request_items');
             $table->string('status');
-            $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
+            $table->string('on_hold_reason')->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Request::PRIORITIES);
             $table->timestamp('resolved_at')->nullable();

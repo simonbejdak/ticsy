@@ -9,7 +9,7 @@ use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Enums\Status;
 use App\Services\ActivityService;
@@ -29,7 +29,7 @@ class RequestEditForm extends Form
     public array $tabs;
     public Collection $activities;
     public Status $status;
-    public $onHoldReason;
+    public OnHoldReason|null $onHoldReason;
     public $priority;
     public string $priorityChangeReason = '';
     public $group;
@@ -41,8 +41,8 @@ class RequestEditForm extends Form
             'status' => ['required', Rule::enum(Status::class)],
             'onHoldReason' => [
                 Rule::requiredIf($this->status == Status::ON_HOLD),
+                Rule::enum(OnHoldReason::class),
                 'nullable',
-                Rule::in(OnHoldReason::MAP)
             ],
             'priority' => ['required', Rule::in(Request::PRIORITIES)],
             'priorityChangeReason' => [
@@ -51,10 +51,10 @@ class RequestEditForm extends Form
             ],
             'group' => ['required', Rule::in(Group::MAP)],
             'resolver' => [
-                'nullable',
                 Rule::in(
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
-                )
+                ),
+                'nullable',
             ],
         ];
     }
@@ -63,7 +63,7 @@ class RequestEditForm extends Form
         $this->request = $request;
         $this->model = $request;
         $this->status = $this->request->status;
-        $this->onHoldReason = $this->request->on_hold_reason_id;
+        $this->onHoldReason = $this->request->on_hold_reason;
         $this->priority = $this->request->priority;
         $this->group = $this->request->group_id;
         $this->resolver = $this->request->resolver_id;
@@ -97,7 +97,7 @@ class RequestEditForm extends Form
     {
         $this->validate();
         $this->request->status = $this->status;
-        $this->request->on_hold_reason_id = $this->onHoldReason;
+        $this->request->on_hold_reason = $this->onHoldReason ?? null;
         $this->request->priority = $this->priority;
         $this->request->group_id = $this->group;
         $this->request->resolver_id = ($this->resolver === '') ? null : $this->resolver;
@@ -139,7 +139,7 @@ class RequestEditForm extends Form
                 ->options(Status::class)
                 ->disabledCondition($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
-                ->options(OnHoldReason::all())
+                ->options(OnHoldReason::class)
                 ->hideable()
                 ->blank()
                 ->disabledCondition($this->isFieldDisabled('onHoldReason')),

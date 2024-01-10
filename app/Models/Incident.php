@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Enums\OnHoldReason;
 use App\Interfaces\Activitable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
@@ -21,6 +22,7 @@ class Incident extends Model implements Ticket, Slable, Activitable
     protected $guarded = [];
     protected $casts = [
         'status' => Status::class,
+        'on_hold_reason' => OnHoldReason::class,
         'resolved_at' => 'datetime',
     ];
 

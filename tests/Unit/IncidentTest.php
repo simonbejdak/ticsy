@@ -8,7 +8,7 @@ use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\User;
 use App\Services\SlaService;
@@ -51,7 +51,7 @@ class IncidentTest extends TestCase
 
     public function test_it_belongs_to_status_on_hold_reason()
     {
-        $incident = Incident::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
+        $incident = Incident::factory(['on_hold_reason' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
         $this->assertEquals('Caller Response', $incident->onHoldReason->name);
     }

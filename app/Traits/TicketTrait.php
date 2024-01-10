@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Group;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\User;
 use App\Observers\TicketObserver;
@@ -40,11 +40,6 @@ trait TicketTrait
 
     abstract function category(): BelongsTo|HasOneThrough;
     abstract function item(): BelongsTo|HasOneThrough;
-
-    function onHoldReason(): BelongsTo
-    {
-        return $this->belongsTo(OnHoldReason::class);
-    }
 
     function group(): BelongsTo
     {
@@ -104,7 +99,7 @@ trait TicketTrait
                 'item.name',
                 'description',
                 'status',
-                'onHoldReason.name',
+                'onHoldReason',
                 'priority',
                 'group.name',
                 'resolver.name',

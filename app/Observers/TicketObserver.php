@@ -11,11 +11,11 @@ class TicketObserver
 {
     public function creating($ticket): void
     {
-        if(!$ticket->isStatus(Status::ON_HOLD) && $ticket->on_hold_reason_id !== null){
+        if(!$ticket->isStatus(Status::ON_HOLD) && $ticket->on_hold_reason !== null){
             throw new Exception('On hold reason cannot be assigned to '. get_class_name($ticket) .' if Status is not on hold');
         }
 
-        if($ticket->isStatus(Status::ON_HOLD) && $ticket->on_hold_reason_id === null){
+        if($ticket->isStatus(Status::ON_HOLD) && $ticket->on_hold_reason === null){
             throw new Exception('On hold reason must be assigned to '. get_class_name($ticket) .' if Status is on hold');
         }
 
@@ -36,7 +36,7 @@ class TicketObserver
 
         if($ticket->isDirty('status')){
             if(!$ticket->isStatus(Status::ON_HOLD)){
-                $ticket->on_hold_reason_id = null;
+                $ticket->on_hold_reason = null;
             }
             if($ticket->isStatus(Status::RESOLVED)){
                 $ticket->resolved_at = Carbon::now();
@@ -45,7 +45,7 @@ class TicketObserver
             }
         }
 
-        if(!$ticket->isStatus(Status::ON_HOLD) && $ticket->on_hold_reason_id !== null){
+        if(!$ticket->isStatus(Status::ON_HOLD) && $ticket->on_hold_reason !== null){
             throw new Exception('On hold reason cannot be assigned to '. get_class_name($ticket) .' if Status is not on hold');
         }
     }

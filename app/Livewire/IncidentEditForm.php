@@ -9,7 +9,7 @@ use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Services\ActivityService;
 use App\Traits\HasFields;
@@ -25,7 +25,7 @@ class IncidentEditForm extends Form
     public Incident $incident;
     public Collection $activities;
     public Status $status;
-    public $onHoldReason;
+    public OnHoldReason|null $onHoldReason;
     public $priority;
     public string $priorityChangeReason = '';
     public $group;
@@ -37,8 +37,8 @@ class IncidentEditForm extends Form
             'status' => ['required', Rule::enum(Status::class)],
             'onHoldReason' => [
                 Rule::requiredIf($this->status == Status::ON_HOLD),
+                Rule::enum(OnHoldReason::class),
                 'nullable',
-                Rule::in(OnHoldReason::MAP)
             ],
             'priority' => ['required', Rule::in(Incident::PRIORITIES)],
             'priorityChangeReason' => [
@@ -47,10 +47,10 @@ class IncidentEditForm extends Form
             ],
             'group' => ['required', Rule::in(Group::MAP)],
             'resolver' => [
-                'nullable',
                 Rule::in(
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
-                )
+                ),
+                'nullable',
             ],
         ];
     }
@@ -59,7 +59,7 @@ class IncidentEditForm extends Form
         $this->incident = $incident;
         $this->model = $incident;
         $this->status = $this->incident->status;
-        $this->onHoldReason = $this->incident->on_hold_reason_id;
+        $this->onHoldReason = $this->incident->on_hold_reason;
         $this->priority = $this->incident->priority;
         $this->group = $this->incident->group_id;
         $this->resolver = $this->incident->resolver_id;
@@ -93,7 +93,7 @@ class IncidentEditForm extends Form
     {
         $this->validate();
         $this->incident->status = $this->status;
-        $this->incident->on_hold_reason_id = $this->onHoldReason;
+        $this->incident->on_hold_reason = $this->onHoldReason ?? null;
         $this->incident->priority = $this->priority;
         $this->incident->group_id = $this->group;
         $this->incident->resolver_id = ($this->resolver === '') ? null : $this->resolver;
@@ -135,7 +135,7 @@ class IncidentEditForm extends Form
                 ->options(Status::class)
                 ->disabledCondition($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
-                ->options(OnHoldReason::all())
+                ->options(OnHoldReason::class)
                 ->hideable()
                 ->blank()
                 ->disabledCondition($this->isFieldDisabled('onHoldReason')),

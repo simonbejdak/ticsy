@@ -5,7 +5,7 @@ namespace Tests\Feature\Incident;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -147,7 +147,7 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseHas('incidents', [
             'id' => $incident->id,
-            'on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR,
+            'on_hold_reason' => OnHoldReason::WAITING_FOR_VENDOR,
         ]);
     }
 

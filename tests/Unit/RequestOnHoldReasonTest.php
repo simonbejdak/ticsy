@@ -2,7 +2,7 @@
 
 
 use App\Models\Request;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,7 +13,7 @@ class RequestOnHoldReasonTest extends TestCase
     public function test_it_has_many_requests()
     {
         $onHoldReason = OnHoldReason::firstOrFail();
-        Request::factory(2, ['on_hold_reason_id' => $onHoldReason])->statusOnHold()->create();
+        Request::factory(2, ['on_hold_reason' => $onHoldReason])->statusOnHold()->create();
         $this->assertCount(2, $onHoldReason->requests);
     }
 
@@ -32,7 +32,7 @@ class RequestOnHoldReasonTest extends TestCase
 
         Request::factory([
             'status' => Status::OPEN,
-            'on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE,
+            'on_hold_reason' => OnHoldReason::CALLER_RESPONSE,
         ])->create();
     }
 

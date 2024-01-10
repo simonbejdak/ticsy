@@ -4,7 +4,7 @@ use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Traits\TicketTrait;
 use Illuminate\Database\Migrations\Migration;
@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->foreignId('category_id')->constrained()->references('id')->on('incident_categories');
             $table->foreignId('item_id')->constrained()->references('id')->on('incident_items');
             $table->string('status');
-            $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
+            $table->string('on_hold_reason')->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Incident::PRIORITIES);
             $table->timestamp('resolved_at')->nullable();

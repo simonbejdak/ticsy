@@ -10,7 +10,7 @@ use App\Livewire\RequestTabs;
 use App\Livewire\TempTabs;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
@@ -123,7 +123,7 @@ class EditTest extends TestCase
     public function on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['on_hold_reason_id' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
+        $request = Request::factory(['on_hold_reason' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])

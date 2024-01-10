@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Enums\OnHoldReason;
 use App\Enums\TaskSequence;
 use App\Helpers\TaskPlan;
 use App\Interfaces\Activitable;
@@ -25,6 +26,7 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
     protected $guarded = [];
     protected $casts = [
         'status' => Status::class,
+        'on_hold_reason' => OnHoldReason::class,
         'resolved_at' => 'datetime',
         'task_sequence' => TaskSequence::class,
     ];
@@ -67,6 +69,16 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
     function taskPlan(): TaskPlan
     {
         return $this->initializeTaskPlan($this->category_id, $this->item->id);
+    }
+
+    function hasNonStartedTask(): bool
+    {
+        return count(($this->tasks()->notStarted()->get())) > 0;
+    }
+
+    function hasAllTasksClosed(): bool
+    {
+        return count($this->tasks()->notClosed()->get()) == 0;
     }
 
     protected function initializeTaskPlan($category, $item): TaskPlan

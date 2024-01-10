@@ -4,7 +4,7 @@ namespace Tests\Feature\Task;
 
 use App\Livewire\TaskEditForm;
 use App\Models\Group;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\Task;
 use App\Models\User;
@@ -147,7 +147,7 @@ class UpdateTest extends TestCase
 
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'on_hold_reason_id' => OnHoldReason::WAITING_FOR_VENDOR,
+            'on_hold_reason' => OnHoldReason::WAITING_FOR_VENDOR,
         ]);
     }
 

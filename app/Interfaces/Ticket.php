@@ -14,7 +14,6 @@ interface Ticket
     function resolver(): BelongsTo;
     function category(): BelongsTo|HasOneThrough;
     function item(): BelongsTo|HasOneThrough;
-    function onHoldReason(): BelongsTo;
     function group(): BelongsTo;
     function slas(): MorphMany;
     function isStatus(Status ...$statuses): bool;

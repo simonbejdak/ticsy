@@ -2,8 +2,6 @@
 
 namespace App\Enums;
 
-use Illuminate\Contracts\Support\Arrayable;
-
 enum Status: string
 {
     case OPEN = 'Open';

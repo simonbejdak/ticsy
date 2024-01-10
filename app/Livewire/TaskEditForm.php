@@ -9,7 +9,7 @@ use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Enums\Status;
 use App\Models\Task;
@@ -28,7 +28,7 @@ class TaskEditForm extends Form
     public array $tabs = ['activities'];
     public Collection $activities;
     public Status $status;
-    public $onHoldReason;
+    public OnHoldReason|null $onHoldReason;
     public $priority;
     public string $priorityChangeReason = '';
     public $group;
@@ -46,8 +46,8 @@ class TaskEditForm extends Form
             'status' => ['required', Rule::enum(Status::class)],
             'onHoldReason' => [
                 Rule::requiredIf($this->status == Status::ON_HOLD),
-                'nullable',
-                Rule::in(OnHoldReason::MAP)
+                Rule::enum(OnHoldReason::class),
+                'nullable'
             ],
             'priority' => ['required', Rule::in(Request::PRIORITIES)],
             'priorityChangeReason' => [
@@ -56,10 +56,10 @@ class TaskEditForm extends Form
             ],
             'group' => ['required', Rule::in(Group::MAP)],
             'resolver' => [
-                'nullable',
                 Rule::in(
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
-                )
+                ),
+                'nullable',
             ],
         ];
     }
@@ -68,7 +68,7 @@ class TaskEditForm extends Form
         $this->task = $task;
         $this->model = $task;
         $this->status = $this->task->status;
-        $this->onHoldReason = $this->task->on_hold_reason_id;
+        $this->onHoldReason = $this->task->on_hold_reason;
         $this->priority = $this->task->priority;
         $this->group = $this->task->group_id;
         $this->resolver = $this->task->resolver_id;
@@ -102,7 +102,7 @@ class TaskEditForm extends Form
     {
         $this->validate();
         $this->task->status = $this->status;
-        $this->task->on_hold_reason_id = $this->onHoldReason;
+        $this->task->on_hold_reason = $this->onHoldReason ?? null;
         $this->task->priority = $this->priority;
         $this->task->group_id = $this->group;
         $this->task->resolver_id = ($this->resolver === '') ? null : $this->resolver;
@@ -144,7 +144,7 @@ class TaskEditForm extends Form
                 ->options(Status::class)
                 ->disabledCondition($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
-                ->options(OnHoldReason::all())
+                ->options(OnHoldReason::class)
                 ->hideable()
                 ->blank()
                 ->disabledCondition($this->isFieldDisabled('onHoldReason')),

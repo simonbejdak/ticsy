@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Group;
-use App\Models\OnHoldReason;
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\Task;
 use App\Models\Ticket;
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('request_id')->constrained();
             $table->text('description');
             $table->string('status');
-            $table->enum('on_hold_reason_id', OnHoldReason::MAP)->nullable();
+            $table->string('on_hold_reason')->nullable();
             $table->enum('group_id', Group::MAP);
             $table->enum('priority', Task::PRIORITIES);
             $table->timestamp('started_at')->nullable();
