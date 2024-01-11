@@ -3,6 +3,7 @@
 
 namespace Tests\Unit;
 
+use App\Enums\Priority;
 use App\Interfaces\Slable;
 use App\Models\Group;
 use App\Models\Incident;
@@ -73,11 +74,11 @@ class IncidentTest extends TestCase
         $this->assertEquals($item->name, $incident->item->name);
     }
 
-    function test_it_has_priority()
+    function test_it_has_priority_enum()
     {
-        $incident = Incident::factory(['priority' => 4])->create();
+        $incident = Incident::factory(['priority' => Priority::THREE])->create();
 
-        $this->assertEquals(4, $incident->priority);
+        $this->assertEquals(Priority::THREE, $incident->priority);
     }
 
     function test_it_has_description()
@@ -90,20 +91,13 @@ class IncidentTest extends TestCase
     function test_it_gets_sla_assigned_based_on_priority(){
         $incident = Incident::factory(['priority' => Incident::DEFAULT_PRIORITY])->create();
 
-        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[Incident::DEFAULT_PRIORITY], $incident->sla->minutes());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[Incident::DEFAULT_PRIORITY->value], $incident->sla->minutes());
 
-        $incident->priority = 3;
+        $incident->priority = Priority::THREE;
         $incident->save();
         $incident->refresh();
 
-        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[3], $incident->sla->minutes());
-    }
-
-    function test_sql_violation_thrown_when_higher_priority_than_predefined_is_assigned()
-    {
-        $this->expectException(QueryException::class);
-
-        Incident::factory(['priority' => count(Incident::PRIORITIES) + 1])->create();
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[Priority::THREE->value], $incident->sla->minutes());
     }
 
     function test_it_has_correct_default_priority()
@@ -181,16 +175,16 @@ class IncidentTest extends TestCase
         Carbon::setTestNow($date);
 
         // additional minute passes, as I'm running the test in real time
-        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority] - 6, $incident->sla->minutesTillExpires());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority->value] - 6, $incident->sla->minutesTillExpires());
 
-        $incident->priority = 3;
+        $incident->priority = Priority::THREE;
         $incident->save();
-        $incident->priority = 4;
+        $incident->priority = Priority::FOUR;
         $incident->save();
         $incident->refresh();
 
         // minute has to be subtracted, as when the test runs, time adjusts
-        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority] - 1, $incident->sla->minutesTillExpires());
+        $this->assertEquals(Incident::PRIORITY_TO_SLA_MINUTES[$incident->priority->value] - 1, $incident->sla->minutesTillExpires());
     }
 
     /**

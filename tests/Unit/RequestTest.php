@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Priority;
 use App\Enums\TaskSequence;
 use App\Interfaces\Slable;
 use App\Models\Group;
@@ -88,11 +89,11 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    function it_has_priority()
+    function it_has_priority_enum()
     {
-        $request = Request::factory(['priority' => 4])->create();
+        $request = Request::factory(['priority' => Priority::THREE])->create();
 
-        $this->assertEquals(4, $request->priority);
+        $this->assertEquals(Priority::THREE, $request->priority);
     }
 
     /** @test */
@@ -120,14 +121,6 @@ class RequestTest extends TestCase
         $request->refresh();
 
         $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[3], $request->sla->minutes());
-    }
-
-    /** @test */
-    function sql_violation_thrown_when_higher_priority_than_predefined_is_assigned()
-    {
-        $this->expectException(QueryException::class);
-
-        Request::factory(['priority' => max(Request::PRIORITIES) + 1])->create();
     }
 
     /** @test */
@@ -220,16 +213,16 @@ class RequestTest extends TestCase
         Carbon::setTestNow($date);
 
         // additional minute passes, as the test runs in real time
-        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[$request->priority] - 6, $request->sla->minutesTillExpires());
+        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[$request->priority->value] - 6, $request->sla->minutesTillExpires());
 
-        $request->priority = 3;
+        $request->priority = Priority::THREE;
         $request->save();
-        $request->priority = 4;
+        $request->priority = Priority::FOUR;
         $request->save();
         $request->refresh();
 
         // minute has to be subtracted, as when the test runs, time adjusts
-        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[$request->priority] - 1, $request->sla->minutesTillExpires());
+        $this->assertEquals(Request::PRIORITY_TO_SLA_MINUTES[$request->priority->value] - 1, $request->sla->minutesTillExpires());
     }
 
     /**

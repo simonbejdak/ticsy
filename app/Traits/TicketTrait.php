@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Enums\Priority;
 use App\Models\Group;
 use App\Enums\OnHoldReason;
 use App\Enums\Status;
@@ -22,11 +23,10 @@ trait TicketTrait
         static::observe(TicketObserver::class);
     }
 
-    const DEFAULT_PRIORITY = 4;
+    const DEFAULT_PRIORITY = Priority::FOUR;
     const DEFAULT_STATUS = Status::OPEN;
     const DEFAULT_GROUP = Group::SERVICE_DESK;
     const ARCHIVE_AFTER_DAYS = 3;
-    const PRIORITIES = [1, 2, 3, 4];
 
     function caller(): BelongsTo
     {
@@ -68,7 +68,7 @@ trait TicketTrait
 
     function calculateSlaMinutes(): int
     {
-        return self::PRIORITY_TO_SLA_MINUTES[$this->priority];
+        return self::PRIORITY_TO_SLA_MINUTES[$this->priority->value];
     }
 
     function statusChanged(): bool

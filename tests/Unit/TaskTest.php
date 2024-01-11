@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Priority;
 use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
@@ -51,10 +52,10 @@ class TaskTest extends TestCase
 
     /** @test */
     function priority_is_set_based_on_request_priority(){
-        $request = Request::factory(['priority' => 3])->create();
+        $request = Request::factory(['priority' => Priority::THREE])->create();
         $task = Task::factory(['request_id' => $request])->create();
 
-        $this->assertEquals(3, $task->priority);
+        $this->assertEquals(Priority::THREE, $task->priority);
     }
 
     /** @test */

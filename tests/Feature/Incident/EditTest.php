@@ -3,6 +3,7 @@
 
 namespace Tests\Feature\Incident;
 
+use App\Enums\Priority;
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
@@ -146,7 +147,7 @@ class EditTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('priority', 1)
+            ->set('priority', Priority::ONE->value)
             ->assertForbidden();
     }
 

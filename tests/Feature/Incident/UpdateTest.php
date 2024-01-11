@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Incident;
 
+use App\Enums\Priority;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
+use TypeError;
 use ValueError;
 
 class UpdateTest extends TestCase
@@ -62,7 +64,7 @@ class UpdateTest extends TestCase
     /**
      * @dataProvider invalidOnHoldReasons
      */
-    public function test_it_throws_value_error_when_invalid_on_hold_reason_set($value, $error)
+    public function test_it_throws_value_error_when_invalid_on_hold_reason_set($value)
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
@@ -89,18 +91,18 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidPriorities
+     * @dataProvider nonNumericPriorities
      */
-    public function test_it_fails_validation_when_invalid_priority_is_set($value, $error)
+    public function test_it_throws_type_error_when_non_numeric_priority_is_set($value)
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
 
+        $this->expectException(TypeError::class);
+
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('priority', $value)
-            ->call('save')
-            ->assertHasErrors(['priority' => $error]);
+            ->set('priority', $value);
     }
 
     /**
@@ -232,12 +234,12 @@ class UpdateTest extends TestCase
         $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory(['status' => Status::OPEN])->create();
         $status = Status::IN_PROGRESS;
-        $priority = Incident::DEFAULT_PRIORITY - 1;
+        $priority = Priority::THREE;
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', $status->value)
-            ->set('priority', $priority)
+            ->set('priority', $priority->value)
             ->set('priorityChangeReason', 'Production issue')
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
@@ -258,7 +260,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('priority', Incident::DEFAULT_PRIORITY - 1)
+            ->set('priority', Incident::DEFAULT_PRIORITY->value - 1)
             ->assertForbidden();
 
         $this->assertDatabaseHas('incidents', [
@@ -307,7 +309,7 @@ class UpdateTest extends TestCase
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('priority', Incident::DEFAULT_PRIORITY - 1)
+            ->set('priority', Incident::DEFAULT_PRIORITY->value - 1)
             ->assertForbidden();
     }
 
@@ -421,10 +423,10 @@ class UpdateTest extends TestCase
         ];
     }
 
-    static function invalidPriorities(){
+    static function nonNumericPriorities(){
         return [
-            ['word', 'in'],
-            ['', 'required'],
+            ['word'],
+            ['']
         ];
     }
 

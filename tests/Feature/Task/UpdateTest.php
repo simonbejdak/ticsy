@@ -2,15 +2,18 @@
 
 namespace Tests\Feature\Task;
 
+use App\Enums\Priority;
 use App\Livewire\TaskEditForm;
 use App\Models\Group;
 use App\Enums\OnHoldReason;
 use App\Enums\Status;
+use App\Models\Request;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
+use TypeError;
 use ValueError;
 
 class UpdateTest extends TestCase
@@ -91,16 +94,16 @@ class UpdateTest extends TestCase
     /**
      * @dataProvider invalidPriorities
      */
-    public function test_it_fails_validation_when_invalid_priority_is_set($value, $error)
+    public function test_it_throws_type_error_when_invalid_priority_is_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory()->create();
 
+        $this->expectException(TypeError::class);
+
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('priority', $value)
-            ->call('save')
-            ->assertHasErrors(['priority' => $error]);
+            ->set('priority', $value);
     }
 
     /**
@@ -230,12 +233,12 @@ class UpdateTest extends TestCase
         $resolver = User::factory()->resolverAllGroups()->create();
         $task = Task::factory()->create();
         $status = Status::IN_PROGRESS;
-        $priority = Task::DEFAULT_PRIORITY - 1;
+        $priority = Priority::THREE;
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', $status->value)
-            ->set('priority', $priority)
+            ->set('priority', $priority->value)
             ->set('priorityChangeReason', 'Production issue')
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
@@ -250,18 +253,18 @@ class UpdateTest extends TestCase
         ]);
     }
 
-    public function test_task_priority_cannot_be_changed_when_status_is_closed(){
+    public function test_task_priority_cannot_be_changed_when_status_is_resolved(){
         $resolver = User::factory()->resolver()->create();
-        $task = Task::factory()->statusResolved()->create();
+        $task = Task::factory(['priority' => Priority::FOUR])->statusResolved()->create();
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('priority', Task::DEFAULT_PRIORITY - 1)
+            ->set('priority', Priority::THREE->value)
             ->assertForbidden();
 
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'priority' => Task::DEFAULT_PRIORITY,
+            'priority' => Priority::FOUR,
         ]);
     }
 
@@ -295,11 +298,11 @@ class UpdateTest extends TestCase
 
     public function test_task_priority_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $task = Task::factory()->statusCancelled()->create();
+        $task = Task::factory(['priority' => Priority::THREE])->statusCancelled()->create();
 
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
-            ->set('priority', Task::DEFAULT_PRIORITY - 1)
+            ->set('priority', Priority::TWO->value)
             ->assertForbidden();
     }
 

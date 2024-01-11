@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Priority;
 use App\Enums\Status;
 use App\Enums\OnHoldReason;
 use App\Interfaces\Activitable;
@@ -23,6 +24,7 @@ class Incident extends Model implements Ticket, Slable, Activitable
     protected $casts = [
         'status' => Status::class,
         'on_hold_reason' => OnHoldReason::class,
+        'priority' => Priority::class,
         'resolved_at' => 'datetime',
     ];
 
@@ -33,10 +35,10 @@ class Incident extends Model implements Ticket, Slable, Activitable
     ];
 
     const PRIORITY_TO_SLA_MINUTES = [
-        1 => 15,
-        2 => 60,
-        3 => 6 * 60,
-        4 => 12 * 60,
+        Priority::ONE->value => 15,
+        Priority::TWO->value => 60,
+        Priority::THREE->value => 6 * 60,
+        Priority::FOUR->value => 12 * 60,
     ];
 
     const CATEGORY_TO_ITEM = [

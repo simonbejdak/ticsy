@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Priority;
 use App\Enums\Status;
 use App\Enums\OnHoldReason;
 use App\Enums\TaskSequence;
@@ -27,6 +28,7 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
     protected $casts = [
         'status' => Status::class,
         'on_hold_reason' => OnHoldReason::class,
+        'priority' => Priority::class,
         'resolved_at' => 'datetime',
         'task_sequence' => TaskSequence::class,
     ];
@@ -37,10 +39,10 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
     ];
 
     const PRIORITY_TO_SLA_MINUTES = [
-        1 => 30,
-        2 => 2 * 60,
-        3 => 12 * 60,
-        4 => 24 * 60,
+        Priority::ONE->value => 30,
+        Priority::TWO->value => 2 * 60,
+        Priority::THREE->value => 12 * 60,
+        Priority::FOUR->value => 24 * 60,
     ];
 
     const CATEGORY_TO_ITEM = [

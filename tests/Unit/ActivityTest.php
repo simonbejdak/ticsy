@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Enums\Priority;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Enums\OnHoldReason;
@@ -85,8 +86,8 @@ class ActivityTest extends TestCase
     public function test_it_logs_incident_priority_updated_event()
     {
         $incident = Incident::factory()->create();
-        $initialPriority = $incident->priority;
-        $incident->priority = 3;
+        $initialPriority = $incident->priority->value;
+        $incident->priority = Priority::THREE;
         $incident->save();
 
         $activity = $incident->activities->last();
@@ -99,8 +100,8 @@ class ActivityTest extends TestCase
     public function test_it_logs_request_priority_updated_event()
     {
         $request = Request::factory(['priority' => Request::DEFAULT_PRIORITY])->create();
-        $initialPriority = $request->priority;
-        $request->priority = 3;
+        $initialPriority = $request->priority->value;
+        $request->priority = Priority::THREE;
         $request->save();
 
         $activity = $request->activities->last();

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Priority;
 use App\Enums\Tab;
 use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
@@ -29,7 +30,7 @@ class TaskEditForm extends Form
     public Collection $activities;
     public Status $status;
     public OnHoldReason|null $onHoldReason;
-    public $priority;
+    public Priority $priority;
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
@@ -49,7 +50,7 @@ class TaskEditForm extends Form
                 Rule::enum(OnHoldReason::class),
                 'nullable'
             ],
-            'priority' => ['required', Rule::in(Request::PRIORITIES)],
+            'priority' => ['required', Rule::enum(Priority::class)],
             'priorityChangeReason' => [
                 Rule::requiredIf($this->priority != $this->task->priority),
                 'string',
@@ -81,7 +82,7 @@ class TaskEditForm extends Form
 
     public function updating($property, $value): void
     {
-        if($property === 'priority' && $value == 1){
+        if($property === 'priority' && $value == Priority::ONE){
             $this->authorize('setPriorityOne', Task::class);
         }
     }
@@ -149,7 +150,7 @@ class TaskEditForm extends Form
                 ->blank()
                 ->disabledCondition($this->isFieldDisabled('onHoldReason')),
             Select::make('priority')
-                ->options(Task::PRIORITIES)
+                ->options(Priority::class)
                 ->disabledCondition($this->isFieldDisabled('priority')),
             Select::make('group')
                 ->options(Group::all())

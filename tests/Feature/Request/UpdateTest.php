@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Request;
 
+use App\Enums\Priority;
 use App\Livewire\RequestEditForm;
 use App\Models\Group;
 use App\Models\Request;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
+use TypeError;
 use ValueError;
 
 class UpdateTest extends TestCase
@@ -78,16 +80,16 @@ class UpdateTest extends TestCase
     /**
      * @dataProvider invalidPriorities
      */
-    public function test_it_fails_validation_when_invalid_priority_is_set($value, $error)
+    public function test_it_throws_type_error_when_invalid_priority_is_set($value)
     {
         $resolver = User::factory()->resolver()->create();
         $request = Request::factory()->create();
 
+        $this->expectException(TypeError::class);
+
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', $value)
-            ->call('save')
-            ->assertHasErrors(['priority' => $error]);
+            ->set('priority', $value);
     }
 
     /**
@@ -217,12 +219,12 @@ class UpdateTest extends TestCase
         $resolver = User::factory()->resolverAllGroups()->create();
         $request = Request::factory()->create();
         $status = Status::IN_PROGRESS;
-        $priority = Request::DEFAULT_PRIORITY - 1;
+        $priority = Priority::THREE;
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
             ->set('status', $status->value)
-            ->set('priority', $priority)
+            ->set('priority', $priority->value)
             ->set('priorityChangeReason', 'Production issue')
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
@@ -239,16 +241,16 @@ class UpdateTest extends TestCase
 
     public function test_request_priority_cannot_be_changed_when_status_is_closed(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusResolved()->create();
+        $request = Request::factory(['priority' => Priority::THREE])->statusResolved()->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', Request::DEFAULT_PRIORITY - 1)
+            ->set('priority', Priority::TWO->value)
             ->assertForbidden();
 
         $this->assertDatabaseHas('requests', [
             'id' => $request->id,
-            'priority' => Request::DEFAULT_PRIORITY,
+            'priority' => Priority::THREE,
         ]);
     }
 
@@ -288,11 +290,11 @@ class UpdateTest extends TestCase
 
     public function test_request_priority_cannot_be_changed_when_status_is_cancelled(){
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory()->statusCancelled()->create();
+        $request = Request::factory(['priority' => Priority::THREE])->statusCancelled()->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
-            ->set('priority', Request::DEFAULT_PRIORITY - 1)
+            ->set('priority', Priority::TWO->value)
             ->assertForbidden();
     }
 
