@@ -64,8 +64,8 @@ class ActivityTest extends TestCase
         $activity = $incident->activities->last();
 
         $this->assertEquals('updated', $activity->event);
-        $this->assertEquals('Caller Response', $activity->changes['attributes']['onHoldReason.name']);
-        $this->assertEquals(null, $activity->changes['old']['onHoldReason.name']);
+        $this->assertEquals('Caller Response', $activity->changes['attributes']['on_hold_reason']);
+        $this->assertEquals(null, $activity->changes['old']['on_hold_reason']);
     }
 
     public function test_it_logs_request_on_hold_reason_updated_event()
@@ -78,8 +78,8 @@ class ActivityTest extends TestCase
         $activity = $request->activities->last();
 
         $this->assertEquals('updated', $activity->event);
-        $this->assertEquals('Caller Response', $activity->changes['attributes']['onHoldReason.name']);
-        $this->assertEquals(null, $activity->changes['old']['onHoldReason.name']);
+        $this->assertEquals('Caller Response', $activity->changes['attributes']['on_hold_reason']);
+        $this->assertEquals(null, $activity->changes['old']['on_hold_reason']);
     }
 
     public function test_it_logs_incident_priority_updated_event()

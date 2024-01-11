@@ -291,7 +291,7 @@ class EditTest extends TestCase
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::ON_HOLD->value)
-            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE)
+            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE->value)
             ->call('save')
             ->assertSuccessful();
 

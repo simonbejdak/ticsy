@@ -10,12 +10,19 @@ function get_class_name($object): string
     return (new ReflectionClass($object))->getShortName();
 }
 
-function addSpacesBeforeUppercase($value): string {
+function addSpacesBeforeUnderscore($value): string
+{
+    return str_replace('_', ' ', $value);
+}
+
+function addSpacesBeforeUppercase($value): string
+{
     return preg_replace('/([A-Z])/', ' $1', $value);
 }
 
 function makeDisplayName($name): string{
     $name = addSpacesBeforeUppercase($name);
+    $name = addSpacesBeforeUnderscore($name);
     $name = strtolower($name);
 
     return ucfirst($name);

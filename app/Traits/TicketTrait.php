@@ -99,7 +99,7 @@ trait TicketTrait
                 'item.name',
                 'description',
                 'status',
-                'onHoldReason',
+                'on_hold_reason',
                 'priority',
                 'group.name',
                 'resolver.name',

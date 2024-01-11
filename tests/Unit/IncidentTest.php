@@ -49,11 +49,11 @@ class IncidentTest extends TestCase
         $this->assertEquals('John Doe', $incident->resolver->name);
     }
 
-    public function test_it_belongs_to_status_on_hold_reason()
+    public function test_it_has_on_hold_reason_enum()
     {
         $incident = Incident::factory(['on_hold_reason' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
-        $this->assertEquals('Caller Response', $incident->onHoldReason->name);
+        $this->assertEquals(OnHoldReason::CALLER_RESPONSE, $incident->on_hold_reason);
     }
 
     public function test_it_belongs_to_group()

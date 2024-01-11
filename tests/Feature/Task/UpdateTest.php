@@ -62,17 +62,17 @@ class UpdateTest extends TestCase
     /**
      * @dataProvider invalidOnHoldReasons
      */
-    public function test_it_fails_validation_when_invalid_on_hold_reason_set($value, $error)
+    public function test_it_throws_value_error_when_invalid_on_hold_reason_set($value, $error)
     {
         $resolver = User::factory()->resolver()->create();
         $task = Task::factory()->create();
 
+        $this->expectException(ValueError::class);
+
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD->value)
-            ->set('onHoldReason', $value)
-            ->call('save')
-            ->assertHasErrors(['onHoldReason' => $error]);
+            ->set('onHoldReason', $value);
     }
 
     public function test_it_fails_validation_if_status_on_hold_and_on_hold_reason_is_null()
@@ -141,7 +141,7 @@ class UpdateTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD->value)
-            ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR)
+            ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR->value)
             ->call('save')
             ->assertSuccessful();
 

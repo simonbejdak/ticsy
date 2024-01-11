@@ -3,6 +3,7 @@
 use App\Enums\TaskSequence;
 use App\Interfaces\Slable;
 use App\Models\Group;
+use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
@@ -61,12 +62,11 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    public function it_belongs_to_status_on_hold_reason()
+    public function it_has_on_hold_reason_enum()
     {
-        $onHoldReason = OnHoldReason::firstOrFail();
-        $request = Request::factory(['on_hold_reason' => $onHoldReason])->statusOnHold()->create();
+        $request = Request::factory(['on_hold_reason' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
 
-        $this->assertEquals($onHoldReason->id, $request->onHoldReason->id);
+        $this->assertEquals(OnHoldReason::CALLER_RESPONSE, $request->on_hold_reason);
     }
 
     /** @test */
