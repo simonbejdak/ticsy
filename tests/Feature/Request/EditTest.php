@@ -240,16 +240,16 @@ class EditTest extends TestCase
     public function it_displays_multiple_activity_changes()
     {
         $resolver = User::factory()->resolver()->create();
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
         $request = Request::factory([
             'status' => Status::OPEN,
-            'group_id' => Group::SERVICE_DESK,
         ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::IN_PROGRESS->value)
-            ->set('group', Group::LOCAL_6445_NEW_YORK)
+            ->set('group', $group->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -258,7 +258,7 @@ class EditTest extends TestCase
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
-            ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
+            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
     /** @test */
@@ -327,12 +327,13 @@ class EditTest extends TestCase
     public function it_displays_group_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $request = Request::factory(['group_id' => Group::SERVICE_DESK])->create();
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+        $request = Request::factory()->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
-            ->set('group', Group::LOCAL_6445_NEW_YORK)
+            ->set('group', $group->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -340,7 +341,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $request])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
+            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
     /** @test */

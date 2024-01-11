@@ -30,9 +30,5 @@ class MapSeeder extends Seeder
         foreach (RequestItem::MAP as $key => $value){
             RequestItem::factory(['name' => $key])->create();
         }
-
-        foreach (Group::MAP as $key => $value){
-            Group::factory(['name' => $key])->create();
-        }
     }
 }

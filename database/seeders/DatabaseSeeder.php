@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             RequestCategoryRequestItemSeeder::class,
             PermissionSeeder::class,
             UserSeeder::class,
+            GroupSeeder::class,
         ]);
 
         $user = User::factory([
@@ -48,10 +49,10 @@ class DatabaseSeeder extends Seeder
             'caller_id' => $user,
         ]);
 
-        $resolvers = User::factory(5)->resolver()->create();
+        $resolvers = User::factory(25)->resolver()->create();
 
         foreach ($resolvers as $resolver){
-            $resolver->groups()->attach(Group::findOrFail(rand(1, Group::count())));
+            $resolver->groups()->attach(Group::findOrFail(rand(1, count(Group::all()))));
         }
     }
 }

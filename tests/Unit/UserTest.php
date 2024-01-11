@@ -16,12 +16,13 @@ class UserTest extends TestCase
 
     function test_it_belongs_to_many_groups()
     {
-        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
-        $resolver = User::factory()->resolverAllGroups()->create();
+        $groupOne = Group::factory(['name' => 'TEST-GROUP-1'])->create();
+        $groupTwo = Group::factory(['name' => 'TEST-GROUP-2'])->create();
+        $resolver = User::factory()->create();
+        $resolver->groups()->attach($groupOne);
+        $resolver->groups()->attach($groupTwo);
 
-        // by default resolver in tests always belongs to the default group
-        $this->assertEquals(Group::SERVICE_DESK, $resolver->groups()->findOrFail(1)->id);
-        $this->assertEquals(Group::LOCAL_6445_NEW_YORK, $resolver->groups()->findOrFail(2)->id);
+        $this->assertCount(2, $resolver->groups);
     }
 
     function test_it_as_caller_has_many_requests(){

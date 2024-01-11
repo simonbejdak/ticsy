@@ -226,16 +226,17 @@ class EditTest extends TestCase
     public function test_it_displays_multiple_activity_changes()
     {
         $resolver = User::factory()->resolver()->create();
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
         $incident = Incident::factory([
             'status' => Status::OPEN,
-            'group_id' => Group::SERVICE_DESK,
+            'group_id' => Group::SERVICE_DESK_ID,
         ])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::IN_PROGRESS->value)
-            ->set('group', Group::LOCAL_6445_NEW_YORK)
+            ->set('group', $group->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -244,7 +245,7 @@ class EditTest extends TestCase
         Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
-            ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
+            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
     public function test_it_displays_status_changes_activity()
@@ -309,12 +310,13 @@ class EditTest extends TestCase
     public function test_it_displays_group_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident = Incident::factory(['group_id' => Group::SERVICE_DESK])->create();
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+        $incident = Incident::factory(['group_id' => Group::SERVICE_DESK_ID])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-            ->set('group', Group::LOCAL_6445_NEW_YORK)
+            ->set('group', $group->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -322,7 +324,7 @@ class EditTest extends TestCase
 
         Livewire::test(Activities::class, ['model' => $incident])
             ->assertSuccessful()
-            ->assertSeeInOrder(['Group:', 'LOCAL-6445-NEW-YORK', 'was', 'SERVICE-DESK']);
+            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
     public function test_it_displays_resolver_changes_activity()

@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->foreignId('item_id')->constrained()->references('id')->on('incident_items');
             $table->string('status');
             $table->string('on_hold_reason')->nullable();
-            $table->enum('group_id', Group::MAP);
+            $table->foreignId('group_id')->constrained();
             $table->integer('priority');
             $table->timestamp('resolved_at')->nullable();
             $table->timestamps();

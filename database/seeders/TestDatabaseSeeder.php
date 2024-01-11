@@ -14,6 +14,7 @@ class TestDatabaseSeeder extends Seeder
             RequestCategoryRequestItemSeeder::class,
             PermissionSeeder::class,
             UserSeeder::class,
+            GroupSeeder::class,
         ]);
     }
 }

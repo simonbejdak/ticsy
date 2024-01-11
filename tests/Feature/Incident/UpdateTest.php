@@ -344,11 +344,11 @@ class UpdateTest extends TestCase
         $resolverTwo = User::factory(['name' => 'Joe Rogan'])->create()->assignRole('resolver');
         $resolverThree = User::factory(['name' => 'Fred Flinstone'])->create()->assignRole('resolver');
 
-        $groupOne = Group::findOrFail(Group::SERVICE_DESK);
+        $groupOne = Group::factory()->create();
         $groupOne->resolvers()->attach($resolverOne);
         $groupOne->resolvers()->attach($resolverTwo);
 
-        $groupTwo = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $groupTwo = Group::factory()->create();
         $groupTwo->resolvers()->attach($resolverThree);
 
         $incident = Incident::factory(['group_id' => $groupOne])->create();
@@ -370,7 +370,7 @@ class UpdateTest extends TestCase
     public function test_resolver_from_not_selected_group_cannot_be_assigned_to_the_incident_as_resolver()
     {
         $resolver = User::factory()->resolver()->create();
-        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $group = Group::factory()->create();
         $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver)
@@ -384,11 +384,9 @@ class UpdateTest extends TestCase
 
     public function test_selected_resolver_is_empty_when_resolver_group_changes()
     {
+        $groupOne = Group::factory()->create();
+        $groupTwo = Group::factory()->create();
         $resolver = User::factory()->resolverAllGroups()->create();
-
-        $groupOne = Group::findOrFail(Group::SERVICE_DESK);
-        $groupTwo = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
-
         $incident = Incident::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolver)
@@ -432,7 +430,7 @@ class UpdateTest extends TestCase
 
     static function invalidGroups(){
         return [
-            ['word', 'in'],
+            ['word', 'exists'],
             ['', 'required'],
         ];
     }

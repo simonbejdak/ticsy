@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('status');
             $table->string('on_hold_reason')->nullable();
-            $table->enum('group_id', Group::MAP);
+            $table->foreignId('group_id')->constrained();
             $table->integer('priority');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('resolved_at')->nullable();

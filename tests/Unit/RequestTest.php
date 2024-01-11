@@ -73,10 +73,10 @@ class RequestTest extends TestCase
     /** @test */
     public function it_belongs_to_group()
     {
-        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
         $request = Request::factory(['group_id' => $group])->create();
 
-        $this->assertEquals('LOCAL-6445-NEW-YORK', $request->group->name);
+        $this->assertEquals('TEST-GROUP', $request->group->name);
     }
 
     /** @test */

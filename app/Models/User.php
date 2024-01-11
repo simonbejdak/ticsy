@@ -69,7 +69,7 @@ class User extends Authenticatable
 
     public static function getSystemUser()
     {
-        // the first user being created is System user in UserSeeder, so ID should be 1
+        // the first user being created is System user in UserSeeder, so ID is 1
         return self::findOrFail(1);
     }
 

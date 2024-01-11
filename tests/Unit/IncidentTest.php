@@ -59,10 +59,10 @@ class IncidentTest extends TestCase
 
     public function test_it_belongs_to_group()
     {
-        $group = Group::findOrFail(Group::LOCAL_6445_NEW_YORK);
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
         $incident = Incident::factory(['group_id' => $group])->create();
 
-        $this->assertEquals('LOCAL-6445-NEW-YORK', $incident->group->name);
+        $this->assertEquals('TEST-GROUP', $incident->group->name);
     }
 
     public function test_it_belongs_to_item()

@@ -113,27 +113,27 @@ class ActivityTest extends TestCase
 
     public function test_it_logs_incident_group_updated_event()
     {
-        $incident = Incident::factory(['group_id' => Group::SERVICE_DESK])->create();
-        $incident->group_id = Group::LOCAL_6445_NEW_YORK;
+        $incident = Incident::factory()->create();
+        $incident->group_id = Group::factory(['name' => 'TEST-GROUP'])->create()->id;
         $incident->save();
 
         $activity = $incident->activities->last();
 
         $this->assertEquals('updated', $activity->event);
-        $this->assertEquals('LOCAL-6445-NEW-YORK', $activity->changes['attributes']['group.name']);
+        $this->assertEquals('TEST-GROUP', $activity->changes['attributes']['group.name']);
         $this->assertEquals('SERVICE-DESK', $activity->changes['old']['group.name']);
     }
 
     public function test_it_logs_request_group_updated_event()
     {
-        $request = Request::factory(['group_id' => Group::SERVICE_DESK])->create();
-        $request->group_id = Group::LOCAL_6445_NEW_YORK;
+        $request = Request::factory()->create();
+        $request->group_id = Group::factory(['name' => 'TEST-GROUP'])->create()->id;
         $request->save();
 
         $activity = $request->activities->last();
 
         $this->assertEquals('updated', $activity->event);
-        $this->assertEquals('LOCAL-6445-NEW-YORK', $activity->changes['attributes']['group.name']);
+        $this->assertEquals('TEST-GROUP', $activity->changes['attributes']['group.name']);
         $this->assertEquals('SERVICE-DESK', $activity->changes['old']['group.name']);
     }
 

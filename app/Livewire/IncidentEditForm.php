@@ -46,7 +46,7 @@ class IncidentEditForm extends Form
                 Rule::requiredIf($this->priority != $this->incident->priority),
                 'string',
             ],
-            'group' => ['required', Rule::in(Group::MAP)],
+            'group' => 'required|exists:App\Models\Group,id',
             'resolver' => [
                 Rule::in(
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []

@@ -25,7 +25,7 @@ trait TicketTrait
 
     const DEFAULT_PRIORITY = Priority::FOUR;
     const DEFAULT_STATUS = Status::OPEN;
-    const DEFAULT_GROUP = Group::SERVICE_DESK;
+    const DEFAULT_GROUP = Group::SERVICE_DESK_ID;
     const ARCHIVE_AFTER_DAYS = 3;
 
     function caller(): BelongsTo
