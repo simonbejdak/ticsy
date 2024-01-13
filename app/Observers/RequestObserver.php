@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Enums\TaskSequence;
 use App\Models\Request;
-use App\Services\RequestService;
+use App\Services\TaskableService;
 use App\Services\TaskService;
 use Exception;
 
@@ -19,6 +19,13 @@ class RequestObserver
 
     function created(Request $request): void
     {
-        RequestService::setTasks($request);
+        TaskableService::setTasks($request);
+    }
+
+    function updated(Request $request): void
+    {
+        if($request->priorityChanged()){
+            TaskableService::eventTaskablePriorityChanged($request);
+        }
     }
 }

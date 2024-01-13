@@ -38,9 +38,6 @@ trait TicketTrait
         return $this->belongsTo(User::class);
     }
 
-    abstract function category(): BelongsTo|HasOneThrough;
-    abstract function item(): BelongsTo|HasOneThrough;
-
     function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);

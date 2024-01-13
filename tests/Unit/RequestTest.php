@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\SlaService;
 use App\Services\TaskService;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -56,10 +57,10 @@ class RequestTest extends TestCase
     }
 
     /** @test */
-    function it_has_many_tasks(){
+    function it_morphs_many_tasks(){
         $request = Request::factory()->create();
 
-        $this->assertInstanceOf(HasMany::class, $request->tasks());
+        $this->assertInstanceOf(MorphMany::class, $request->tasks());
     }
 
     /** @test */

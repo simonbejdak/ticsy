@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Request extends Model implements Ticket, Slable, Activitable, Taskable
 {
@@ -63,9 +64,9 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
         return $this->belongsTo(RequestItem::class, 'item_id');
     }
 
-    function tasks(): HasMany
+    function tasks(): MorphMany
     {
-        return $this->hasMany(Task::class);
+        return $this->morphMany(Task::class, 'taskable');
     }
 
     function taskPlan(): TaskPlan

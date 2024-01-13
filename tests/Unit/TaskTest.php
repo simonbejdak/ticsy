@@ -27,20 +27,20 @@ class TaskTest extends TestCase
     }
 
     /** @test */
-    function it_belongs_to_request(){
+    function it_morphs_to_taskable_for_request(){
         $request = Request::factory(['description' => 'Request Description'])->create();
-        $task = Task::factory(['request_id' => $request])->create();
+        $task = Task::factory()->create()->taskable()->associate($request);
 
-        $this->assertEquals('Request Description', $task->request->description);
+        $this->assertEquals('Request Description', $task->taskable->description);
     }
 
     /** @test */
-    function it_has_one_category_through_request(){
+    function it_returns_request_category_name_through_categoryName_method(){
         $category = RequestCategory::firstOrFail();
         $request = Request::factory(['category_id' => $category])->create();
-        $task = Task::factory(['request_id' => $request])->create();
+        $task = Task::factory()->create()->taskable()->associate($request);
 
-        $this->assertTrue($task->category->is($request->category));
+        $this->assertEquals($task->categoryName(), $request->category->name);
     }
 
     /** @test */
@@ -51,9 +51,15 @@ class TaskTest extends TestCase
     }
 
     /** @test */
-    function priority_is_set_based_on_request_priority(){
-        $request = Request::factory(['priority' => Priority::THREE])->create();
-        $task = Task::factory(['request_id' => $request])->create();
+    function its_priority_is_updated_based_on_request(){
+        $request = Request::factory(['priority' => Priority::FOUR])->withoutTaskPlan()->create();
+        $task = $request->tasks()->first();
+
+        $this->assertEquals(Priority::FOUR, $task->priority);
+
+        $request->priority = Priority::THREE;
+        $request->save();
+        $task->refresh();
 
         $this->assertEquals(Priority::THREE, $task->priority);
     }
@@ -87,4 +93,10 @@ class TaskTest extends TestCase
         $this->assertTrue($task->isArchived());
     }
 
+    /** @test */
+    function hasTaskable_method_returns_false_if_taskable_is_not_assigned(){
+        $task = Task::factory()->create();
+
+        $this->assertFalse($task->hasTaskable());
+    }
 }

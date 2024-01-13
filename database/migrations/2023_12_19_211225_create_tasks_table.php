@@ -20,7 +20,9 @@ return new class extends Migration
             $table->id()->startingValue(10000001);
             $table->foreignId('caller_id')->constrained()->references('id')->on('users');
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
-            $table->foreignId('request_id')->constrained();
+            $table->string('taskable_type')->nullable();
+            $table->unsignedInteger('taskable_id')->nullable();
+//            $table->foreignId('request_id')->constrained();
             $table->text('description');
             $table->string('status');
             $table->string('on_hold_reason')->nullable();

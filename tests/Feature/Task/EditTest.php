@@ -71,8 +71,8 @@ class EditTest extends TestCase
         $response = $this->get(route('tasks.edit', $task));
 
         $response->assertSuccessful();
-        $response->assertSee($task->category->name);
-        $response->assertSee($task->item->name);
+        $response->assertSee($task->categoryName());
+        $response->assertSee($task->itemName());
         $response->assertSee($task->group->name);
         $response->assertSee($task->status->value);
     }

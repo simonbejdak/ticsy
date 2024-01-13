@@ -136,10 +136,10 @@ class TaskEditForm extends Form
                 ->value($this->task->updated_at)
                 ->disabled(),
             TextInput::make('category')
-                ->value($this->task->category->name)
+                ->value($this->task->categoryName())
                 ->disabled(),
             TextInput::make('item')
-                ->value($this->task->item->name)
+                ->value($this->task->itemName())
                 ->disabled(),
             Select::make('status')
                 ->options(Status::class)

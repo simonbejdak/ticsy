@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Activitylog\LogOptions;
 
 class Task extends Model implements Ticket, Slable, Activitable
 {
@@ -42,34 +44,53 @@ class Task extends Model implements Ticket, Slable, Activitable
         Priority::FOUR->value => 24 * 60,
     ];
 
-    function request(): BelongsTo
+    function taskable(): MorphTo
     {
-        return $this->belongsTo(Request::class);
+        return $this->morphTo('taskable');
     }
 
-    function category(): HasOneThrough
+    function hasTaskable(): bool
     {
-        return $this->hasOneThrough(
-            RequestCategory::class,
-            Request::class,
-            'id',
-            'id',
-            'request_id',
-            'category_id',
-        );
+        return $this->taskable_type != null;
     }
 
-    function item(): HasOneThrough
+    function categoryName(): string
     {
-        return $this->hasOneThrough(
-            RequestItem::class,
-            Request::class,
-            'id',
-            'id',
-            'request_id',
-            'category_id',
-        );
+        return $this->hasTaskable() ? $this->taskable->category->name : '';
     }
+
+    function itemName(): string
+    {
+        return $this->hasTaskable() ? $this->taskable->item->name : '';
+    }
+//    function request(): BelongsTo
+//    {
+//        return $this->belongsTo(Request::class);
+//    }
+//
+//    function category(): HasOneThrough
+//    {
+//        return $this->hasOneThrough(
+//            RequestCategory::class,
+//            Request::class,
+//            'id',
+//            'id',
+//            'request_id',
+//            'category_id',
+//        );
+//    }
+//
+//    function item(): HasOneThrough
+//    {
+//        return $this->hasOneThrough(
+//            RequestItem::class,
+//            Request::class,
+//            'id',
+//            'id',
+//            'request_id',
+//            'category_id',
+//        );
+//    }
 
     function isStarted(): bool
     {
@@ -97,4 +118,18 @@ class Task extends Model implements Ticket, Slable, Activitable
             $this->getOriginal('status') == Status::CANCELLED
         ;
     }
+    function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'description',
+                'status',
+                'on_hold_reason',
+                'priority',
+                'group.name',
+                'resolver.name',
+            ])
+            ->logOnlyDirty();
+    }
+
 }

@@ -2,19 +2,19 @@
 
 namespace App\Services;
 
-use App\Interfaces\Ticket;
-use App\Models\Request;
+use App\Interfaces\Taskable;
 use App\Enums\Status;
 use App\Models\Task;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 
 class TaskService
 {
-    public static function createTask(Request $request, string $description): void
+    public static function createTask(string $description, Taskable $taskable = null): void
     {
         $task = new Task();
-        $task->request_id = $request->id;
+        if($taskable){
+            $task->taskable()->associate($taskable);
+        }
         $task->description = $description;
         $task->save();
     }

@@ -22,7 +22,7 @@ class TaskFactory extends Factory
     {
         return [
             'caller_id' => User::factory(),
-            'request_id' => Request::factory(),
+//            'request_id' => Request::factory(),
             'description' => fake()->realText(40),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
