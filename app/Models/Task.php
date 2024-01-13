@@ -71,6 +71,16 @@ class Task extends Model implements Ticket, Slable, Activitable
         );
     }
 
+    function isStarted(): bool
+    {
+        return $this->started_at != null;
+    }
+
+    function scopeStarted(Builder $query): void
+    {
+        $query->where('started_at', '!=', null);
+    }
+
     function scopeNotStarted(Builder $query): void
     {
         $query->where('started_at', '=', null);

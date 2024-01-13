@@ -7,6 +7,7 @@ use App\Enums\Tab;
 use App\Livewire\Activities;
 use App\Livewire\RequestEditForm;
 use App\Livewire\RequestTabs;
+use App\Livewire\Tasks;
 use App\Livewire\TempTabs;
 use App\Models\Group;
 use App\Models\Incident;
@@ -15,6 +16,7 @@ use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Enums\Status;
+use App\Models\Task;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -454,6 +456,28 @@ class EditTest extends TestCase
                 ->assertSee($task->number)
                 ->assertSee($task->description)
                 ->assertSee($task->status->name);
+        }
+    }
+
+    /** @test */
+    function it__shows_only_started_tasks(){
+        $request = Request::factory()->taskSequenceGradient()->create();
+        $resolver = User::factory()->resolver()->create();
+        $startedTasks = $request->tasks()->started()->get();
+        $notStartedTasks = $request->tasks()->notStarted()->get();
+
+        Livewire::actingAs($resolver);
+
+        foreach ($startedTasks as $startedTask){
+            $this->assertTrue($startedTask->isStarted());
+            Livewire::test(Tasks::class, ['model' => $request])
+                ->assertSee($startedTask->description);
+        }
+
+        foreach ($notStartedTasks as $notStartedTask){
+            $this->assertFalse($notStartedTask->isStarted());
+            Livewire::test(Tasks::class, ['model' => $request])
+                ->assertDontSee($notStartedTask->description);
         }
     }
 }

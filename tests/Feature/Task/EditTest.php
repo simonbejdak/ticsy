@@ -54,7 +54,7 @@ class EditTest extends TestCase
     /** @test */
     function it_authorizes_resolver_to_view(){
         $resolver = User::factory()->resolver()->create();
-        $task = Task::factory()->create();
+        $task = Task::factory()->started()->create();
 
         $this->actingAs($resolver);
         $response = $this->get(route('tasks.edit', $task));
@@ -65,7 +65,7 @@ class EditTest extends TestCase
     function it_displays_task_data()
     {
         $resolver = User::factory()->resolver()->create();
-        $task = Task::factory()->create();
+        $task = Task::factory()->started()->create();
 
         $this->actingAs($resolver);
         $response = $this->get(route('tasks.edit', $task));
@@ -81,7 +81,7 @@ class EditTest extends TestCase
     function it_displays_comments()
     {
         $resolver = User::factory()->resolver()->create();
-        $task = Task::factory()->create();
+        $task = Task::factory()->started()->create();
 
         $this->actingAs($resolver);
         ActivityService::comment($task, 'Comment Body');
@@ -403,5 +403,29 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(taskEditForm::class, ['task' => $task])
             ->assertSee($task->sla->minutesTillExpires() . ' minutes');
+    }
+
+    /** @test */
+    function it_returns_forbidden_if_task_is_not_started(){
+        $task = Task::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('tasks.edit', $task));
+
+        $this->assertFalse($task->isStarted());
+        $response->assertForbidden();
+    }
+
+    /** @test */
+    function it_returns_successful_if_task_is_started(){
+        $task = Task::factory(['started_at' => Carbon::now()])->create();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('tasks.edit', $task));
+
+        $this->assertTrue($task->isStarted());
+        $response->assertSuccessful();
     }
 }

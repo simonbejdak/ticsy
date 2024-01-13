@@ -64,4 +64,13 @@ class TaskFactory extends Factory
             ];
         });
     }
+
+    public function started()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'started_at' => Carbon::now(),
+            ];
+        });
+    }
 }

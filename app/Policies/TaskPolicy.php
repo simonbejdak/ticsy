@@ -8,9 +8,9 @@ use App\Models\User;
 
 class TaskPolicy
 {
-    public function edit(User $user): bool
+    public function edit(User $user, Task $task): bool
     {
-        return $user->hasPermissionTo('view_all_tickets');
+        return $user->hasPermissionTo('view_all_tickets') && $task->isStarted();
     }
 
     public function update(User $user): bool

@@ -13,7 +13,7 @@ class Tasks extends Component
     public Collection $tasks;
 
     public function render(){
-        $this->tasks = $this->model->tasks()->orderByDesc('id')->get();
+        $this->tasks = $this->model->tasks()->started()->get();
 
         return view('livewire.tasks');
     }
