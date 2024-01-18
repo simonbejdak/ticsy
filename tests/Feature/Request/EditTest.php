@@ -443,8 +443,8 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    function it_shows_task_list(){
-        $request = Request::factory()->create();
+    function it_shows_all_tasks_if_task_sequence_is_at_once(){
+        $request = Request::factory()->taskSequenceAtOnce()->create();
         $resolver = User::factory()->create();
         $tasks = $request->tasks;
 
@@ -453,9 +453,30 @@ class EditTest extends TestCase
         foreach ($tasks as $task){
             Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
                 ->call('setViewedTab', 'tasks')
-                ->assertSee($task->number)
-                ->assertSee($task->description)
-                ->assertSee($task->status->name);
+                ->assertSee($task->description);
+        }
+    }
+
+    /** @test */
+    function it_shows_only_started_tasks_if_task_sequence_is_gradient(){
+        $request = Request::factory()->taskSequenceGradient()->create();
+        $resolver = User::factory()->create();
+        $startedTasks = $request->tasks()->started()->get();
+        $notStartedTasks = $request->tasks()->notStarted()->get();
+
+
+        Livewire::actingAs($resolver);
+
+        foreach ($startedTasks as $task){
+            Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
+                ->call('setViewedTab', 'tasks')
+                ->assertSee($task->description);
+        }
+
+        foreach ($notStartedTasks as $task){
+            Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
+                ->call('setViewedTab', 'tasks')
+                ->assertDontSee($task->description);
         }
     }
 

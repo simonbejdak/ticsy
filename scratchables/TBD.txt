@@ -15,7 +15,9 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 13. SLAs -- done
 14. Implement Requests -- done
 15. Implement multiple tasks support for requests -- done
-16. E-mail notification on ticket update
+17. E-mail notification on Incident and Request when opened to caller
+16. E-mail notification on Incident and Request comment added to caller
+17. E-mail notification on Incident and Request Status changed to Cancelled or Resolver to caller
 17. Resolver required_if Status in_progress
 
 18. Statistics
@@ -26,6 +28,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 23. Watch list for tickets
 24. Make TicketEditForm be synchronized in real time between browsers
 25. Send e-mail, when Ticket SLA is before expiration
+26. Comment required if Status resolved
 
 Refactor Ideas:
 - change TicketTrait to separate traits

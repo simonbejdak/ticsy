@@ -4,12 +4,14 @@
 namespace Tests\Feature\Request;
 
 use App\Livewire\RequestCreateForm;
-use App\Models\Incident\IncidentCategory;
+use App\Mail\IncidentCreated;
+use App\Mail\RequestCreated;
 use App\Models\Incident\IncidentItem;
+use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -118,6 +120,42 @@ class CreateTest extends TestCase
             Livewire::test(RequestCreateForm::class)
                 ->assertSee($category->name);
         }
+    }
+
+    /** @test  */
+    function mailable_request_created_content_is_correct(){
+        $request = Request::factory()->create();
+
+        $mailable = new RequestCreated($request);
+
+        $mailable->assertFrom(User::getSystemUser()->email);
+        $mailable->assertHasSubject('Request ' . $request->id . ' has been opened for you');
+
+        $mailable->assertSeeInHtml('Hello ' . $request->caller->name);
+        $mailable->assertSeeInHtml('A Request has been opened on your behalf:');
+        $mailable->assertSeeInHtml('Requested for: ' . $request->caller->name);
+        $mailable->assertSeeInHtml('Requested by: ' . $request->caller->name);
+        $mailable->assertSeeInHtml('Description: ' . $request->description);
+    }
+
+    /** @test */
+    function email_is_sent_when_request_is_created_to_caller(){
+        $caller = User::factory()->create();
+        $category = RequestCategory::findOrFail(RequestCategory::SERVER);
+        $item = $category->randomItem();
+        Mail::fake();
+
+        Livewire::actingAs($caller)
+            ->test(RequestCreateForm::class)
+            ->set('category', $category->id)
+            ->set('item', $item->id)
+            ->set('description', 'Test Description')
+            ->call('create')
+            ->assertSuccessful();
+
+        Mail::assertSent(RequestCreated::class, function (RequestCreated $mail) use ($caller) {
+            return $mail->hasTo($caller->email);
+        });
     }
 
     static function invalidCategories(){

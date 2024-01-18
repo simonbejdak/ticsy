@@ -5,12 +5,14 @@ namespace App\Livewire;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
+use App\Mail\IncidentCreated;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
 use App\Traits\HasFields;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
@@ -62,6 +64,7 @@ class IncidentCreateForm extends Form
         $incident->save();
 
         Session::flash('success', 'You have successfully created an incident');
+        Mail::to($incident->caller)->send(new IncidentCreated($incident));
         return redirect()->route('incidents.edit', $incident);
     }
 

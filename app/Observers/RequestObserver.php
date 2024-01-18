@@ -2,10 +2,8 @@
 
 namespace App\Observers;
 
-use App\Enums\TaskSequence;
 use App\Models\Request;
 use App\Services\TaskableService;
-use App\Services\TaskService;
 use Exception;
 
 class RequestObserver

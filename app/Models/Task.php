@@ -63,34 +63,6 @@ class Task extends Model implements Ticket, Slable, Activitable
     {
         return $this->hasTaskable() ? $this->taskable->item->name : '';
     }
-//    function request(): BelongsTo
-//    {
-//        return $this->belongsTo(Request::class);
-//    }
-//
-//    function category(): HasOneThrough
-//    {
-//        return $this->hasOneThrough(
-//            RequestCategory::class,
-//            Request::class,
-//            'id',
-//            'id',
-//            'request_id',
-//            'category_id',
-//        );
-//    }
-//
-//    function item(): HasOneThrough
-//    {
-//        return $this->hasOneThrough(
-//            RequestItem::class,
-//            Request::class,
-//            'id',
-//            'id',
-//            'request_id',
-//            'category_id',
-//        );
-//    }
 
     function isStarted(): bool
     {

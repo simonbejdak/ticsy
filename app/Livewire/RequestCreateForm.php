@@ -5,12 +5,14 @@ namespace App\Livewire;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
+use App\Mail\RequestCreated;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Traits\HasFields;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
@@ -62,6 +64,7 @@ class RequestCreateForm extends Form
         $request->save();
 
         Session::flash('success', 'You have successfully created a request');
+        Mail::to($request->caller)->send(new RequestCreated($request));
         return redirect()->route('requests.edit', $request);
     }
 

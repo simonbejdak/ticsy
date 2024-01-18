@@ -4,11 +4,14 @@
 namespace Tests\Feature\Incident;
 
 use App\Livewire\IncidentCreateForm;
+use App\Mail\IncidentCreated;
+use App\Mail\RequestCreated;
+use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Models\TicketConfig;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -98,6 +101,42 @@ class CreateTest extends TestCase
             ->set('description', 'TicketTrait Description')
             ->call('create')
             ->assertHasNoErrors(['description' => 'required']);
+    }
+
+    /** @test  */
+    function mailable_incident_created_content_is_correct(){
+        $incident = Incident::factory()->create();
+
+        $mailable = new IncidentCreated($incident);
+
+        $mailable->assertFrom(User::getSystemUser()->email);
+        $mailable->assertHasSubject('Incident ' . $incident->id . ' has been opened for you');
+
+        $mailable->assertSeeInHtml('Hello ' . $incident->caller->name);
+        $mailable->assertSeeInHtml('An Incident has been opened on your behalf:');
+        $mailable->assertSeeInHtml('Requested for: ' . $incident->caller->name);
+        $mailable->assertSeeInHtml('Requested by: ' . $incident->caller->name);
+        $mailable->assertSeeInHtml('Description: ' . $incident->description);
+    }
+
+    /** @test */
+    function email_is_sent_when_incident_is_created_to_caller(){
+        $caller = User::factory()->create();
+        $category = IncidentCategory::findOrFail(IncidentCategory::EMAIL);
+        $item = $category->randomItem();
+        Mail::fake();
+
+        Livewire::actingAs($caller)
+            ->test(IncidentCreateForm::class)
+            ->set('category', $category->id)
+            ->set('item', $item->id)
+            ->set('description', 'Test Description')
+            ->call('create')
+            ->assertSuccessful();
+
+        Mail::assertSent(IncidentCreated::class, function (IncidentCreated $mail) use ($caller) {
+            return $mail->hasTo($caller->email);
+        });
     }
 
     static function invalidCategories(){
