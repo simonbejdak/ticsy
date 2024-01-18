@@ -19,8 +19,8 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 17. Resolver required_if Status in_progress -- done
 18. Comment required_if Status resolved -- done
 
-19. Statistics
-20. Resolver dashboard
+19. Resolver dashboard
+20. Statistics
 21. Knowledge articles for common problems
 22. Change templates
 23. Subcategories
@@ -28,14 +28,18 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 25. Make TicketEditForm be synchronized in real time between browsers
 26. Send e-mail, when Ticket SLA is before expiration
 
+Use case problems:
+- validation red error ring shown even after clicking on the field, it should hide
+- It should be possible to navigate to Tasks Taskable model from TaskEditForm
+- when a field is required, there should also be a red asterisk on the right of its label
+- SLA changes its duration even if model is archived
+- Priority 1 is shown even if user has no permission to set priority one
+- when Status on EditForms is set to Open, resolved is not set to null
+- SLA bar does not spatially indicate, that it represents percentage before expiration, when on 100%,
+- tasks table does not have rounded corners
+- breadcrumbs are missing
+- empty Updated event rendered on TaskEditForm
+
 Refactor Ideas:
 - change TicketTrait to separate traits
-
-Design ideas:
-- make SLA bar always show at least a little bit of red color to indicate, that colors represent time left
-- make tasks table have rounded corners on Tasks component
-- breadcrumbs
-
-Bugs:
-- empty Updated event rendered on TaskEditForm
 
