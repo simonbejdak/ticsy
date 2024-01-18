@@ -3,6 +3,7 @@
 namespace Tests\Feature\Incident;
 
 use App\Enums\Priority;
+use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident;
@@ -448,6 +449,27 @@ class UpdateTest extends TestCase
             ->set('status', Status::CANCELLED->value)
             ->call('save')
             ->assertHasErrors(['comment' => 'required']);
+    }
+
+    public function test_resolver_can_add_comment(){
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('comment', 'Test comment')
+            ->call('save');
+
+        Livewire::actingAs($resolver)
+            ->test(Activities::class, ['model' => $incident])
+            ->assertSee('Test comment');
+
+        $this->assertDatabaseHas('activity_log', [
+            'subject_id' => $incident->id,
+            'causer_id' => $resolver->id,
+            'event' => 'comment',
+            'description' => 'Test comment'
+        ]);
     }
 
     static function invalidStatuses(){

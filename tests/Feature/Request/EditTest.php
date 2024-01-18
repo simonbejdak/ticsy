@@ -432,20 +432,23 @@ class EditTest extends TestCase
 
     public function test_it_allows_to_add_comment_to_user_who_has_created_the_request()
     {
-        $user = User::factory()->create();
-        $request = Request::factory(['caller_id' => $user])->create();
+        $caller = User::factory()->create();
+        $request = Request::factory(['caller_id' => $caller])->create();
 
-        Livewire::actingAs($user)
-            ->test(Activities::class, ['model' => $request])
-            ->set('body', 'Comment Body')
-            ->call('addComment')
-            ->assertSee('Comment Body');
+        Livewire::actingAs($caller);
+
+        Livewire::test(RequestEditForm::class, ['request' => $request])
+            ->set('comment', 'Test comment')
+            ->call('save');
+
+        Livewire::test(Activities::class, ['model' => $request])
+            ->assertSee('Test comment');
 
         $this->assertDatabaseHas('activity_log', [
             'subject_id' => $request->id,
-            'causer_id' => $user->id,
+            'causer_id' => $caller->id,
             'event' => 'comment',
-            'description' => 'Comment Body'
+            'description' => 'Test comment'
         ]);
     }
 

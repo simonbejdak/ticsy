@@ -17,7 +17,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 15. Implement multiple tasks support for requests -- done
 16. E-mail notification on Incident and Request when opened to caller -- done
 17. Resolver required_if Status in_progress -- done
-18. Comment required_if Status resolved
+18. Comment required_if Status resolved -- done
 
 19. Statistics
 20. Resolver dashboard

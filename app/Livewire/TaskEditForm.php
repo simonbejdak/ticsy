@@ -34,7 +34,7 @@ class TaskEditForm extends Form
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
-    public string $comment;
+    public string $comment = '';
 
     public Collection $statuses;
     public Collection $onHoldReasons;
