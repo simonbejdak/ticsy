@@ -132,6 +132,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::CANCELLED->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 
@@ -208,13 +209,14 @@ class EditTest extends TestCase
 
     public function test_it_displays_changes_activity_dynamically()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory(['status' => Status::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -227,8 +229,8 @@ class EditTest extends TestCase
 
     public function test_it_displays_multiple_activity_changes()
     {
-        $resolver = User::factory()->resolver()->create();
         $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory([
             'status' => Status::OPEN,
             'group_id' => Group::SERVICE_DESK_ID,
@@ -239,6 +241,7 @@ class EditTest extends TestCase
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::IN_PROGRESS->value)
             ->set('group', $group->id)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -252,13 +255,14 @@ class EditTest extends TestCase
 
     public function test_it_displays_status_changes_activity()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory(['status' => Status::OPEN])->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -279,6 +283,7 @@ class EditTest extends TestCase
         Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 
@@ -402,22 +407,25 @@ class EditTest extends TestCase
             ->assertSee($incident->sla->minutesTillExpires() . ' minutes');
     }
 
-    public function test_it_allows_to_add_comment_to_user_who_has_created_the_incident()
+    public function test_it_allows_to_add_comment_to_caller()
     {
-        $user = User::factory()->create();
-        $incident = Incident::factory(['caller_id' => $user])->create();
+        $caller = User::factory()->create();
+        $incident = Incident::factory(['caller_id' => $caller])->create();
 
-        Livewire::actingAs($user)
-            ->test(Activities::class, ['model' => $incident])
-            ->set('body', 'Comment Body')
-            ->call('addComment')
-            ->assertSee('Comment Body');
+        Livewire::actingAs($caller);
+
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('comment', 'Test comment')
+            ->call('save');
+
+        Livewire::test(Activities::class, ['model' => $incident])
+            ->assertSee('Test comment');
 
         $this->assertDatabaseHas('activity_log', [
             'subject_id' => $incident->id,
-            'causer_id' => $user->id,
+            'causer_id' => $caller->id,
             'event' => 'comment',
-            'description' => 'Comment Body'
+            'description' => 'Test comment'
         ]);
     }
 

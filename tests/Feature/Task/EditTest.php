@@ -124,6 +124,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::CANCELLED->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 
@@ -205,12 +206,13 @@ class EditTest extends TestCase
     /** @test */
     function it_displays_changes_activity_dynamically()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $task = Task::factory()->create();
         Livewire::actingAs($resolver);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -224,8 +226,8 @@ class EditTest extends TestCase
     /** @test */
     function it_displays_multiple_activity_changes()
     {
-        $resolver = User::factory()->resolver()->create();
         $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $task = Task::factory([
             'status' => Status::OPEN,
         ])->create();
@@ -235,6 +237,7 @@ class EditTest extends TestCase
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS->value)
             ->set('group', $group->id)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -249,13 +252,14 @@ class EditTest extends TestCase
     /** @test */
     function it_displays_status_changes_activity()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $task = Task::factory()->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -277,6 +281,7 @@ class EditTest extends TestCase
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 

@@ -8,6 +8,7 @@ use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Livewire\RequestEditForm;
 use App\Livewire\RequestTabs;
+use App\Livewire\Tabs;
 use App\Livewire\Tasks;
 use App\Livewire\TempTabs;
 use App\Models\Group;
@@ -142,6 +143,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::CANCELLED->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 
@@ -223,12 +225,13 @@ class EditTest extends TestCase
     /** @test */
     public function it_displays_changes_activity_dynamically()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $request = Request::factory()->create();
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -242,8 +245,8 @@ class EditTest extends TestCase
     /** @test */
     public function it_displays_multiple_activity_changes()
     {
-        $resolver = User::factory()->resolver()->create();
         $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $request = Request::factory([
             'status' => Status::OPEN,
         ])->create();
@@ -253,6 +256,7 @@ class EditTest extends TestCase
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::IN_PROGRESS->value)
             ->set('group', $group->id)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -267,13 +271,14 @@ class EditTest extends TestCase
     /** @test */
     public function it_displays_status_changes_activity()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $request = Request::factory()->create();
 
         Livewire::actingAs($resolver);
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save')
             ->assertSuccessful();
 
@@ -295,6 +300,7 @@ class EditTest extends TestCase
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 
@@ -452,7 +458,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         foreach ($tasks as $task){
-            Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
+            Livewire::test(Tabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
                 ->call('setViewedTab', 'tasks')
                 ->assertSee($task->description);
         }
@@ -469,13 +475,13 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         foreach ($startedTasks as $task){
-            Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
+            Livewire::test(Tabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
                 ->call('setViewedTab', 'tasks')
                 ->assertSee($task->description);
         }
 
         foreach ($notStartedTasks as $task){
-            Livewire::test(TempTabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
+            Livewire::test(Tabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
                 ->call('setViewedTab', 'tasks')
                 ->assertDontSee($task->description);
         }

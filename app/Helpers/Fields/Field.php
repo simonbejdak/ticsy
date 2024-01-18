@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 abstract class Field
 {
     public string $name;
+    public bool $hasLabel;
     public string $value;
     public string $rules;
     protected string $displayName;
@@ -20,6 +21,7 @@ abstract class Field
     protected function __construct()
     {
         $this->value = '';
+        $this->hasLabel = true;
         $this->hideable = false;
         $this->disabled = false;
         $this->position = FieldPosition::INSIDE_GRID;
@@ -29,6 +31,7 @@ abstract class Field
     {
         $static = new static;
         $static->name = $name;
+        $static->label = $name;
 
         return $static;
     }
@@ -117,10 +120,15 @@ abstract class Field
         return $this;
     }
 
-    public function outsideGrid(): self
+    function outsideGrid(): self
     {
         $this->position = FieldPosition::OUTSIDE_GRID;
         return $this;
     }
 
+    function withoutLabel(): self
+    {
+        $this->hasLabel = false;
+        return $this;
+    }
 }

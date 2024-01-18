@@ -35,6 +35,7 @@ class RequestEditForm extends Form
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
+    public string $comment;
 
     public function rules()
     {
@@ -56,6 +57,13 @@ class RequestEditForm extends Form
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
                 ),
                 Rule::requiredIf($this->status == Status::IN_PROGRESS),
+                'nullable',
+            ],
+            'comment' => [
+                'max:255',
+                Rule::requiredIf($this->status == Status::RESOLVED),
+                Rule::requiredIf($this->status == Status::CANCELLED),
+                Rule::requiredIf($this->status == Status::ON_HOLD),
                 'nullable',
             ],
         ];
@@ -107,7 +115,10 @@ class RequestEditForm extends Form
 
         if($this->priorityChangeReason !== ''){
             ActivityService::priorityChangeReason($this->request, $this->priorityChangeReason);
-            $this->priorityChangeReason = '';
+        }
+
+        if($this->comment !== ''){
+            ActivityService::comment($this->request, $this->comment);
         }
 
         Session::flash('success', 'You have successfully updated the request');
@@ -167,6 +178,10 @@ class RequestEditForm extends Form
                 ->value($this->request->description)
                 ->disabled()
                 ->outsideGrid(),
+            TextInput::make('comment')
+                ->withoutLabel()
+                ->placeholder('Add a comment')
+                ->outsideGrid(),
         );
     }
 
@@ -177,7 +192,15 @@ class RequestEditForm extends Form
 
     protected function isFieldDisabled(string $name): bool
     {
-        if($this->request->isArchived() || auth()->user()->cannot('update', Incident::class)){
+        if($this->request->isArchived()){
+            return true;
+        }
+
+        if($name == 'comment'){
+            return auth()->user()->cannot('addComment', $this->request);
+        }
+
+        if(auth()->user()->cannot('update', Request::class)){
             return true;
         }
 

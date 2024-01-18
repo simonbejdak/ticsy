@@ -1,5 +1,7 @@
 <x-field-layout :hidden="$field->isHidden()">
-    <x-field-label :value="$field->getDisplayName()"/>
+    @if($field->hasLabel)
+        <x-field-label :value="$field->getDisplayName()"/>
+    @endif
     <x-field-select :disabled="$field->disabled" :name="$field->name" :error="$errors->has($field->name)">
         @if($field->blank)
             <x-field-option />

@@ -3,13 +3,11 @@
 namespace App\Livewire;
 
 use App\Enums\Tab;
-use App\Helpers\Tabs;
 use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
 
-class TempTabs extends Component
+class Tabs extends Component
 {
     public Model $model;
     public array $tabs;

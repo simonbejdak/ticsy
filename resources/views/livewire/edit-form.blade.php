@@ -1,7 +1,7 @@
 <div>
     @if(hasTrait(\App\Traits\HasFields::class, $this))
         <form wire:submit="save">
-            <div class="flex flex-col space-y-4">
+            <div class="flex flex-col space-y-4 mb-4">
                 <x-field-grid class="'grid-cols-3'">
                     @foreach($this->fields()->insideGrid() as $field)
                         <x-field :field="$field" />
@@ -17,6 +17,6 @@
         </form>
     @endif
     @if(hasTrait(\App\Traits\HasTabs::class, $this))
-        <livewire:temp-tabs :tabs="$this->tabs()" :model="$model"/>
+        <livewire:tabs :tabs="$this->tabs()" :model="$model"/>
     @endif
 </div>

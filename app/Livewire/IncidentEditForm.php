@@ -31,6 +31,7 @@ class IncidentEditForm extends Form
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
+    public string $comment = '';
 
     public function rules()
     {
@@ -52,6 +53,13 @@ class IncidentEditForm extends Form
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
                 ),
                 Rule::requiredIf($this->status == Status::IN_PROGRESS),
+                'nullable',
+            ],
+            'comment' => [
+                'max:255',
+                Rule::requiredIf($this->status == Status::RESOLVED),
+                Rule::requiredIf($this->status == Status::CANCELLED),
+                Rule::requiredIf($this->status == Status::ON_HOLD),
                 'nullable',
             ],
         ];
@@ -103,7 +111,10 @@ class IncidentEditForm extends Form
 
         if($this->priorityChangeReason !== ''){
             ActivityService::priorityChangeReason($this->incident, $this->priorityChangeReason);
-            $this->priorityChangeReason = '';
+        }
+
+        if($this->comment !== ''){
+            ActivityService::comment($this->incident, $this->comment);
         }
 
         Session::flash('success', 'You have successfully updated the incident');
@@ -163,6 +174,10 @@ class IncidentEditForm extends Form
                 ->value($this->incident->description)
                 ->disabled()
                 ->outsideGrid(),
+            TextInput::make('comment')
+                ->withoutLabel()
+                ->placeholder('Add a comment')
+                ->outsideGrid(),
         );
     }
 
@@ -173,7 +188,15 @@ class IncidentEditForm extends Form
 
     protected function isFieldDisabled(string $name): bool
     {
-        if($this->incident->isArchived() || auth()->user()->cannot('update', Incident::class)){
+        if($this->incident->isArchived()){
+            return true;
+        }
+
+        if($name == 'comment'){
+            return auth()->user()->cannot('addComment', $this->incident);
+        }
+
+        if(auth()->user()->cannot('update', Incident::class)){
             return true;
         }
 

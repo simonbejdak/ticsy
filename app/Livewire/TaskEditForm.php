@@ -34,12 +34,14 @@ class TaskEditForm extends Form
     public string $priorityChangeReason = '';
     public $group;
     public $resolver;
+    public string $comment;
 
     public Collection $statuses;
     public Collection $onHoldReasons;
     public array $priorities;
     public Collection $groups;
     public Collection $resolvers;
+
 
     public function rules()
     {
@@ -61,6 +63,13 @@ class TaskEditForm extends Form
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
                 ),
                 Rule::requiredIf($this->status == Status::IN_PROGRESS),
+                'nullable',
+            ],
+            'comment' => [
+                'max:255',
+                Rule::requiredIf($this->status == Status::RESOLVED),
+                Rule::requiredIf($this->status == Status::CANCELLED),
+                Rule::requiredIf($this->status == Status::ON_HOLD),
                 'nullable',
             ],
         ];
@@ -112,7 +121,10 @@ class TaskEditForm extends Form
 
         if($this->priorityChangeReason !== ''){
             ActivityService::priorityChangeReason($this->task, $this->priorityChangeReason);
-            $this->priorityChangeReason = '';
+        }
+
+        if($this->comment !== ''){
+            ActivityService::comment($this->task, $this->comment);
         }
 
         Session::flash('success', 'You have successfully updated the task');
@@ -172,12 +184,24 @@ class TaskEditForm extends Form
                 ->value($this->task->description)
                 ->disabled()
                 ->outsideGrid(),
+            TextInput::make('comment')
+                ->withoutLabel()
+                ->placeholder('Add a comment')
+                ->outsideGrid(),
         );
     }
 
     protected function isFieldDisabled(string $name): bool
     {
-        if($this->task->isArchived() || auth()->user()->cannot('update', Task::class)){
+        if($this->task->isArchived()){
+            return true;
+        }
+
+        if($name == 'comment'){
+            return auth()->user()->cannot('addComment', $this->task);
+        }
+
+        if(auth()->user()->cannot('update', Task::class)){
             return true;
         }
 

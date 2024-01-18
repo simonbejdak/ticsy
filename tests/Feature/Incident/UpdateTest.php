@@ -32,12 +32,13 @@ class UpdateTest extends TestCase
 
     public function test_resolver_can_set_status()
     {
-        $resolver = User::factory()->resolver()->create();
+        $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::IN_PROGRESS->value)
+            ->set('resolver', $resolver->id)
             ->call('save');
 
         $this->assertDatabaseHas('incidents', [
@@ -144,6 +145,7 @@ class UpdateTest extends TestCase
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', Status::ON_HOLD->value)
             ->set('onHoldReason', OnHoldReason::WAITING_FOR_VENDOR->value)
+            ->set('comment', 'Test comment')
             ->call('save')
             ->assertSuccessful();
 
@@ -409,6 +411,43 @@ class UpdateTest extends TestCase
             'group_id' => $groupTwo->id,
             'resolver_id' => null,
         ]);
+    }
+
+    public function test_comment_is_required_if_status_is_on_hold()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('status', Status::ON_HOLD->value)
+            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE->value)
+            ->call('save')
+            ->assertHasErrors(['comment' => 'required']);
+    }
+
+    public function test_comment_is_required_if_status_is_resolved()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('status', Status::RESOLVED->value)
+            ->call('save')
+            ->assertHasErrors(['comment' => 'required']);
+    }
+
+    public function test_comment_is_required_if_status_is_cancelled()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('status', Status::CANCELLED->value)
+            ->call('save')
+            ->assertHasErrors(['comment' => 'required']);
     }
 
     static function invalidStatuses(){
