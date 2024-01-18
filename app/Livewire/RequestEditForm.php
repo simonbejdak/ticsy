@@ -55,6 +55,7 @@ class RequestEditForm extends Form
                 Rule::in(
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []
                 ),
+                Rule::requiredIf($this->status == Status::IN_PROGRESS),
                 'nullable',
             ],
         ];

@@ -5,6 +5,7 @@ namespace Tests\Feature\Request;
 
 use App\Enums\Tab;
 use App\Livewire\Activities;
+use App\Livewire\IncidentEditForm;
 use App\Livewire\RequestEditForm;
 use App\Livewire\RequestTabs;
 use App\Livewire\Tasks;
@@ -500,5 +501,18 @@ class EditTest extends TestCase
             Livewire::test(Tasks::class, ['model' => $request])
                 ->assertDontSee($notStartedTask->description);
         }
+    }
+
+    /** @test */
+    function resolver_is_required_if_status_in_progress()
+    {
+        $request = Request::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->set('status', Status::IN_PROGRESS->value)
+            ->call('save')
+            ->assertHasErrors(['resolver' => 'required']);
     }
 }

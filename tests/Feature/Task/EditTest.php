@@ -8,6 +8,7 @@ use App\Livewire\RequestEditForm;
 use App\Livewire\TaskEditForm;
 use App\Models\Group;
 use App\Enums\OnHoldReason;
+use App\Models\Request;
 use App\Models\Task;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
@@ -427,5 +428,18 @@ class EditTest extends TestCase
 
         $this->assertTrue($task->isStarted());
         $response->assertSuccessful();
+    }
+
+    /** @test */
+    function resolver_is_required_if_status_in_progress()
+    {
+        $task = Task::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->set('status', Status::IN_PROGRESS->value)
+            ->call('save')
+            ->assertHasErrors(['resolver' => 'required']);
     }
 }

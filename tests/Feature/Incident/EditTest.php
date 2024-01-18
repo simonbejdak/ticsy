@@ -6,6 +6,7 @@ namespace Tests\Feature\Incident;
 use App\Enums\Priority;
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
+use App\Mail\IncidentCreated;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
@@ -16,6 +17,7 @@ use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -417,5 +419,17 @@ class EditTest extends TestCase
             'event' => 'comment',
             'description' => 'Comment Body'
         ]);
+    }
+
+    public function test_resolver_is_required_if_status_in_progress()
+    {
+        $incident = Incident::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('status', Status::IN_PROGRESS->value)
+            ->call('save')
+            ->assertHasErrors(['resolver' => 'required']);
     }
 }
