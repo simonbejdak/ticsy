@@ -5,6 +5,7 @@ namespace App\Helpers\Fields;
 class TextInput extends Field
 {
     public string $placeholder;
+    public string $anchor;
 
     protected function __construct()
     {
@@ -16,5 +17,16 @@ class TextInput extends Field
     {
         $this->placeholder = $placeholder;
         return $this;
+    }
+
+    function anchor(string $anchor): self
+    {
+        $this->anchor = $anchor;
+        return $this;
+    }
+
+    function hasAnchor(): bool
+    {
+        return isset($this->anchor);
     }
 }

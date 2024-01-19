@@ -16,6 +16,7 @@ abstract class Field
     protected string $displayName;
     public bool $hideable;
     public bool $disabled;
+    public bool $hidden;
     public FieldPosition $position;
 
     protected function __construct()
@@ -24,6 +25,7 @@ abstract class Field
         $this->hasLabel = true;
         $this->hideable = false;
         $this->disabled = false;
+        $this->hidden = false;
         $this->position = FieldPosition::INSIDE_GRID;
     }
 
@@ -31,7 +33,6 @@ abstract class Field
     {
         $static = new static;
         $static->name = $name;
-        $static->label = $name;
 
         return $static;
     }
@@ -65,7 +66,7 @@ abstract class Field
         return $this;
     }
 
-    function disabledCondition(bool $condition): self
+    function disabledIf(bool $condition): self
     {
         $this->disabled = $condition;
         return $this;
@@ -73,7 +74,7 @@ abstract class Field
 
     function isHidden(): bool
     {
-        return $this->hideable && $this->disabled;
+        return $this->hidden;
     }
 
     function required(): self
@@ -129,6 +130,12 @@ abstract class Field
     function withoutLabel(): self
     {
         $this->hasLabel = false;
+        return $this;
+    }
+
+    function hiddenIf(bool $condition): self
+    {
+        $this->hidden = $condition;
         return $this;
     }
 }

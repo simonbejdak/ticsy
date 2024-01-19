@@ -137,6 +137,12 @@ class TaskEditForm extends Form
             TextInput::make('number')
                 ->value($this->task->id)
                 ->disabled(),
+            TextInput::make('taskable')
+                ->displayName(get_class_name($this->task->taskable))
+                ->value($this->task->taskable_id)
+                ->hiddenIf(!$this->task->hasTaskable())
+                ->disabled()
+                ->anchor($this->task->taskable->editFormRoute()),
             TextInput::make('caller')
                 ->value($this->task->caller->name)
                 ->disabled(),
@@ -156,29 +162,27 @@ class TaskEditForm extends Form
                 ->disabled(),
             Select::make('status')
                 ->options(Status::class)
-                ->disabledCondition($this->isFieldDisabled('status')),
+                ->disabledIf($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
                 ->options(OnHoldReason::class)
-                ->hideable()
-                ->blank()
-                ->disabledCondition($this->isFieldDisabled('onHoldReason')),
+                ->hiddenIf($this->isFieldDisabled('onHoldReason'))
+                ->blank(),
             Select::make('priority')
                 ->options(Priority::class)
-                ->disabledCondition($this->isFieldDisabled('priority')),
+                ->disabledIf($this->isFieldDisabled('priority')),
             Select::make('group')
                 ->options(Group::all())
-                ->disabledCondition($this->isFieldDisabled('group')),
+                ->disabledIf($this->isFieldDisabled('group')),
             Select::make('resolver')
                 ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
-                ->disabledCondition($this->isFieldDisabled('resolver'))
+                ->disabledIf($this->isFieldDisabled('resolver'))
                 ->blank(),
             Bar::make('sla')
                 ->displayName('SLA expires at')
                 ->percentage($this->task->sla->toPercentage())
                 ->value($this->task->sla->minutesTillExpires() . ' minutes'),
             TextInput::make('priorityChangeReason')
-                ->hideable()
-                ->disabledCondition($this->isFieldDisabled('priorityChangeReason'))
+                ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),
             TextInput::make('description')
                 ->value($this->task->description)

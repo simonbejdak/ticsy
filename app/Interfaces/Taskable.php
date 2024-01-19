@@ -9,4 +9,5 @@ use Spatie\Activitylog\LogOptions;
 interface Taskable
 {
     public function tasks(): MorphMany;
+    public function editFormRoute(): string;
 }

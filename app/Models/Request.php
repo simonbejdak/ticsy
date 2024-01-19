@@ -115,4 +115,8 @@ class Request extends Model implements Ticket, Slable, Activitable, Taskable
         return $taskPlan;
     }
 
+    public function editFormRoute(): string
+    {
+        return route('requests.edit', $this);
+    }
 }

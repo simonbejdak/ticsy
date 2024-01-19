@@ -150,29 +150,27 @@ class RequestEditForm extends Form
                 ->disabled(),
             Select::make('status')
                 ->options(Status::class)
-                ->disabledCondition($this->isFieldDisabled('status')),
+                ->disabledIf($this->isFieldDisabled('status')),
             Select::make('onHoldReason')
                 ->options(OnHoldReason::class)
-                ->hideable()
-                ->blank()
-                ->disabledCondition($this->isFieldDisabled('onHoldReason')),
+                ->hiddenIf($this->isFieldDisabled('onHoldReason'))
+                ->blank(),
             Select::make('priority')
                 ->options(Priority::class)
-                ->disabledCondition($this->isFieldDisabled('priority')),
+                ->disabledIf($this->isFieldDisabled('priority')),
             Select::make('group')
                 ->options(Group::all())
-                ->disabledCondition($this->isFieldDisabled('group')),
+                ->disabledIf($this->isFieldDisabled('group')),
             Select::make('resolver')
                 ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
-                ->disabledCondition($this->isFieldDisabled('resolver'))
+                ->disabledIf($this->isFieldDisabled('resolver'))
                 ->blank(),
             Bar::make('sla')
                 ->displayName('SLA expires at')
                 ->percentage($this->request->sla->toPercentage())
                 ->value($this->request->sla->minutesTillExpires() . ' minutes'),
             TextInput::make('priorityChangeReason')
-                ->hideable()
-                ->disabledCondition($this->isFieldDisabled('priorityChangeReason'))
+                ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),
             TextInput::make('description')
                 ->value($this->request->description)

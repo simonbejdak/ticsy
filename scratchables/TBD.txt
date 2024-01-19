@@ -29,7 +29,6 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 26. Send e-mail, when Ticket SLA is before expiration
 
 Use case problems:
-- validation red error ring shown even after clicking on the field, it should hide
 - It should be possible to navigate to Tasks Taskable model from TaskEditForm
 - when a field is required, there should also be a red asterisk on the right of its label
 - SLA changes its duration even if model is archived
@@ -39,6 +38,7 @@ Use case problems:
 - tasks table does not have rounded corners
 - breadcrumbs are missing
 - empty Updated event rendered on TaskEditForm
+- validation red error ring shown even after clicking on the field, it should hide
 
 Refactor Ideas:
 - change TicketTrait to separate traits
