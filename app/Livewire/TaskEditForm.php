@@ -133,16 +133,10 @@ class TaskEditForm extends Form
 
     function fields(): Fields
     {
-        return new Fields(
+        $fields = new Fields(
             TextInput::make('number')
                 ->value($this->task->id)
                 ->disabled(),
-            TextInput::make('taskable')
-                ->displayName(get_class_name($this->task->taskable))
-                ->value($this->task->taskable_id)
-                ->hiddenIf(!$this->task->hasTaskable())
-                ->disabled()
-                ->anchor($this->task->taskable->editFormRoute()),
             TextInput::make('caller')
                 ->value($this->task->caller->name)
                 ->disabled(),
@@ -193,6 +187,16 @@ class TaskEditForm extends Form
                 ->placeholder('Add a comment')
                 ->outsideGrid(),
         );
+
+        if($this->task->hasTaskable()){
+            $fields->add(TextInput::make('taskable')
+                ->displayName(get_class_name($this->task->taskable))
+                ->value($this->task->taskable_id)
+                ->disabled()
+                ->anchor($this->task->taskable->editFormRoute()), 2);
+        }
+
+        return $fields;
     }
 
     protected function isFieldDisabled(string $name): bool

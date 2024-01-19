@@ -30,11 +30,11 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 
 Use case problems:
 - It should be possible to navigate to Tasks Taskable model from TaskEditForm -- done
-- when a field is required, there should also be a red asterisk on the right of its label
+- when a field is required, there should also be a red asterisk on the right of its label -- done
 - SLA changes its duration even if model is archived
 - Priority 1 is shown even if user has no permission to set priority one
 - when Status on EditForms is set to Open, resolved is not set to null
-- SLA bar does not spatially indicate, that it represents percentage before expiration, when on 100%,
+- SLA bar does not spatially communicate, that it represents percentage before expiration, when on 100%,
 - tasks table does not have rounded corners
 - breadcrumbs are missing
 - empty Updated event rendered on TaskEditForm
@@ -44,4 +44,5 @@ Use case problems:
 
 Refactor Ideas:
 - change TicketTrait to separate traits
+- TaskEditForm has to use an ugly looking conditional in forms() method, which puts Taskable in second position of EditForm, find a more flexible way
 

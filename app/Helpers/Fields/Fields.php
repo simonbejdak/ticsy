@@ -18,6 +18,12 @@ class Fields implements IteratorAggregate
         }
     }
 
+    function add(Field $field, int $index = null): self
+    {
+        $index ? array_splice($this->fields, $index, 0, $field) : $this->fields[] = $field;
+        return $this;
+    }
+
     function insideGrid(): self
     {
         foreach($this->fields as $field){
