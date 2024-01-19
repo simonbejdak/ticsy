@@ -35,7 +35,7 @@ class RequestCreateForm extends Form
                     RequestCategory::find($this->category) ? RequestCategory::find($this->category)->getItemIds() : []
                 )
             ],
-            'description' => 'string|required',
+            'description' => ['string', 'required'],
         ];
     }
 

@@ -35,7 +35,7 @@ class IncidentCreateForm extends Form
                     IncidentCategory::find($this->category) ? IncidentCategory::find($this->category)->getItemIds() : []
                 )
             ],
-            'description' => 'string|required',
+            'description' => ['string', 'required'],
         ];
     }
 

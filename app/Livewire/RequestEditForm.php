@@ -51,7 +51,7 @@ class RequestEditForm extends Form
                 Rule::requiredIf($this->priority != $this->request->priority),
                 'string',
             ],
-            'group' => 'required|exists:App\Models\Group,id',
+            'group' => ['required', 'exists:App\Models\Group,id'],
             'resolver' => [
                 Rule::in(
                     Group::find($this->group) ? Group::find($this->group)->getResolverIds() : []

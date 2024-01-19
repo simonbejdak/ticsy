@@ -1,6 +1,11 @@
 <x-field-layout :hidden="$field->isHidden()">
     @if($field->hasLabel)
-        <x-field-label :value="$field->getDisplayName()"/>
+        <div class="flex flex-row">
+            <x-field-label :value="$field->getDisplayName()" />
+            @if($required)
+                <span class="text-red-500 text-sm align-top ml-1">*</span>
+            @endif
+        </div>
     @endif
     @if($field->hasAnchor())<a x-show="@json($field->hasAnchor())" href="{{ $field->anchor }}">@endif
             <x-field-input
