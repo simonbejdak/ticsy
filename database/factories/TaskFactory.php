@@ -67,9 +67,20 @@ class TaskFactory extends Factory
 
     public function started()
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
                 'started_at' => Carbon::now(),
+            ];
+        });
+    }
+
+    public function withTaskable()
+    {
+        return $this->state(function () {
+            $taskable = Request::factory()->create();
+            return [
+                'taskable_type' => get_class($taskable),
+                'taskable_id' => $taskable->id,
             ];
         });
     }

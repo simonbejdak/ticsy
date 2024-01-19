@@ -447,4 +447,14 @@ class EditTest extends TestCase
             ->call('save')
             ->assertHasErrors(['resolver' => 'required']);
     }
+
+    /** @test */
+    function it_loads_correctly_when_task_has_taskable(){
+        $task = Task::factory()->withTaskable()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('tasks.edit', $task));
+        $response->assertSuccessful();
+    }
 }
