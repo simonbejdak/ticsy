@@ -168,7 +168,8 @@ class RequestEditForm extends Form
             Bar::make('sla')
                 ->displayName('SLA expires at')
                 ->percentage($this->request->sla->toPercentage())
-                ->value($this->request->sla->minutesTillExpires() . ' minutes'),
+                ->value($this->request->sla->minutesTillExpires() . ' minutes')
+                ->hiddenIf($this->request->sla->isClosed()),
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),

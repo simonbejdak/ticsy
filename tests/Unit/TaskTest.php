@@ -99,4 +99,28 @@ class TaskTest extends TestCase
 
         $this->assertFalse($task->hasTaskable());
     }
+
+    /**
+     * @test
+     * @dataProvider slaClosingStatuses
+     */
+    function sla_is_closed_when_status_changes_to_sla_closing_statuses($status){
+        $task = Task::factory()->create();
+
+        $this->assertFalse($task->sla->isClosed());
+
+        $task->status = $status;
+        $task->save();
+        $task->refresh();
+
+        $this->assertTrue($task->sla->isClosed());
+    }
+
+    static function slaClosingStatuses(){
+        return [
+            [Status::ON_HOLD],
+            [Status::RESOLVED],
+            [Status::CANCELLED],
+        ];
+    }
 }

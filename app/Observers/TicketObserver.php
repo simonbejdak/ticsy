@@ -52,7 +52,10 @@ class TicketObserver
 
     public function saved($ticket): void
     {
-        if($ticket->priorityChanged()){
+        if($ticket->statusChangedTo(Status::ON_HOLD, Status::RESOLVED, Status::CANCELLED)){
+            SlaService::closeSla($ticket->sla);
+        }
+        elseif($ticket->priorityChanged() || $ticket->statusChanged()){
             SlaService::closeSla($ticket->sla);
             SlaService::createSla($ticket);
         }

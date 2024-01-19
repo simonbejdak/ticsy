@@ -210,6 +210,29 @@ class IncidentTest extends TestCase
         $this->assertNotNull($sla->closed_at);
     }
 
+    /**
+     * @dataProvider slaClosingStatuses
+     */
+    public function test_sla_is_closed_when_status_changes_to_sla_closing_statuses($status){
+        $incident = Incident::factory()->create();
+
+        $this->assertFalse($incident->sla->isClosed());
+
+        $incident->status = $status;
+        $incident->save();
+        $incident->refresh();
+
+        $this->assertTrue($incident->sla->isClosed());
+    }
+
+    static function slaClosingStatuses(){
+        return [
+            [Status::ON_HOLD],
+            [Status::RESOLVED],
+            [Status::CANCELLED],
+        ];
+    }
+
     static function priorityToSlaMinutes(){
         return [
             [1, 15],

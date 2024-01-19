@@ -164,7 +164,8 @@ class IncidentEditForm extends Form
             Bar::make('sla')
                 ->displayName('SLA expires at')
                 ->percentage($this->incident->sla->toPercentage())
-                ->value($this->incident->sla->minutesTillExpires() . ' minutes'),
+                ->value($this->incident->sla->minutesTillExpires() . ' minutes')
+                ->hiddenIf($this->incident->sla->isClosed()),
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),

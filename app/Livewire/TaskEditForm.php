@@ -174,7 +174,8 @@ class TaskEditForm extends Form
             Bar::make('sla')
                 ->displayName('SLA expires at')
                 ->percentage($this->task->sla->toPercentage())
-                ->value($this->task->sla->minutesTillExpires() . ' minutes'),
+                ->value($this->task->sla->minutesTillExpires() . ' minutes')
+                ->hiddenIf($this->task->sla->isClosed()),
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),
@@ -193,7 +194,7 @@ class TaskEditForm extends Form
                 ->displayName(get_class_name($this->task->taskable))
                 ->value($this->task->taskable_id)
                 ->disabled()
-                ->anchor($this->task->taskable->editFormRoute()), 2);
+                ->anchor($this->task->taskable->editFormRoute()));
         }
 
         return $fields;

@@ -73,14 +73,26 @@ trait TicketTrait
         return $this->isDirty('status');
     }
 
-    function statusChangedTo(Status $status): bool
+    function statusChangedTo(Status ...$statuses): bool
     {
-        return $this->statusChanged() && $this->isStatus($status);
+        if($this->statusChanged()){
+            foreach ($statuses as $status){
+                if($this->isStatus($status)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    function statusChangedFrom(Status $status): bool
+    function statusChangedFrom(Status ...$statuses): bool
     {
-        return $this->statusChanged() && $this->getOriginal('status') == $status;
+        if($this->statusChanged()){
+            if (in_array($this->getOriginal('status'), $statuses)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function priorityChanged(): bool

@@ -14,6 +14,5 @@
         @foreach($field->options as $option)
             <x-field-option :value="$option['id']" :text="$option['name']"/>
         @endforeach
-        <x-field-option :value="10" :text="'Whatever'"/>
     </x-field-select>
 </x-field-layout>

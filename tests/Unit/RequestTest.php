@@ -340,6 +340,30 @@ class RequestTest extends TestCase
         $this->assertEquals('Please do the needful', $request->tasks->first()->description);
     }
 
+    /**
+     * @test
+     * @dataProvider slaClosingStatuses
+     */
+    function sla_is_closed_when_status_changes_to_sla_closing_statuses($status){
+        $request = Incident::factory()->create();
+
+        $this->assertFalse($request->sla->isClosed());
+
+        $request->status = $status;
+        $request->save();
+        $request->refresh();
+
+        $this->assertTrue($request->sla->isClosed());
+    }
+
+    static function slaClosingStatuses(){
+        return [
+            [Status::ON_HOLD],
+            [Status::RESOLVED],
+            [Status::CANCELLED],
+        ];
+    }
+
     static function priorityToSlaMinutes(){
         return [
             [1, 30],

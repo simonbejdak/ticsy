@@ -31,7 +31,6 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 Use case problems:
 - It should be possible to navigate to Tasks Taskable model from TaskEditForm -- done
 - when a field is required, there should also be a red asterisk on the right of its label -- done
-- SLA changes its duration even if model is archived
 - Priority 1 is shown even if user has no permission to set priority one
 - when Status on EditForms is set to Open, resolved is not set to null
 - SLA bar does not spatially communicate, that it represents percentage before expiration, when on 100%,
@@ -41,6 +40,7 @@ Use case problems:
 - validation red error ring shown even after clicking on the field, it should hide
 - rules() method on our Forms accept only arrays, we need to accept strings as well
 - red asterisk not visible for fields without labels
+- SLA changes its duration even if model is archived
 
 Refactor Ideas:
 - change TicketTrait to separate traits
