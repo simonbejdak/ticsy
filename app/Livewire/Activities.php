@@ -16,7 +16,9 @@ class Activities extends Component
     public string $body = '';
 
     public function render(){
-        $this->activities = $this->model->activities()->orderByDesc('id')->get();
+        // We do not want to render activities,
+        // which have nothing recorded ({"attributes":[],"old":[]} says something changed, but we didn't record it)
+        $this->activities = $this->model->activities()->where('properties', '!=', '{"attributes":[],"old":[]}')->orderByDesc('id')->get();
 
         return view('livewire.activities');
     }

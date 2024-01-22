@@ -11,17 +11,19 @@ class Fields implements IteratorAggregate
 {
     public array $fields;
 
-    function __construct(Field ...$fields)
+    function __construct(Field|callable ...$objects)
     {
-        foreach ($fields as $field){
-            $this->fields[] = $field;
+        foreach ($objects as $object){
+            if($object instanceof Field){
+                $this->fields[] = $object;
+            } elseif(call_user_func($object) instanceof Field) {
+                $this->fields[] = call_user_func($object);
+            } elseif(call_user_func($object) instanceof Fields){
+                foreach (call_user_func($object) as $field){
+                    $this->fields[] = $field;
+                }
+            }
         }
-    }
-
-    function add(Field $field, int $index = null): self
-    {
-        $index ? array_splice($this->fields, $index, 0, $field) : $this->fields[] = $field;
-        return $this;
     }
 
     function insideGrid(): self

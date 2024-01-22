@@ -20,4 +20,17 @@
             @endforeach
         </div>
     @endif
+    @isset($requests)
+        <div class="mt-12 flex flex-row justify-between">
+            <h3>Recent requests you have already created: </h3>
+            <a href="{{route('requests.index')}}">
+                <x-secondary-button>See All</x-secondary-button>
+            </a>
+        </div>
+        <div class="mb-4 flex flex-col justify-start mt-4 space-y-4">
+            @foreach($requests as $request)
+                <x-request-card :$request />
+            @endforeach
+        </div>
+    @endif
 </x-app-layout>

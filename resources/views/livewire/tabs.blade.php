@@ -1,4 +1,4 @@
-<div class="flex flex-col mb-4">
+<div class="flex flex-col mb-8">
     <div class="flex flex-row">
         @foreach($this->tabs() as $tab)
             <div
@@ -7,7 +7,7 @@
             >{{ ucfirst($tab->value) }}</div>
         @endforeach
     </div>
-    <div class="bg-white border border-gray-300 -mt-1 p-4">
+    <div class="bg-white border border-gray-300 -mt-1 px-4 py-8">
 {{--        Due to Livewire nature we need to have a key defined for such dynamic Livewire component rendering, otherwise the component does not get refreshed properly after clicking on another tab --}}
         @livewire($this->viewedTab()->value, ['model' => $model], key(array_search($this->viewedTab(), $this->tabs())))
     </div>

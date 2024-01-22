@@ -36,12 +36,6 @@ class TaskEditForm extends Form
     public $resolver;
     public string $comment = '';
 
-    public Collection $statuses;
-    public Collection $onHoldReasons;
-    public array $priorities;
-    public Collection $groups;
-    public Collection $resolvers;
-
 
     public function rules()
     {
@@ -136,7 +130,7 @@ class TaskEditForm extends Form
 
     function fields(): Fields
     {
-        $fields = new Fields(
+        return new Fields(
             TextInput::make('number')
                 ->value($this->task->id)
                 ->disabled(),
@@ -151,12 +145,23 @@ class TaskEditForm extends Form
                 ->displayName('Updated at')
                 ->value($this->task->updated_at)
                 ->disabled(),
-            TextInput::make('category')
-                ->value($this->task->categoryName())
-                ->disabled(),
-            TextInput::make('item')
-                ->value($this->task->itemName())
-                ->disabled(),
+            function () {
+                if($this->task->hasTaskable()){
+                    return new Fields(
+                        TextInput::make('taskable')
+                            ->displayName(get_class_name($this->task->taskable))
+                            ->value($this->task->taskable_id)
+                            ->disabled()
+                            ->anchor($this->task->taskable->editFormRoute()),
+                        TextInput::make('category')
+                            ->value($this->task->categoryName())
+                            ->disabled(),
+                        TextInput::make('item')
+                            ->value($this->task->itemName())
+                            ->disabled(),
+                    );
+                } return null;
+            },
             Select::make('status')
                 ->options(Status::class)
                 ->disabledIf($this->isFieldDisabled('status')),
@@ -191,16 +196,6 @@ class TaskEditForm extends Form
                 ->displayName('Add a comment')
                 ->outsideGrid(),
         );
-
-        if($this->task->hasTaskable()){
-            $fields->add(TextInput::make('taskable')
-                ->displayName(get_class_name($this->task->taskable))
-                ->value($this->task->taskable_id)
-                ->disabled()
-                ->anchor($this->task->taskable->editFormRoute()));
-        }
-
-        return $fields;
     }
 
     protected function isFieldDisabled(string $name): bool

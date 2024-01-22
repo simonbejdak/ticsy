@@ -4,6 +4,7 @@ namespace App;
 
 use App\Http\Controllers\HomeController;
 use App\Models\Incident;
+use App\Models\Request;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -52,14 +53,14 @@ class HomeTest extends TestCase
         $response->assertSee('Incident Description');
     }
 
-    public function test_it_displays_correct_number_of_recent_tickets()
+    public function test_it_displays_correct_number_of_recent_incidents()
     {
         $user = User::factory()->create();
 
         for ($i = 1; $i <= HomeController::RECENT_INCIDENTS_COUNT; $i++){
             Incident::factory([
                 'caller_id' => $user,
-                'description' => 'TicketTrait Description ' . $i,
+                'description' => 'Incident Description ' . $i,
             ])->create();
         }
 
@@ -68,9 +69,31 @@ class HomeTest extends TestCase
         $response = $this->get(route('home'));
 
         for ($i = 1; $i <= HomeController::RECENT_INCIDENTS_COUNT; $i++){
-            $response->assertSee('TicketTrait Description ' . $i);
+            $response->assertSee('Incident Description ' . $i);
         }
 
-        $response->assertDontSee('TicketTrait Description ' . HomeController::RECENT_INCIDENTS_COUNT + 1);
+        $response->assertDontSee('Incident ' . HomeController::RECENT_INCIDENTS_COUNT + 1);
+    }
+
+    public function test_it_displays_correct_number_of_recent_requests()
+    {
+        $user = User::factory()->create();
+
+        for ($i = 1; $i <= HomeController::RECENT_REQUESTS_COUNT; $i++){
+            Request::factory([
+                'caller_id' => $user,
+                'description' => 'Request Description ' . $i,
+            ])->create();
+        }
+
+
+        $this->actingAs($user);
+        $response = $this->get(route('home'));
+
+        for ($i = 1; $i <= HomeController::RECENT_REQUESTS_COUNT; $i++){
+            $response->assertSee('Request Description ' . $i);
+        }
+
+        $response->assertDontSee('Request Description ' . HomeController::RECENT_REQUESTS_COUNT + 1);
     }
 }

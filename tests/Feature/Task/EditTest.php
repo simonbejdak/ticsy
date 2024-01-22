@@ -15,6 +15,7 @@ use App\Models\Request\RequestItem;
 use App\Enums\Status;
 use App\Models\User;
 use App\Services\ActivityService;
+use App\Services\TaskService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Livewire\Livewire;
@@ -450,7 +451,17 @@ class EditTest extends TestCase
 
     /** @test */
     function it_loads_correctly_when_task_has_taskable(){
-        $task = Task::factory()->withTaskable()->create();
+        $task = Request::factory()->create()->tasks()->first();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('tasks.edit', $task));
+        $response->assertSuccessful();
+    }
+
+    /** @test */
+    function it_loads_correctly_when_task_does_not_have_taskable(){
+        $task = Task::factory()->started()->create();
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
@@ -469,5 +480,18 @@ class EditTest extends TestCase
             ->assertSet('resolver', $resolver->id)
             ->set('status', Status::OPEN->value)
             ->assertSet('resolver', null);
+    }
+
+    /** @test */
+    function it_does_not_render_empty_activity_after_started_at_attribute_is_updated(){
+        $task = Task::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        TaskService::startTask($task);
+
+        Livewire::actingAs($resolver)
+            ->test(Activities::class, ['model' => $task])
+            ->assertSuccessful()
+            ->assertDontSeeText('Updated');
     }
 }

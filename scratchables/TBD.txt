@@ -34,14 +34,17 @@ Use case problems:
 - SLA changes its duration even if model is archived -- done
 - red asterisk not visible for fields without labels -- cancelled for now
 - SLA bar does not spatially communicate, that it represents percentage before expiration, when on 100%, -- done
-- when Status on EditForms is set to Open, resolved is not set to null
-- tasks table does not have rounded corners
-- breadcrumbs are missing
+- when Status on EditForms is set to Open, resolved is not set to null -- done
+- breadcrumbs are missing -- cancelled
+- tasks table does not have rounded corners -- done
 - empty Updated event rendered on TaskEditForm
 - validation red error ring shown even after clicking on the field, it should hide
 - rules() method on our Forms accept only arrays, we need to accept strings as well
 - selects should be greyed out if they have no options
 - Priority 1 is shown even if user has no permission to set priority one
+- SLA bar does not refresh on its own, you need to update EditForm
+- created_at and update_at fields on EditForms show an ugly form of date and time
+- Home index page shows only recent Incidents
 
 Refactor Ideas:
 - change TicketTrait to separate traits
