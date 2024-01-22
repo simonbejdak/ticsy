@@ -37,7 +37,7 @@ Use case problems:
 - when Status on EditForms is set to Open, resolved is not set to null -- done
 - breadcrumbs are missing -- cancelled
 - tasks table does not have rounded corners -- done
-- empty Updated event rendered on TaskEditForm
+- empty Updated event rendered on TaskEditForm -- done
 - validation red error ring shown even after clicking on the field, it should hide
 - rules() method on our Forms accept only arrays, we need to accept strings as well
 - selects should be greyed out if they have no options
