@@ -8,7 +8,7 @@
                     @endforeach
                 </x-field-grid>
                 @foreach($this->fields()->outsideGrid() as $field)
-                    <x-field :field="$field" />
+                    <x-field :field="$field" :required="$this->isFieldMarkedAsRequired($field->name)" />
                 @endforeach
                 <div class="flex flex-row justify-end">
                     <x-secondary-button>Update</x-secondary-button>

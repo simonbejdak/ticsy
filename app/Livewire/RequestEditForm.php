@@ -86,6 +86,9 @@ class RequestEditForm extends Form
 
     public function updating($property, $value): void
     {
+        if($property === 'status' && $value == Status::OPEN){
+            $this->resolver = null;
+        }
         if($property === 'priority' && $value == Priority::ONE){
             $this->authorize('setPriorityOne', Request::class);
         }
@@ -169,6 +172,7 @@ class RequestEditForm extends Form
                 ->displayName('SLA expires at')
                 ->percentage($this->request->sla->toPercentage())
                 ->value($this->request->sla->minutesTillExpires() . ' minutes')
+                ->pulse()
                 ->hiddenIf($this->request->sla->isClosed()),
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
@@ -178,8 +182,7 @@ class RequestEditForm extends Form
                 ->disabled()
                 ->outsideGrid(),
             TextInput::make('comment')
-                ->withoutLabel()
-                ->placeholder('Add a comment')
+                ->displayName('Add a comment')
                 ->outsideGrid(),
         );
     }

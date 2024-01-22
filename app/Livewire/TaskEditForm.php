@@ -92,6 +92,9 @@ class TaskEditForm extends Form
 
     public function updating($property, $value): void
     {
+        if($property === 'status' && $value == Status::OPEN){
+            $this->resolver = null;
+        }
         if($property === 'priority' && $value == Priority::ONE){
             $this->authorize('setPriorityOne', Task::class);
         }
@@ -175,6 +178,7 @@ class TaskEditForm extends Form
                 ->displayName('SLA expires at')
                 ->percentage($this->task->sla->toPercentage())
                 ->value($this->task->sla->minutesTillExpires() . ' minutes')
+                ->pulse()
                 ->hiddenIf($this->task->sla->isClosed()),
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
@@ -184,8 +188,7 @@ class TaskEditForm extends Form
                 ->disabled()
                 ->outsideGrid(),
             TextInput::make('comment')
-                ->withoutLabel()
-                ->placeholder('Add a comment')
+                ->displayName('Add a comment')
                 ->outsideGrid(),
         );
 

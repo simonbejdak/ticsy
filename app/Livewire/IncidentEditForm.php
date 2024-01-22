@@ -82,6 +82,9 @@ class IncidentEditForm extends Form
 
     public function updating($property, $value): void
     {
+        if($property === 'status' && $value == Status::OPEN){
+            $this->resolver = null;
+        }
         if($property === 'priority' && $value == Priority::ONE){
             $this->authorize('setPriorityOne', Incident::class);
         }
@@ -165,7 +168,8 @@ class IncidentEditForm extends Form
                 ->displayName('SLA expires at')
                 ->percentage($this->incident->sla->toPercentage())
                 ->value($this->incident->sla->minutesTillExpires() . ' minutes')
-                ->hiddenIf($this->incident->sla->isClosed()),
+                ->hiddenIf($this->incident->sla->isClosed())
+                ->pulse(),
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),
@@ -174,8 +178,7 @@ class IncidentEditForm extends Form
                 ->disabled()
                 ->outsideGrid(),
             TextInput::make('comment')
-                ->withoutLabel()
-                ->placeholder('Add a comment')
+                ->displayName('Add a comment')
                 ->outsideGrid(),
         );
     }

@@ -7,18 +7,14 @@ use App\Enums\Tab;
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Livewire\RequestEditForm;
-use App\Livewire\RequestTabs;
 use App\Livewire\Tabs;
 use App\Livewire\Tasks;
-use App\Livewire\TempTabs;
 use App\Models\Group;
-use App\Models\Incident;
 use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
 use App\Enums\Status;
-use App\Models\Task;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -523,5 +519,18 @@ class EditTest extends TestCase
             ->set('status', Status::IN_PROGRESS->value)
             ->call('save')
             ->assertHasErrors(['resolver' => 'required']);
+    }
+
+    /** @test */
+    function resolver_set_to_null_if_status_is_open()
+    {
+        $resolver = User::factory()->resolverAllGroups()->create();
+        $request = Request::factory(['resolver_id' => $resolver])->statusInProgress()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->assertSet('resolver', $resolver->id)
+            ->set('status', Status::OPEN->value)
+            ->assertSet('resolver', null);
     }
 }

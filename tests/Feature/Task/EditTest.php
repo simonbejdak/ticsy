@@ -457,4 +457,17 @@ class EditTest extends TestCase
         $response = $this->get(route('tasks.edit', $task));
         $response->assertSuccessful();
     }
+
+    /** @test */
+    function resolver_set_to_null_if_status_is_open()
+    {
+        $resolver = User::factory()->resolverAllGroups()->create();
+        $task = Task::factory(['resolver_id' => $resolver])->statusInProgress()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->assertSet('resolver', $resolver->id)
+            ->set('status', Status::OPEN->value)
+            ->assertSet('resolver', null);
+    }
 }

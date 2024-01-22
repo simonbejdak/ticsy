@@ -32,16 +32,16 @@ Use case problems:
 - It should be possible to navigate to Tasks Taskable model from TaskEditForm -- done
 - when a field is required, there should also be a red asterisk on the right of its label -- done
 - SLA changes its duration even if model is archived -- done
-- SLA bar does not spatially communicate, that it represents percentage before expiration, when on 100%,
-- Priority 1 is shown even if user has no permission to set priority one
+- red asterisk not visible for fields without labels -- cancelled for now
+- SLA bar does not spatially communicate, that it represents percentage before expiration, when on 100%, -- done
 - when Status on EditForms is set to Open, resolved is not set to null
 - tasks table does not have rounded corners
 - breadcrumbs are missing
 - empty Updated event rendered on TaskEditForm
 - validation red error ring shown even after clicking on the field, it should hide
 - rules() method on our Forms accept only arrays, we need to accept strings as well
-- red asterisk not visible for fields without labels
 - selects should be greyed out if they have no options
+- Priority 1 is shown even if user has no permission to set priority one
 
 Refactor Ideas:
 - change TicketTrait to separate traits

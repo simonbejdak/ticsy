@@ -440,4 +440,16 @@ class EditTest extends TestCase
             ->call('save')
             ->assertHasErrors(['resolver' => 'required']);
     }
+
+    public function test_resolver_set_to_null_if_status_is_open()
+    {
+        $resolver = User::factory()->resolverAllGroups()->create();
+        $incident = Incident::factory(['resolver_id' => $resolver])->statusInProgress()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->assertSet('resolver', $resolver->id)
+            ->set('status', Status::OPEN->value)
+            ->assertSet('resolver', null);
+    }
 }
