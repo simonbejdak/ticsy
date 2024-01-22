@@ -27,7 +27,6 @@ class FieldElement extends Component
             ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
             ($this->anchor ? 'hover:cursor-pointer hover:border-gray-400 transform ease-in duration-150 ' : ' ') .
             ($this->disabled && !$this->anchor ? 'pointer-events-none ' : 'caret-gray-200 ') .
-            ($this->error ? 'ring-1 ring-red-500 ' : ' ') .
             'appearance-none px-2 w-full pt-2 pb-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 

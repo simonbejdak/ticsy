@@ -164,12 +164,15 @@ class IncidentEditForm extends Form
                 ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
                 ->disabledIf($this->isFieldDisabled('resolver'))
                 ->blank(),
-            Bar::make('sla')
-                ->displayName('SLA expires at')
-                ->percentage($this->incident->sla->toPercentage())
-                ->value($this->incident->sla->minutesTillExpires() . ' minutes')
-                ->hiddenIf($this->incident->sla->isClosed())
-                ->pulse(),
+            function () {
+                if($this->incident->sla->isOpened()){
+                    Bar::make('sla')
+                        ->displayName('SLA expires at')
+                        ->percentage($this->incident->sla->toPercentage())
+                        ->value($this->incident->sla->minutesTillExpires() . ' minutes')
+                        ->pulse();
+                }
+            },
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),

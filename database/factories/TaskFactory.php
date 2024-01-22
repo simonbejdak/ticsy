@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\OnHoldReason;
 use App\Models\Request;
 use App\Enums\Status;
 use App\Models\User;
@@ -43,6 +44,7 @@ class TaskFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'status' => Status::ON_HOLD,
+                'on_hold_reason' => OnHoldReason::CALLER_RESPONSE,
             ];
         });
     }

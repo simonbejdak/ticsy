@@ -33,6 +33,11 @@ class Sla extends Model
         return $this->expires_at->diffInMinutes(Carbon::now());
     }
 
+    public function isOpened(): bool
+    {
+        return !$this->isClosed();
+    }
+
     public function isClosed(): bool
     {
         return $this->closed_at != null;

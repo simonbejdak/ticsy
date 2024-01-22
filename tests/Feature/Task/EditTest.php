@@ -494,4 +494,14 @@ class EditTest extends TestCase
             ->assertSuccessful()
             ->assertDontSeeText('Updated');
     }
+
+    /** @test */
+    function it_successfully_loads_if_task_status_is_on_hold(){
+        $task = Task::factory()->started()->statusOnHold()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('tasks.edit', $task));
+        $response->assertSuccessful();
+    }
 }

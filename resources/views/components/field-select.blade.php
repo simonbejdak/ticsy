@@ -1,11 +1,17 @@
-<div class="relative">
+<div
+    wire:key="{{ rand() }}"
+    class="relative"
+    x-data="{ error: @json($error) }"
+>
     <select
+        @click="error = false"
         wire:model.live="{{ $name }}"
         id="{{ $name }}"
         {{ ($disabled) ? 'disabled ' : '' }}
         {!! $attributes->merge([
             'class' => $style
         ]) !!}
+        :class="error ? 'ring-1 ring-red-500 ' : ''"
     >
         {{ $slot }}
     </select>

@@ -38,15 +38,15 @@ Use case problems:
 - breadcrumbs are missing -- cancelled
 - tasks table does not have rounded corners -- done
 - empty Updated event rendered on TaskEditForm -- done
+- Home index page shows only recent Incidents -- done
 - validation red error ring shown even after clicking on the field, it should hide
 - rules() method on our Forms accept only arrays, we need to accept strings as well
 - selects should be greyed out if they have no options
 - Priority 1 is shown even if user has no permission to set priority one
 - SLA bar does not refresh on its own, you need to update EditForm
 - created_at and update_at fields on EditForms show an ugly form of date and time
-- Home index page shows only recent Incidents
 
 Refactor Ideas:
+- TaskEditForm has to use an ugly looking conditional in forms() method, which puts Taskable in second position of EditForm, find a more flexible way -- done
 - change TicketTrait to separate traits
-- TaskEditForm has to use an ugly looking conditional in forms() method, which puts Taskable in second position of EditForm, find a more flexible way
 

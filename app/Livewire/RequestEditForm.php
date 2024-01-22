@@ -168,12 +168,15 @@ class RequestEditForm extends Form
                 ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
                 ->disabledIf($this->isFieldDisabled('resolver'))
                 ->blank(),
-            Bar::make('sla')
-                ->displayName('SLA expires at')
-                ->percentage($this->request->sla->toPercentage())
-                ->value($this->request->sla->minutesTillExpires() . ' minutes')
-                ->pulse()
-                ->hiddenIf($this->request->sla->isClosed()),
+            function () {
+                if($this->request->sla->isOpened()){
+                    Bar::make('sla')
+                        ->displayName('SLA expires at')
+                        ->percentage($this->request->sla->toPercentage())
+                        ->value($this->request->sla->minutesTillExpires() . ' minutes')
+                        ->pulse();
+                }
+            },
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),

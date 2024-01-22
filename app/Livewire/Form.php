@@ -12,6 +12,12 @@ abstract class Form extends Component
 {
     public Model $model;
 
+    public function hydrate(): void
+    {
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
     function updated($property): void
     {
         if(hasTrait(HasFields::class, $this)){
