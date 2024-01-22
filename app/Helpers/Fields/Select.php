@@ -27,4 +27,9 @@ class Select extends Field
         $this->blank = true;
         return $this;
     }
+
+    function isDisabled(): bool
+    {
+        return $this->disabled || count($this->options) == 0;
+    }
 }

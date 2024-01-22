@@ -35,7 +35,7 @@ class Sla extends Model
 
     public function isOpened(): bool
     {
-        return !$this->isClosed();
+        return $this->isClosed() == null;
     }
 
     public function isClosed(): bool

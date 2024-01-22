@@ -139,11 +139,11 @@ class TaskEditForm extends Form
                 ->disabled(),
             TextInput::make('created')
                 ->displayName('Created at')
-                ->value($this->task->created_at)
+                ->value($this->task->created_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('updated')
                 ->displayName('Updated at')
-                ->value($this->task->updated_at)
+                ->value($this->task->updated_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             function () {
                 if($this->task->hasTaskable()){
@@ -170,7 +170,7 @@ class TaskEditForm extends Form
                 ->hiddenIf($this->isFieldDisabled('onHoldReason'))
                 ->blank(),
             Select::make('priority')
-                ->options(Priority::class)
+                ->options(Priority::byUser())
                 ->disabledIf($this->isFieldDisabled('priority')),
             Select::make('group')
                 ->options(Group::all())
@@ -181,12 +181,12 @@ class TaskEditForm extends Form
                 ->blank(),
             function () {
                 if($this->task->sla->isOpened()){
-                    Bar::make('sla')
+                    return Bar::make('sla')
                         ->displayName('SLA expires at')
                         ->percentage($this->task->sla->toPercentage())
                         ->value($this->task->sla->minutesTillExpires() . ' minutes')
                         ->pulse();
-                }
+                } return null;
             },
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))

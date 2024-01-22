@@ -135,11 +135,11 @@ class IncidentEditForm extends Form
                 ->disabled(),
             TextInput::make('created')
                 ->displayName('Created at')
-                ->value($this->incident->created_at)
+                ->value($this->incident->created_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('updated')
                 ->displayName('Updated at')
-                ->value($this->incident->updated_at)
+                ->value($this->incident->updated_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('category')
                 ->value($this->incident->category->name)
@@ -166,12 +166,12 @@ class IncidentEditForm extends Form
                 ->blank(),
             function () {
                 if($this->incident->sla->isOpened()){
-                    Bar::make('sla')
+                    return Bar::make('sla')
                         ->displayName('SLA expires at')
                         ->percentage($this->incident->sla->toPercentage())
                         ->value($this->incident->sla->minutesTillExpires() . ' minutes')
                         ->pulse();
-                }
+                } return null;
             },
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))

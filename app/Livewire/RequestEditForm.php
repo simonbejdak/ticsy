@@ -139,11 +139,11 @@ class RequestEditForm extends Form
                 ->disabled(),
             TextInput::make('created')
                 ->displayName('Created at')
-                ->value($this->request->created_at)
+                ->value($this->request->created_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('updated')
                 ->displayName('Updated at')
-                ->value($this->request->updated_at)
+                ->value($this->request->updated_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('category')
                 ->value($this->request->category->name)
@@ -170,12 +170,12 @@ class RequestEditForm extends Form
                 ->blank(),
             function () {
                 if($this->request->sla->isOpened()){
-                    Bar::make('sla')
+                    return Bar::make('sla')
                         ->displayName('SLA expires at')
                         ->percentage($this->request->sla->toPercentage())
                         ->value($this->request->sla->minutesTillExpires() . ' minutes')
                         ->pulse();
-                }
+                } return null;
             },
             TextInput::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))

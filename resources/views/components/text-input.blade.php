@@ -13,7 +13,7 @@
                 :name="$field->name"
                 :value="$field->value"
                 :error="$errors->has($field->name)"
-                :disabled="$field->disabled"
+                :disabled="$field->isDisabled()"
                 :placeholder="$field->placeholder"
                 :anchor="$field->hasAnchor()"
             />

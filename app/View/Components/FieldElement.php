@@ -11,6 +11,7 @@ class FieldElement extends Component
     public string $name;
     public string $value;
     public string $style;
+    public string $errorStyle;
     public bool $disabled;
     public bool $error;
     public bool $anchor;
@@ -23,6 +24,7 @@ class FieldElement extends Component
         $this->error = $error;
         $this->anchor = $anchor;
 
+        $this->errorStyle = 'ring-1 ring-red-500 ';
         $this->style =
             ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
             ($this->anchor ? 'hover:cursor-pointer hover:border-gray-400 transform ease-in duration-150 ' : ' ') .

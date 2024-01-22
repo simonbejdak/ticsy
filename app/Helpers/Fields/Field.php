@@ -15,7 +15,7 @@ abstract class Field
     public string $rules;
     protected string $displayName;
     public bool $hideable;
-    public bool $disabled;
+    protected bool $disabled;
     public bool $hidden;
     public FieldPosition $position;
 
@@ -137,5 +137,10 @@ abstract class Field
     {
         $this->hidden = $condition;
         return $this;
+    }
+
+    function isDisabled(): bool
+    {
+        return $this->disabled;
     }
 }

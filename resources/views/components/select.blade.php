@@ -7,7 +7,7 @@
             @endif
         </div>
     @endif
-    <x-field-select :disabled="$field->disabled" :name="$field->name" :error="$errors->has($field->name)">
+    <x-field-select :disabled="$field->isDisabled()" :name="$field->name" :error="$errors->has($field->name)">
         @if($field->blank)
             <x-field-option />
         @endif
