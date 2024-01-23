@@ -32,8 +32,13 @@
 
             <!-- Page Content -->
             <main>
-                <div class="px-32">
-                    {{ $slot }}
+                <div class="flex flex-row">
+                    @if(auth()->user()->hasPermissionTo('view_resolver_panel'))
+                        <x-resolver-panel />
+                    @endif
+                    <div class="px-32 w-full">
+                        {{ $slot }}
+                    </div>
                 </div>
             </main>
         </div>

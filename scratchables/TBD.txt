@@ -19,7 +19,13 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 17. Resolver required_if Status in_progress -- done
 18. Comment required_if Status resolved -- done
 
-19. Resolver dashboard
+19. Resolver Panel -- in progress
+- flexible sidebar -- done
+- reusable table definition to examine existing entities (Incident, Request, Task, Change, etc..) in application
+- if resolver is in specific sidebar tab, make it apparent it is selected
+- ability to save favorite sidebar tab, and lookup saved favorites in sidebar navigation on top
+- resolver panel tabs should be visible only by resolvers and managers
+
 20. Statistics
 21. Knowledge articles for common problems
 22. Change templates
@@ -29,24 +35,8 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 26. Send e-mail, when Ticket SLA is before expiration
 
 Use case problems:
-- It should be possible to navigate to Tasks Taskable model from TaskEditForm -- done
-- when a field is required, there should also be a red asterisk on the right of its label -- done
-- SLA changes its duration even if model is archived -- done
-- red asterisk not visible for fields without labels -- cancelled for now
-- SLA bar does not spatially communicate, that it represents percentage before expiration, when on 100%, -- done
-- when Status on EditForms is set to Open, resolved is not set to null -- done
-- breadcrumbs are missing -- cancelled
-- tasks table does not have rounded corners -- done
-- empty Updated event rendered on TaskEditForm -- done
-- Home index page shows only recent Incidents -- done
-- validation red error ring shown even after clicking on the field, it should hide -- done
-- rules() method on our Forms accept only arrays, we need to accept strings as well -- done
-- selects should be greyed out if they have no options -- done
 - Priority 1 is shown even if user has no permission to set priority one
-- SLA bar does not refresh on its own, you need to update EditForm -- done
-- created_at and update_at fields on EditForms show an ugly form of date and time
 
 Refactor Ideas:
-- TaskEditForm has to use an ugly looking conditional in forms() method, which puts Taskable in second position of EditForm, find a more flexible way -- done
 - change TicketTrait to separate traits
 

@@ -170,7 +170,7 @@ class TaskEditForm extends Form
                 ->hiddenIf($this->isFieldDisabled('onHoldReason'))
                 ->blank(),
             Select::make('priority')
-                ->options(Priority::byUser())
+                ->options(Priority::class)
                 ->disabledIf($this->isFieldDisabled('priority')),
             Select::make('group')
                 ->options(Group::all())

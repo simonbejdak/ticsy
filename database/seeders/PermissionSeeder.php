@@ -14,12 +14,14 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'update_all_tickets']);
         Permission::create(['name' => 'set_priority_one']);
         Permission::create(['name' => 'add_comments_to_all_tickets']);
+        Permission::create(['name' => 'view_resolver_panel']);
 
         $roleResolver = Role::create(['name' => 'resolver']);
         $roleResolver->givePermissionTo(
             'view_all_tickets',
             'update_all_tickets',
             'add_comments_to_all_tickets',
+            'view_resolver_panel',
         );
 
         $roleManager = Role::create(['name' => 'manager']);
@@ -28,6 +30,7 @@ class PermissionSeeder extends Seeder
             'update_all_tickets',
             'add_comments_to_all_tickets',
             'set_priority_one',
+            'view_resolver_panel',
         );
     }
 }
