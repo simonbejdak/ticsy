@@ -18,9 +18,6 @@ class Table extends Component
 
     public function render()
     {
-        return view('livewire.table', [
-            'table' => $this->table,
-            'startingPaginationModelField' => TextInput::make('startingPaginationModelField')->withoutLabel(),
-        ]);
+        return view('livewire.table', ['table' => $this->table]);
     }
 }

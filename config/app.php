@@ -183,7 +183,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        'TextInput' => App\Helpers\Fields\TextInput::class,
     ])->toArray(),
 
 ];

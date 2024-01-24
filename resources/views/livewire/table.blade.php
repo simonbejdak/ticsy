@@ -1,9 +1,9 @@
 <div>
-    <div class="border border-gray-300 rounded-md overflow-hidden">
+    <div class="border border-gray-300 rounded-md overflow-hidden text-sm">
         <table class="w-full">
             <tr>
                 @foreach($table->getHeaders() as $header)
-                    <th class="text-left pl-3 py-2 bg-white">
+                    <th class="text-left pl-3 py-1 bg-white">
                         {{ $header }}
                     </th>
                 @endforeach
@@ -16,7 +16,7 @@
                     "
                 >
                     @foreach($row as $cell)
-                        <td class="text-left pl-3 py-2">
+                        <td class="text-left pl-3 py-1">
                             @if($cell['anchor'] != null)
                                 <a class="underline underline-offset-2 decoration-1 hover:cursor-pointer" href="{{ $cell['anchor'] }}">
                             @endif
@@ -44,7 +44,7 @@
             </svg>
         </div>
         <div>
-            <x-field :field="$startingPaginationModelField" />
+            <x-field :field="TextInput::make('startingPaginationModelField')->withoutLabel()" />
         </div>
         {{-- Forward --}}
         <div>

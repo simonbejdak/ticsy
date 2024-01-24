@@ -19,7 +19,7 @@ class Table
     {
         $static = new static();
         $static->builder = $builder;
-        $static->pagination = 10;
+        $static->pagination = 25;
         $static->startingPaginationModel = 1;
         $static->models = $static->getPaginated();
         return $static;

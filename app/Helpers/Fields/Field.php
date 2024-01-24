@@ -150,6 +150,6 @@ abstract class Field
         return
             ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
             ($this->error ? 'ring-1 ring-red-500 ' : '') .
-            'appearance-none px-2 w-full pt-2 pb-2.5 rounded-lg border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
+            'appearance-none px-2 w-full h-8 pt-2 pb-2.5 rounded-sm text-md font-light border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }
