@@ -7,10 +7,12 @@ class TextInput extends Field
     public string $placeholder;
     public string $anchor;
 
-    protected function __construct()
+    static function make(string $name): static
     {
-        parent::__construct();
-        $this->placeholder = '';
+        $static = parent::make($name);
+        $static->placeholder = '';
+
+        return $static;
     }
 
     function placeholder(string $placeholder): self
@@ -28,5 +30,12 @@ class TextInput extends Field
     function hasAnchor(): bool
     {
         return isset($this->anchor);
+    }
+
+    function style(): string
+    {
+        return parent::style() .
+            ($this->hasAnchor() ? 'hover:cursor-pointer hover:border-gray-400 transform ease-in duration-150 ' : ' ') .
+            ($this->disabled && !$this->hasAnchor() ? 'pointer-events-none ' : 'caret-gray-200 ');
     }
 }

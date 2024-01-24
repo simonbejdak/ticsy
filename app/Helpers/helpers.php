@@ -72,3 +72,8 @@ function hasTrait(string $class, $object): bool
 {
     return in_array($class, class_uses_recursive($object));
 }
+
+function isEven(int $number): bool
+{
+    return $number % 2 == 0;
+}

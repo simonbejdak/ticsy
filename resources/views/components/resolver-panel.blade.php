@@ -1,24 +1,24 @@
 <div
-    class="-mt-8 h-screen flex flex-col justify-between bg-white text-sm shadow-md transition-all"
+    class="-mt-8 min-h-screen flex flex-col justify-between bg-white text-sm shadow-md transition-all"
     x-data="{ open: true }"
     :class="open ? 'w-64' : 'w-16'"
     x-transition
 >
     <div
-        class="flex flex-col"
+        class="flex flex-col sticky top-2"
         x-show="open"
     >
-        <a href="{{ route('incidents.table') }}">
+        <a href="{{ route('resolver-panel.incidents') }}">
             <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:bg-gray-100 hover:cursor-pointer transition ease-in duration-75">
                 Incidents
             </div>
         </a>
-        <a href="{{ route('requests.table') }}">
+        <a href="{{ route('resolver-panel.requests') }}">
             <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:bg-gray-100 hover:cursor-pointer transition ease-in duration-75">
                 Requests
             </div>
         </a>
-        <a href="{{ route('tasks.table') }}">
+        <a href="{{ route('resolver-panel.tasks') }}">
             <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:bg-gray-100 hover:cursor-pointer transition ease-in duration-75">
                 Tasks
             </div>

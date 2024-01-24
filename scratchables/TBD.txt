@@ -36,6 +36,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 
 Use case problems:
 - Priority 1 is shown even if user has no permission to set priority one
+- Comment on EditForms required even if status is already on hold, and it was not changed to on hold at all.. we need to required the comment only if the status was changed
 
 Refactor Ideas:
 - change TicketTrait to separate traits

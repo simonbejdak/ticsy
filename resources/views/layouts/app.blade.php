@@ -33,9 +33,11 @@
             <!-- Page Content -->
             <main>
                 <div class="flex flex-row">
-                    @if(auth()->user()->hasPermissionTo('view_resolver_panel'))
-                        <x-resolver-panel />
-                    @endif
+                    @auth
+                        @if(auth()->user()->hasPermissionTo('view_resolver_panel'))
+                            <x-resolver-panel />
+                        @endif
+                    @endauth
                     <div class="px-32 w-full">
                         {{ $slot }}
                     </div>

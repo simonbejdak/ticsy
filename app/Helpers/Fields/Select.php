@@ -9,11 +9,13 @@ class Select extends Field
     public array $options;
     public bool $blank;
 
-    protected function __construct()
+    static function make(string $name): static
     {
-        parent::__construct();
-        $this->options = [];
-        $this->blank = false;
+        $static = parent::make($name);
+        $static->options = [];
+        $static->blank = false;
+
+        return $static;
     }
 
     function options(string|array|Collection $options): self

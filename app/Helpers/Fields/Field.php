@@ -6,6 +6,7 @@ use App\Enums\FieldPosition;
 use App\Interfaces\Fieldable;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Session;
 
 abstract class Field
 {
@@ -17,22 +18,22 @@ abstract class Field
     public bool $hideable;
     protected bool $disabled;
     public bool $hidden;
+    public bool $error;
     public FieldPosition $position;
 
-    protected function __construct()
-    {
-        $this->value = '';
-        $this->hasLabel = true;
-        $this->hideable = false;
-        $this->disabled = false;
-        $this->hidden = false;
-        $this->position = FieldPosition::INSIDE_GRID;
-    }
+    protected function __construct(){}
 
     static function make(string $name): static
     {
         $static = new static;
         $static->name = $name;
+        $static->value = '';
+        $static->hasLabel = true;
+        $static->hideable = false;
+        $static->disabled = false;
+        $static->hidden = false;
+        $static->error = session('error') ? session('error')->first($static->name) : false;
+        $static->position = FieldPosition::INSIDE_GRID;
 
         return $static;
     }
@@ -142,5 +143,13 @@ abstract class Field
     function isDisabled(): bool
     {
         return $this->disabled;
+    }
+
+    function style(): string
+    {
+        return
+            ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
+            ($this->error ? 'ring-1 ring-red-500 ' : '') .
+            'appearance-none px-2 w-full pt-2 pb-2.5 rounded-lg border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }

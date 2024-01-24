@@ -13,6 +13,6 @@
         {!! $attributes->merge([
             'class' => $style
         ]) !!}
-        :class="error ? '{{ $errorStyle }}' : ''"
+        :class="error ? '{{ 'ring-1 ring-red-500 ' }}' : ''"
     />
 </div>

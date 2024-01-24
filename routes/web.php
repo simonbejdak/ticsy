@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/resolver/panel/incidents', [ResolverPanelController::class, 'incidents'])->name('resolver-panel.incidents');
+Route::get('/resolver/panel/requests', [ResolverPanelController::class, 'requests'])->name('resolver-panel.requests');
+Route::get('/resolver/panel/tasks', [ResolverPanelController::class, 'tasks'])->name('resolver-panel.tasks');
 
 Route::middleware('auth')->group(function (){
 

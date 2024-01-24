@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        "./app/View/Components/FieldElement.php",
+        "./app/Helpers/Fields/Field.php",
+        "./app/Helpers/Fields/TextInput.php",
         "./app/View/Components/ActivityCard.php",
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
