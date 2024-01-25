@@ -2,22 +2,31 @@
 
 namespace App\Livewire;
 
-use App\Helpers\Fields\Field;
-use App\Helpers\Fields\TextInput;
+use App\Enums\SortOrder;
 use Livewire\Component;
 
-class Table extends Component
+abstract class Table extends Component
 {
-    protected \App\Helpers\Table $table;
-    public int $startingPaginationModel;
+    public string $columnToSortBy;
+    public SortOrder $sortOrder;
 
-    public function mount(\App\Helpers\Table $table){
-        $this->table = $table;
-        $this->startingPaginationModel = $this->table->startingPaginationModel;
+    abstract function table(): \App\Helpers\Table\Table;
+
+    function render()
+    {
+        return view('livewire.table', ['table' => $this->table()]);
     }
 
-    public function render()
+    function columnHeaderClicked(string $column): void
     {
-        return view('livewire.table', ['table' => $this->table]);
+        if($this->columnToSortBy == $column){
+            $this->switchSortOrder();
+        }
+        $this->columnToSortBy = $column;
+    }
+
+    protected function switchSortOrder(): void
+    {
+        $this->sortOrder == SortOrder::DESCENDING ? $this->sortOrder = SortOrder::ASCENDING : $this->sortOrder = SortOrder::DESCENDING;
     }
 }

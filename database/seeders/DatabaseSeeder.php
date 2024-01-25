@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'manager@gmail.com',
         ])->manager()->create();
 
-        Incident::factory(30)->create([
+        Incident::factory(1000)->create([
             'caller_id' => $user,
         ]);
 

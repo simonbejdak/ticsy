@@ -9,7 +9,7 @@
     <input
         @click="error = false"
         value="{{ $value }}"
-        wire:model="{{ $name }}"
+        wire:model.live="{{ $name }}"
         {!! $attributes->merge([
             'class' => $style
         ]) !!}
