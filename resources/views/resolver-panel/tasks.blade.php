@@ -1,3 +1,3 @@
 <x-app-layout>
-    <livewire:table :$table />
+    <livewire:tables.tasks-table />
 </x-app-layout>

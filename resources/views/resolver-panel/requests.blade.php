@@ -1,3 +1,3 @@
 <x-app-layout>
-    <livewire:table :$table />
+    <livewire:tables.requests-table />
 </x-app-layout>
