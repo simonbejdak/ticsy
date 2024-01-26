@@ -2,13 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Group;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Enums\OnHoldReason;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Enums\Status;
 use Illuminate\Database\Seeder;
 
 class MapSeeder extends Seeder

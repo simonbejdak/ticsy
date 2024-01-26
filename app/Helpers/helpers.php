@@ -1,8 +1,5 @@
 <?php
 
-use App\Enums\Status;
-use App\Traits\HasFields;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection;
 
 function get_class_name($object): string

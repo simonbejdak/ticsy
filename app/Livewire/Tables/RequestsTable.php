@@ -2,25 +2,24 @@
 
 namespace App\Livewire\Tables;
 
-use App\Enums\SortOrder;
-use App\Helpers\Table\Table;
+use App\Helpers\Table\TableBuilder;
 use App\Models\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class RequestsTable extends \App\Livewire\Table
 {
-    public string $columnToSortBy = 'id';
-    public SortOrder $sortOrder = SortOrder::DESCENDING;
-
-    function table(): Table
+    function query(): Builder
     {
-        return Table::make(Request::query()->with('caller'))
-            ->sortByColumn($this->columnToSortBy)
-            ->sortOrder($this->sortOrder)
+        return Request::query()->with('caller');
+    }
+
+    function schema(): TableBuilder
+    {
+        return $this->tableBuilder()
             ->column('Number', 'id', ['requests.edit', 'id'])
             ->column('Caller', 'caller.name')
             ->column('Resolver', 'resolver.name')
             ->column('Status', 'status.value')
-            ->column('Priority', 'priority.value')
-            ->get();
+            ->column('Priority', 'priority.value');
     }
 }

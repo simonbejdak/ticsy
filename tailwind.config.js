@@ -2,6 +2,7 @@
 export default {
     content: [
         "./app/Helpers/Fields/Field.php",
+        "./app/Helpers/Fields/TablePaginationIndexInput.php",
         "./app/Helpers/Fields/TextInput.php",
         "./app/View/Components/ActivityCard.php",
         "./resources/**/*.blade.php",

@@ -4,7 +4,6 @@
 namespace Tests\Feature\Request;
 
 use App\Livewire\RequestCreateForm;
-use App\Mail\IncidentCreated;
 use App\Mail\RequestCreated;
 use App\Models\Incident\IncidentItem;
 use App\Models\Request;

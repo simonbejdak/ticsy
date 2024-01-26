@@ -4,9 +4,6 @@ namespace App\Helpers\Fields;
 
 use App\Enums\FieldPosition;
 use App\Interfaces\Fieldable;
-use App\Enums\Status;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Session;
 
 abstract class Field
 {
@@ -150,6 +147,6 @@ abstract class Field
         return
             ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
             ($this->error ? 'ring-1 ring-red-500 ' : '') .
-            'appearance-none px-2 w-full h-8 rounded-sm text-md font-light border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
+            'appearance-none px-2 w-full h-6 rounded-sm text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }

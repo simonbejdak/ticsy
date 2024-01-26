@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Interfaces\Taskable;
 use App\Enums\Status;
+use App\Interfaces\Taskable;
 use App\Models\Task;
 use Illuminate\Support\Carbon;
 

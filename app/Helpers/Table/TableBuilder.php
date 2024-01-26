@@ -27,6 +27,12 @@ class TableBuilder
         return $this;
     }
 
+    function paginationIndex(int $paginationIndex): self
+    {
+        $this->table->paginationIndex = $paginationIndex;
+        return $this;
+    }
+
     function sortByColumn(string $column): self
     {
         $this->table->sortByColumn = $column;

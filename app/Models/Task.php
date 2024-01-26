@@ -2,21 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Enums\OnHoldReason;
 use App\Interfaces\Activitable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
-use App\Models\Request\RequestCategory;
-use App\Models\Request\RequestItem;
 use App\Traits\HasSla;
 use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 

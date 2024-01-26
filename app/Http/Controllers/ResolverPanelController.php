@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Table\Table;
-use App\Models\Request;
-use App\Models\Task;
-
 class ResolverPanelController extends Controller
 {
     function incidents(){

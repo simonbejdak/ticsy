@@ -2,9 +2,8 @@
 
 namespace App\Services;
 
-use App\Interfaces\Ticket;
-use App\Models\Request;
 use App\Enums\Status;
+use App\Interfaces\Ticket;
 use App\Models\User;
 
 class TicketService

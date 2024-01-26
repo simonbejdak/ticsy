@@ -3,13 +3,11 @@
 namespace App\Traits;
 
 use App\Enums\Priority;
-use App\Models\Group;
-use App\Enums\OnHoldReason;
 use App\Enums\Status;
+use App\Models\Group;
 use App\Models\User;
 use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;

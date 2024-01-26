@@ -77,6 +77,11 @@ class Table
         return $this;
     }
 
+    function to(): int
+    {
+        return $this->paginationIndex + $this->pagination;
+    }
+
     protected function getValue($model, $propertyPath): string|null
     {
         return array_reduce(explode('.', $propertyPath),

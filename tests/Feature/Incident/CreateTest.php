@@ -5,7 +5,6 @@ namespace Tests\Feature\Incident;
 
 use App\Livewire\IncidentCreateForm;
 use App\Mail\IncidentCreated;
-use App\Mail\RequestCreated;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;

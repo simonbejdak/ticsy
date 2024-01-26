@@ -2,7 +2,6 @@
 
 namespace App\View\Components;
 
-use App\Enums\FieldPosition;
 use App\Enums\FieldType;
 use App\Helpers\Field;
 use App\Interfaces\Fieldable;

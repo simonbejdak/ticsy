@@ -7,7 +7,6 @@ use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\Component;
 use InvalidArgumentException;
 

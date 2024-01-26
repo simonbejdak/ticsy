@@ -1,9 +1,5 @@
 <?php
 
-use App\Models\Group;
-use App\Enums\OnHoldReason;
-use App\Enums\Status;
-use App\Models\Task;
 use App\Models\Ticket;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

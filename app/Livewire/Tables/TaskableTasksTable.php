@@ -3,22 +3,25 @@
 namespace App\Livewire\Tables;
 
 use App\Enums\SortOrder;
-use App\Helpers\Table\Table;
+use App\Helpers\Table\TableBuilder;
 use App\Interfaces\Taskable;
-use App\Models\Task;
+use Illuminate\Database\Eloquent\Builder;
 
 class TaskableTasksTable extends \App\Livewire\Table
 {
     public Taskable $taskable;
+    public SortOrder $sortOrder = SortOrder::ASCENDING;
 
-    function table(): Table
+    function query(): Builder
     {
-        return Table::make($this->taskable->tasks()->started()->getQuery())
-            ->sortByColumn('id')
-            ->sortOrder(SortOrder::ASCENDING)
+        return $this->taskable->tasks()->started()->getQuery();
+    }
+
+    function schema(): TableBuilder
+    {
+        return $this->tableBuilder()
             ->column('Number', 'id', ['tasks.edit', 'id'])
             ->column('Description', 'description')
-            ->column('Status', 'status.value')
-            ->get();
+            ->column('Status', 'status.value');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Enums\OnHoldReason;
 use App\Enums\TaskSequence;
 use App\Helpers\TaskPlan;
 use App\Interfaces\Activitable;
@@ -18,7 +18,6 @@ use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Request extends Model implements Ticket, Slable, Activitable, Taskable

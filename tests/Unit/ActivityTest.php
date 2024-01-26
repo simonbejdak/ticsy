@@ -1,12 +1,12 @@
 <?php
 
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
+use App\Enums\Status;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Enums\OnHoldReason;
 use App\Models\Request;
-use App\Enums\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Tests\TestCase;

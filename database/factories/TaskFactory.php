@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Enums\OnHoldReason;
-use App\Models\Request;
 use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;

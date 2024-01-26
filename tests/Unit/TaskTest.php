@@ -1,10 +1,9 @@
 <?php
 
 use App\Enums\Priority;
-use App\Models\Incident;
+use App\Enums\Status;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
-use App\Enums\Status;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;

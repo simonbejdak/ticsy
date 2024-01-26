@@ -1,22 +1,18 @@
 <?php
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
-use App\Enums\TaskSequence;
+use App\Enums\Status;
 use App\Interfaces\Slable;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Enums\OnHoldReason;
-use App\Enums\Status;
-use App\Models\Task;
 use App\Models\User;
 use App\Services\SlaService;
 use App\Services\TaskService;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;

@@ -3,18 +3,17 @@
 
 namespace Tests\Unit;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
+use App\Enums\Status;
 use App\Interfaces\Slable;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Enums\OnHoldReason;
-use App\Enums\Status;
 use App\Models\User;
 use App\Services\SlaService;
 use Exception;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;

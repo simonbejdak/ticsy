@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Incident\IncidentCategory;
-use App\Models\Incident\IncidentItem;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

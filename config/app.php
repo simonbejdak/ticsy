@@ -184,7 +184,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'SortOrder' => App\Enums\SortOrder::class,
-        'TextInput' => App\Helpers\Fields\TextInput::class,
+        'TablePaginationIndexInput' => App\Helpers\Fields\TablePaginationIndexInput::class,
     ])->toArray(),
 
 ];

@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
+use App\Enums\Status;
 use App\Enums\Tab;
 use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
@@ -10,8 +12,6 @@ use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Enums\OnHoldReason;
-use App\Enums\Status;
 use App\Services\ActivityService;
 use App\Traits\HasFields;
 use App\Traits\HasTabs;

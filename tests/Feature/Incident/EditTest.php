@@ -3,21 +3,19 @@
 
 namespace Tests\Feature\Incident;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
+use App\Enums\Status;
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
-use App\Mail\IncidentCreated;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Enums\OnHoldReason;
-use App\Enums\Status;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\TestCase;
 

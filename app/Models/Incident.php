@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Enums\OnHoldReason;
 use App\Interfaces\Activitable;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;

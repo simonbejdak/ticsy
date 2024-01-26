@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Incident;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Priority;
+use App\Enums\Status;
 use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident;
-use App\Enums\OnHoldReason;
-use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
