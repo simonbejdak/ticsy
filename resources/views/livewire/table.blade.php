@@ -3,8 +3,31 @@
         <table class="w-full">
             <tr>
                 @foreach($table->getHeaders() as $header)
-                    <th wire:click="columnHeaderClicked('caller.name')" class="text-left pl-3 py-1 bg-white">
-                        {{ $header }}
+                    <th class="text-left pl-3 py-1 bg-white">
+                        <span
+                            class="flex flex-row items-center cursor-pointer"
+                            :class="'{{ $columnToSortBy == $header['propertyPath'] ? 'text-blue-500' : ' ' }}'"
+                            wire:click="columnHeaderClicked('{{ $header['propertyPath'] }}')"
+                        >
+                            {{ $header['header'] }}
+                            @if($columnToSortBy == $header['propertyPath'])
+                                @if($sortOrder == SortOrder::ASCENDING)
+                                    {{-- Downward --}}
+                                    <div class="ml-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-4 h-4 rotate-90">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                                        </svg>
+                                    </div>
+                                @else
+                                    {{-- Upward --}}
+                                    <div class="ml-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-4 h-4 -rotate-90">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                                        </svg>
+                                    </div>
+                                @endif
+                            @endif
+                        </span>
                     </th>
                 @endforeach
             </tr>

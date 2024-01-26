@@ -38,7 +38,7 @@
                             <x-resolver-panel />
                         @endif
                     @endauth
-                    <div class="px-32 w-full">
+                    <div class="px-10 w-full">
                         {{ $slot }}
                     </div>
                 </div>

@@ -16,7 +16,7 @@ class TasksTable extends \App\Livewire\Table
         return Table::make(Task::query()->with('caller'))
             ->sortByColumn($this->columnToSortBy)
             ->sortOrder($this->sortOrder)
-            ->column('Number', 'id', ['requests.edit', 'id'])
+            ->column('Number', 'id', ['tasks.edit', 'id'])
             ->column('Caller', 'caller.name')
             ->column('Resolver', 'resolver.name')
             ->column('Status', 'status.value')

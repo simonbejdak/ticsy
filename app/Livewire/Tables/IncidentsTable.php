@@ -16,7 +16,7 @@ class IncidentsTable extends \App\Livewire\Table
         return Table::make(Incident::query()->with('caller'))
             ->sortByColumn($this->columnToSortBy)
             ->sortOrder($this->sortOrder)
-            ->column('Number', 'id', ['requests.edit', 'id'])
+            ->column('Number', 'id', ['incidents.edit', 'id'])
             ->column('Caller', 'caller.name')
             ->column('Resolver', 'resolver.name')
             ->column('Status', 'status.value')

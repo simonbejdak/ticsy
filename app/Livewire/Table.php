@@ -23,6 +23,7 @@ abstract class Table extends Component
             $this->switchSortOrder();
         }
         $this->columnToSortBy = $column;
+        $this->render();
     }
 
     protected function switchSortOrder(): void

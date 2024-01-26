@@ -42,7 +42,14 @@ class Table
 
     function getHeaders(): array
     {
-        return array_keys($this->columns);
+        $headers = [];
+        foreach (array_keys($this->columns) as $header){
+            $headers[] = [
+                'header' => $header,
+                'propertyPath' => $this->columns[$header]['propertyPath'],
+            ];
+        }
+        return $headers;
     }
 
     function getRows(): array

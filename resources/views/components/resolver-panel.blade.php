@@ -8,18 +8,18 @@
         class="flex flex-col sticky top-2"
         x-show="open"
     >
-        <a href="{{ route('resolver-panel.incidents') }}">
-            <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:bg-gray-100 hover:cursor-pointer transition ease-in duration-75">
+        <a class="{{ Route::is('resolver-panel.incidents') == route('resolver-panel.incidents') ? 'bg-slate-800 text-white hover:bg-slate-700 ' : 'hover:bg-gray-100 '}}" href="{{ route('resolver-panel.incidents') }}">
+            <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:cursor-pointer transition ease-in duration-75">
                 Incidents
             </div>
         </a>
-        <a href="{{ route('resolver-panel.requests') }}">
-            <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:bg-gray-100 hover:cursor-pointer transition ease-in duration-75">
+        <a class="{{ Route::is('resolver-panel.requests') == route('resolver-panel.requests') ? 'bg-slate-800 text-white hover:bg-slate-700 ' : 'hover:bg-gray-100 '}}" href="{{ route('resolver-panel.requests') }}">
+            <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:cursor-pointer transition ease-in duration-75">
                 Requests
             </div>
         </a>
-        <a href="{{ route('resolver-panel.tasks') }}">
-            <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:bg-gray-100 hover:cursor-pointer transition ease-in duration-75">
+        <a class="{{ Route::is('resolver-panel.tasks') == route('resolver-panel.tasks') ? 'bg-slate-800 text-white hover:bg-slate-700 ' : 'hover:bg-gray-100 '}}" href="{{ route('resolver-panel.tasks') }}">
+            <div class="flex flex-row pl-4 py-1 border-t border-gray-200 hover:cursor-pointer transition ease-in duration-75">
                 Tasks
             </div>
         </a>
