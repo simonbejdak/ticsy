@@ -32,7 +32,7 @@ class Table
 
     function isPreviousPage(): bool
     {
-        return $this->paginationIndex > $this->pagination;
+        return $this->paginationIndex > 1;
     }
 
     function isNextPage(): int

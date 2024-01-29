@@ -8,7 +8,7 @@
         @endforeach
     </div>
     <div class="bg-white border border-gray-300 -mt-1 px-4 py-8">
-{{--        Due to Livewire nature we need to have a key defined for such dynamic Livewire component rendering, otherwise the component does not get refreshed properly after clicking on another tab --}}
+{{--        Due to Livewire nature we need to have a key defined for such dynamic Livewire component rendering, otherwise the component does not create refreshed properly after clicking on another tab --}}
         @livewire($this->viewedTab()->value, ['model' => $model], key(array_search($this->viewedTab(), $this->tabs())))
     </div>
 </div>

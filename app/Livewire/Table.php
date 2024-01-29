@@ -6,13 +6,13 @@ use App\Enums\SortOrder;
 use App\Helpers\Table\TableBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 abstract class Table extends Component
 {
-    #[Validate]
-    public int|null $paginationIndex = 1;
+    public $paginationIndex = 1;
+    #[Locked]
+    public $pagination = 25;
     #[Locked]
     public int $modelCount;
     #[Locked]
@@ -27,7 +27,8 @@ abstract class Table extends Component
         return \App\Helpers\Table\Table::make($this->query())
             ->sortByColumn($this->columnToSortBy)
             ->sortOrder($this->sortOrder)
-            ->paginationIndex($this->paginationIndex ?? 1);
+            ->paginate($this->pagination)
+            ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1);
     }
 
     function table(): \App\Helpers\Table\Table
@@ -58,8 +59,50 @@ abstract class Table extends Component
         $this->render();
     }
 
+    function doubleBackwardsClicked(): void
+{
+    $this->paginationIndex = 1;
+}
+
+    function backwardsClicked(): void
+    {
+        if($this->paginationIndex - $this->pagination < 1){
+            $this->paginationIndex = 1;
+        } else {
+            $this->paginationIndex -= $this->pagination;
+        }
+    }
+
+    function forwardClicked(): void
+    {
+        if($this->paginationIndex + $this->pagination > $this->modelCount - $this->pagination){
+            $this->paginationIndex = $this->modelCount - $this->pagination;
+        } else {
+            $this->paginationIndex += $this->pagination;
+        }
+    }
+
+    function doubleForwardClicked(): void
+    {
+        $this->paginationIndex = $this->modelCount - $this->pagination;
+    }
+
     protected function switchSortOrder(): void
     {
         $this->sortOrder == SortOrder::DESCENDING ? $this->sortOrder = SortOrder::ASCENDING : $this->sortOrder = SortOrder::DESCENDING;
+    }
+
+    protected function isPaginationIndexValid(): bool
+    {
+        if(is_numeric($this->paginationIndex)){
+            if($this->paginationIndex == 1){
+                return true;
+            } else {
+                if($this->paginationIndex > 1 && $this->paginationIndex <= $this->modelCount){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

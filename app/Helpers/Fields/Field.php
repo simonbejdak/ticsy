@@ -11,6 +11,7 @@ abstract class Field
     public bool $hasLabel;
     public string $value;
     public string $rules;
+    public string $width;
     protected string $displayName;
     public bool $hideable;
     protected bool $disabled;
@@ -25,6 +26,7 @@ abstract class Field
         $static = new static;
         $static->name = $name;
         $static->value = '';
+        $static->width = 'w-full';
         $static->hasLabel = true;
         $static->hideable = false;
         $static->disabled = false;
@@ -147,6 +149,6 @@ abstract class Field
         return
             ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
             ($this->error ? 'ring-1 ring-red-500 ' : '') .
-            'appearance-none px-2 w-full h-6 rounded-sm text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
+            'appearance-none px-2 ' . $this->width . ' h-6 rounded-sm text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }
