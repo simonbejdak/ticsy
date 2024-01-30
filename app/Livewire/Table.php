@@ -68,6 +68,8 @@ abstract class Table extends Component
         if($this->isPropertyPathValid($column)){
             if($this->columnToSortBy == $column){
                 $this->switchSortOrder();
+            } else {
+                $this->sortOrder = SortOrder::ASCENDING;
             }
             $this->columnToSortBy = $column;
             $this->render();

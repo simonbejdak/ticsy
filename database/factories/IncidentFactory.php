@@ -31,6 +31,15 @@ class IncidentFactory extends Factory
         });
     }
 
+    public function withResolver()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'resolver_id' => User::factory()->resolver(),
+            ];
+        });
+    }
+
     public function statusInProgress()
     {
         return $this->state(function (array $attributes) {
