@@ -32,6 +32,13 @@
                     </th>
                 @endforeach
             </tr>
+            <tr class="border-t border-gray-300">
+                @foreach($table->getHeaders() as $header)
+                    <td class="px-2 py-1 bg-slate-200 border-r border-white">
+                        <x-field :field="TableColumnSearchTextInput::make()->propertyPath($header['propertyPath'])" />
+                    </td>
+                @endforeach
+            </tr>
             @foreach($table->getRows() as $rowNumber => $row)
                 <tr
                     class="
@@ -55,4 +62,4 @@
         </table>
     </div>
     <x-table-pagination :$table />
-<div>
+</div>

@@ -2,13 +2,13 @@
 
 namespace App\Helpers\Fields;
 
-class TablePaginationIndexInput extends TextInput
+class TablePaginationIndexTextInput extends TextInput
 {
-    static function make(string $name): static
+    static function make(string $name = null): static
     {
-        $static = parent::make($name);
+        $static = parent::make('paginationIndex');
+        $static->withoutLabel();
         $static->width = 'w-14';
-        $static->placeholder = '';
 
         return $static;
     }

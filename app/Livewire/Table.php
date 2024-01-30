@@ -7,14 +7,18 @@ use App\Helpers\Table\TableBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use UnitEnum;
 
 abstract class Table extends Component
 {
     public $paginationIndex = 1;
+    public array $searchCases = [];
     #[Locked]
     public $pagination = 25;
     #[Locked]
     public int $modelCount;
+    #[Locked]
+    public array $propertyPaths;
     #[Locked]
     public string $columnToSortBy = 'id';
     #[Locked]
@@ -24,25 +28,34 @@ abstract class Table extends Component
     abstract function schema(): TableBuilder;
 
     function tableBuilder(): TableBuilder{
-        return \App\Helpers\Table\Table::make($this->query())
+        $tableBuilder = \App\Helpers\Table\Table::make($this->query())
             ->sortByColumn($this->columnToSortBy)
             ->sortOrder($this->sortOrder)
             ->paginate($this->pagination)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1);
+
+        foreach($this->searchCases as $propertyPath => $value){
+            if(is_array($value)){
+                $value = array_values($value)[0];
+            }
+            $tableBuilder->searchCase($propertyPath, $value);
+        }
+
+        return $tableBuilder;
+    }
+
+    function mount(): void
+    {
+        $table = $this->schema()->get();
+        $this->modelCount = $table->modelCount;
+        foreach($table->columns as $column){
+            $this->propertyPaths[] = $column['propertyPath'];
+        }
     }
 
     function table(): \App\Helpers\Table\Table
     {
-        $table = $this->schema()->get();
-        $this->modelCount = $table->modelCount;
-        return $table;
-    }
-
-    function rules(): array
-    {
-        return [
-            'paginationIndex' => 'nullable|integer|lt:' . $this->modelCount,
-        ];
+        return $this->schema()->get();
     }
 
     function render()
@@ -52,11 +65,20 @@ abstract class Table extends Component
 
     function columnHeaderClicked(string $column): void
     {
-        if($this->columnToSortBy == $column){
-            $this->switchSortOrder();
+        if($this->isPropertyPathValid($column)){
+            if($this->columnToSortBy == $column){
+                $this->switchSortOrder();
+            }
+            $this->columnToSortBy = $column;
+            $this->render();
         }
-        $this->columnToSortBy = $column;
-        $this->render();
+    }
+
+    function searchCase(string $propertyPath): void
+    {
+        if($this->isPropertyPathValid($propertyPath)){
+            $this->searchCases[$propertyPath] = $this->{$propertyPath};
+        }
     }
 
     function doubleBackwardsClicked(): void
@@ -104,5 +126,10 @@ abstract class Table extends Component
             }
         }
         return false;
+    }
+
+    protected function isPropertyPathValid(string $propertyPath): bool
+    {
+        return in_array($propertyPath, $this->propertyPaths);
     }
 }

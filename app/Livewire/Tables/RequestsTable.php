@@ -3,10 +3,11 @@
 namespace App\Livewire\Tables;
 
 use App\Helpers\Table\TableBuilder;
+use App\Livewire\Table;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Builder;
 
-class RequestsTable extends \App\Livewire\Table
+class RequestsTable extends Table
 {
     function query(): Builder
     {

@@ -12,6 +12,7 @@ abstract class Field
     public string $value;
     public string $rules;
     public string $width;
+    public string $wireModel;
     protected string $displayName;
     public bool $hideable;
     protected bool $disabled;
@@ -27,6 +28,7 @@ abstract class Field
         $static->name = $name;
         $static->value = '';
         $static->width = 'w-full';
+        $static->wireModel = $static->name;
         $static->hasLabel = true;
         $static->hideable = false;
         $static->disabled = false;
@@ -142,6 +144,12 @@ abstract class Field
     function isDisabled(): bool
     {
         return $this->disabled;
+    }
+
+    function wireModel(string $wireModel): self
+    {
+        $this->wireModel = $wireModel;
+        return $this;
     }
 
     function style(): string

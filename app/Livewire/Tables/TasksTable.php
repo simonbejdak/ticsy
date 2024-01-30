@@ -3,14 +3,15 @@
 namespace App\Livewire\Tables;
 
 use App\Helpers\Table\TableBuilder;
+use App\Livewire\Table;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
 
-class TasksTable extends \App\Livewire\Table
+class TasksTable extends Table
 {
     function query(): Builder
     {
-        return Task::query()->with('caller');
+        return Task::query()->started()->with('caller');
     }
 
     function schema(): TableBuilder

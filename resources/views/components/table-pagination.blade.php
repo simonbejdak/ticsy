@@ -21,7 +21,7 @@
             </svg>
         </div>
         <div>
-            <x-field :field="TablePaginationIndexInput::make('paginationIndex')->withoutLabel()" />
+            <x-field :field="TablePaginationIndexTextInput::make()" />
         </div>
         <div class="text-black text-xs px-1">
             {{ 'to ' . $table->to() . ' from ' . $table->modelCount }}

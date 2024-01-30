@@ -8,15 +8,23 @@
         </div>
     @endif
     @if($field->hasAnchor())<a x-show="@json($field->hasAnchor())" href="{{ $field->anchor }}">@endif
-        <x-field-input
-            class="p-2"
-            :name="$field->name"
-            :value="$field->value"
-            :error="$errors->has($field->name)"
-            :style="$field->style()"
-            :disabled="$field->isDisabled()"
-            :placeholder="$field->placeholder"
-            :anchor="$field->hasAnchor()"
-        />
+        <div
+            wire:key="{{ rand() }}"
+            class="relative"
+            x-data="{
+                error: @json($errors->has($field->name)),
+                disabled: @json($field->isDisabled())
+            }"
+            >
+                <input
+                    @click="error = false"
+                    value="{{ $field->value }}"
+                    class="{{ $field->style() }}"
+                    :class="error ? '{{ 'ring-1 ring-red-500 ' }}' : ''"
+                    wire:model.lazy="{{ $field->wireModel }}"
+                    placeholder="{{ $field->placeholder }}"
+                    {{ ($field->isDisabled()) ? ' disabled' : '' }}
+                />
+            </div>
     @if($field->hasAnchor())</a>@endif
 </x-field-layout>

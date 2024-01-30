@@ -3,10 +3,11 @@
 namespace App\Livewire\Tables;
 
 use App\Helpers\Table\TableBuilder;
+use App\Livewire\Table;
 use App\Models\Incident;
 use Illuminate\Database\Eloquent\Builder;
 
-class IncidentsTable extends \App\Livewire\Table
+class IncidentsTable extends Table
 {
     function query(): Builder
     {

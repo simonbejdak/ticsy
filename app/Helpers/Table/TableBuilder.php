@@ -49,4 +49,10 @@ class TableBuilder
     {
         return $this->table->create();
     }
+
+    public function searchCase(string $propertyPath, string $value): self
+    {
+        $this->table->addSearchCase($propertyPath, $value);
+        return $this;
+    }
 }

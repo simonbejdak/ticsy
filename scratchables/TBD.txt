@@ -22,12 +22,14 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 19. Resolver Panel -- in progress
 - flexible sidebar -- done
 - reusable table definition to examine existing entities (Incident, Request, Task, Change, etc..) in application -- done
-- if resolver is in specific sidebar tab, make it apparent it is selected
-- ability to sort table results by  clicking on table header either in ascendant, or descendant order
+- if resolver is in specific sidebar tab, make it apparent it is selected -- done
+- ability to sort table results by clicking on table header either in ascendant, or descendant order -- done
+- ability to paginate through the table -- done
+- resolver panel tabs should be visible only by resolvers and managers -- done
+- make sure, that malicious user cannot manipulate propertyPaths -- done
 - ability to search through each column by typing text
-- ability to paginate through the table
+- resolver panel pages should be visible only by resolvers and managers, i.e. wrap the ResolverPanelController to middleware
 - ability to save favorite sidebar tab, and lookup saved favorites in sidebar navigation on top
-- resolver panel tabs should be visible only by resolvers and managers
 
 20. Statistics
 21. Knowledge articles for common problems

@@ -5,11 +5,14 @@ namespace App\Helpers\Table;
 use App\Enums\SortOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class Table
 {
     public Builder $builder;
     public array $columns;
+    public array $searchCases;
     public int $pagination;
     public int $paginationIndex;
     public int $modelCount;
@@ -23,6 +26,7 @@ class Table
     static function make(Builder $builder): TableBuilder
     {
         $static = new static();
+        $static->searchCases = [];
         $static->pagination = 25;
         $static->paginationIndex = 1;
         $static->builder = $builder;
@@ -71,9 +75,20 @@ class Table
     function create(): self
     {
         $this->models = $this->builder->get();
+        foreach ($this->searchCases as $propertyPath => $value){
+            $this->models = $this->models->filter(function ($model) use ($propertyPath, $value){
+                return str_contains($this->data_get($model, $propertyPath), $value);
+            });
+        }
         $this->models = $this->sortOrder == SortOrder::DESCENDING ? $this->models->sortByDesc($this->sortByColumn) : $this->models->sortBy($this->sortByColumn);
         $this->paginatedModels = $this->getPaginated();
         $this->modelCount = count($this->models);
+        return $this;
+    }
+
+    function addSearchCase(string $propertyPath, string $value): self
+    {
+        $this->searchCases[$propertyPath] = $value;
         return $this;
     }
 
@@ -94,5 +109,14 @@ class Table
     protected function getPaginated(): Collection
     {
         return $this->models->skip($this->paginationIndex - 1)->take($this->pagination);
+    }
+
+    protected function data_get($target, string $propertyPath): string
+    {
+        $data = data_get($target, $propertyPath);
+        if($data instanceof UnitEnum){
+            $data = $data->value;
+        }
+        return $data;
     }
 }

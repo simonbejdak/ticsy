@@ -24,7 +24,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 21. Subcategories
 
 Refactor ideas
-- remove resolver and can change status columns in users table -- done
+- remove resolver and can change status propertyPaths in users table -- done
 - refactor route web file -- done
 - rename all relationship tests -- done
 - foreach iterations in seeders can be shortened -- done
