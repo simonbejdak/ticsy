@@ -10,9 +10,13 @@ use UnitEnum;
 
 class Table
 {
+    const DEFAULT_PAGINATION = 25;
+
     public Builder $builder;
     public array $columns;
     public array $searchCases;
+    public bool $paginate;
+    public bool $columnSearch;
     public int $pagination;
     public int $paginationIndex;
     public int $modelCount;
@@ -27,7 +31,9 @@ class Table
     {
         $static = new static();
         $static->searchCases = [];
-        $static->pagination = 25;
+        $static->paginate = true;
+        $static->columnSearch = true;
+        $static->pagination = $static::DEFAULT_PAGINATION;
         $static->paginationIndex = 1;
         $static->builder = $builder;
         $static->sortOrder = SortOrder::ASCENDING;

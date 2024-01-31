@@ -45,6 +45,18 @@ class TableBuilder
         return $this;
     }
 
+    function withoutPagination(): self
+    {
+        $this->table->paginate = false;
+        return $this;
+    }
+
+    function withoutColumnSearch(): self
+    {
+        $this->table->columnSearch = false;
+        return $this;
+    }
+
     function get(): Table
     {
         return $this->table->create();

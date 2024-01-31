@@ -23,6 +23,8 @@ class TaskableTasksTable extends Table
         return $this->tableBuilder()
             ->column('Number', 'id', ['tasks.edit', 'id'])
             ->column('Description', 'description')
-            ->column('Status', 'status.value');
+            ->column('Status', 'status.value')
+            ->withoutPagination()
+            ->withoutColumnSearch();
     }
 }

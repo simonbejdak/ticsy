@@ -27,8 +27,8 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 - ability to paginate through the table -- done
 - resolver panel tabs should be visible only by resolvers and managers -- done
 - make sure, that malicious user cannot manipulate propertyPaths -- done
-- ability to search through each column by typing text
-- resolver panel pages should be visible only by resolvers and managers, i.e. wrap the ResolverPanelController to middleware
+- ability to search through each column by typing text -- done
+- resolver panel pages should be visible only by resolvers and managers, i.e. wrap the ResolverPanelController to middleware -- done
 - ability to save favorite sidebar tab, and lookup saved favorites in sidebar navigation on top
 
 20. Statistics
@@ -42,6 +42,8 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 Use case problems:
 - Priority 1 is shown even if user has no permission to set priority one
 - Comment on EditForms required even if status is already on hold, and it was not changed to on hold at all.. we need to required the comment only if the status was changed
+- Very long descriptions span tables to unlimited width
+- Table component is not horizontally scrollable
 
 Refactor Ideas:
 - change TicketTrait to separate traits

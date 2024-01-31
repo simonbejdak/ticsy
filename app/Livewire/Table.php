@@ -20,6 +20,10 @@ abstract class Table extends Component
     #[Locked]
     public array $propertyPaths;
     #[Locked]
+    public bool $paginate;
+    #[Locked]
+    public bool $columnSearch;
+    #[Locked]
     public string $columnToSortBy = 'id';
     #[Locked]
     public SortOrder $sortOrder = SortOrder::DESCENDING;
@@ -48,6 +52,8 @@ abstract class Table extends Component
     {
         $table = $this->schema()->get();
         $this->modelCount = $table->modelCount;
+        $this->paginate = $table->paginate;
+        $this->columnSearch = $table->columnSearch;
         foreach($table->columns as $column){
             $this->propertyPaths[] = $column['propertyPath'];
         }
@@ -78,7 +84,7 @@ abstract class Table extends Component
 
     function searchCase(string $propertyPath): void
     {
-        if($this->isPropertyPathValid($propertyPath)){
+        if($this->isPropertyPathValid($propertyPath) && $this->columnSearch){
             $this->searchCases[$propertyPath] = $this->{$propertyPath};
         }
     }

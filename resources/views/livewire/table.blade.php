@@ -1,5 +1,5 @@
 <div>
-    <x-table-pagination :$table />
+    @if($paginate)<x-table-pagination :$table />@endif
     <div class="border border-gray-300 rounded-sm overflow-hidden text-sm">
         <table class="w-full">
             <tr>
@@ -32,13 +32,15 @@
                     </th>
                 @endforeach
             </tr>
-            <tr class="border-t border-gray-300">
-                @foreach($table->getHeaders() as $header)
-                    <td class="px-2 py-1 bg-slate-200 border-r border-white">
-                        <x-field :field="TableColumnSearchTextInput::make()->propertyPath($header['propertyPath'])" />
-                    </td>
-                @endforeach
-            </tr>
+            @if($columnSearch)
+                <tr class="border-t border-gray-300">
+                    @foreach($table->getHeaders() as $header)
+                        <td class="px-2 py-1 bg-slate-200 border-r border-white">
+                            <x-field :field="TableColumnSearchTextInput::make()->propertyPath($header['propertyPath'])" />
+                        </td>
+                    @endforeach
+                </tr>
+            @endif
             @foreach($table->getRows() as $rowNumber => $row)
                 <tr
                     class="
@@ -61,5 +63,5 @@
             @endforeach
         </table>
     </div>
-    <x-table-pagination :$table />
+    @if($paginate)<x-table-pagination :$table />@endif
 </div>

@@ -10,9 +10,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Request\Request>
- */
 class RequestFactory extends Factory
 {
     public function definition(): array
@@ -58,6 +55,15 @@ class RequestFactory extends Factory
             return [
                 'category_id' => RequestCategory::SERVER,
                 'item_id' => RequestItem::MAINTENANCE,
+            ];
+        });
+    }
+
+    public function withResolver()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'resolver_id' => User::factory()->resolver(),
             ];
         });
     }

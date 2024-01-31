@@ -4,34 +4,47 @@ namespace Database\Factories;
 
 use App\Enums\OnHoldReason;
 use App\Enums\Status;
+use App\Models\Request;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
- */
 class TaskFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
             'caller_id' => User::factory(),
-//            'request_id' => Request::factory(),
             'description' => fake()->realText(40),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
     }
 
+    public function withCaller(User $caller)
+    {
+        $taskable = Request::factory(['caller_id' => $caller])->create();
+
+        return $this->state(function () use ($taskable){
+            return [
+                'taskable_type' => get_class($taskable),
+                'taskable_id' => $taskable->id,
+            ];
+        });
+    }
+
+    public function withResolver()
+    {
+        return $this->state(function () {
+            return [
+                'resolver_id' => User::factory()->resolver(),
+            ];
+        });
+    }
+
     public function statusInProgress()
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
                 'status' => Status::IN_PROGRESS,
             ];
@@ -40,7 +53,7 @@ class TaskFactory extends Factory
 
     public function statusOnHold()
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
                 'status' => Status::ON_HOLD,
                 'on_hold_reason' => OnHoldReason::CALLER_RESPONSE,
@@ -50,7 +63,7 @@ class TaskFactory extends Factory
 
     public function statusResolved()
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
                 'status' => Status::RESOLVED,
             ];
@@ -59,7 +72,7 @@ class TaskFactory extends Factory
 
     public function statusCancelled()
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
                 'status' => Status::CANCELLED,
             ];

@@ -4,14 +4,14 @@ namespace Tables;
 
 use App\Enums\Priority;
 use App\Helpers\Table\Table;
-use App\Livewire\Tables\IncidentsTable;
-use App\Models\Incident;
+use App\Livewire\Tables\RequestsTable;
+use App\Models\Request;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class IncidentsTableTest extends TestCase
+class RequestsTableTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,113 +21,113 @@ class IncidentsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.incidents'));
+        $response = $this->get(route('resolver-panel.requests'));
 
         $response->assertSeeInOrder(['Number', 'Description', 'Caller', 'Resolver', 'Status', 'Priority']);
     }
 
     /** @test */
-    function it_renders_incident_data_in_correct_order()
+    function it_renders_requests_data_in_correct_order()
     {
-        $incidents = Incident::factory(3)->withResolver()->create();
+        $requests = Request::factory(3)->withResolver()->create();
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.incidents'));
-        foreach ($incidents as $incident) {
+        $response = $this->get(route('resolver-panel.requests'));
+        foreach ($requests as $request) {
             $response->assertSeeInOrder([
-                $incident->id,
-                $incident->description,
-                $incident->caller->name,
-                $incident->resolver->name,
-                $incident->status->value,
-                $incident->priority->value,
+                $request->id,
+                $request->description,
+                $request->caller->name,
+                $request->resolver->name,
+                $request->status->value,
+                $request->priority->value,
             ]);
         }
     }
 
     /** @test */
-    function it_renders_incidents_in_descending_order_by_default()
+    function it_renders_requests_in_descending_order_by_default()
     {
-        $incident_one = Incident::factory()->create();
-        $incident_two = Incident::factory()->create();
-        $incident_three = Incident::factory()->create();
+        $request_one = Request::factory()->create();
+        $request_two = Request::factory()->create();
+        $request_three = Request::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.incidents'));
+        $response = $this->get(route('resolver-panel.requests'));
 
-        $response->assertSeeInOrder([$incident_three->caller->name, $incident_two->caller->name, $incident_one->caller->name]);
+        $response->assertSeeInOrder([$request_three->caller->name, $request_two->caller->name, $request_one->caller->name]);
     }
 
     /** @test */
-    function it_renders_incidents_in_ascending_order_if_wire_click_on_number_header()
+    function it_renders_requests_in_ascending_order_if_wire_click_on_number_header()
     {
-        $incident_one = Incident::factory()->create();
-        $incident_two = Incident::factory()->create();
-        $incident_three = Incident::factory()->create();
+        $request_one = Request::factory()->create();
+        $request_two = Request::factory()->create();
+        $request_three = Request::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->call('columnHeaderClicked', 'id')
-            ->assertSeeInOrder([$incident_one->caller->name, $incident_two->caller->name, $incident_three->caller->name]);
+            ->assertSeeInOrder([$request_one->caller->name, $request_two->caller->name, $request_three->caller->name]);
     }
 
     /** @test */
-    function it_renders_incidents_in_descending_order_if_wire_click_twice_on_number_header()
+    function it_renders_requests_in_descending_order_if_wire_click_twice_on_number_header()
     {
-        $incident_one = Incident::factory()->create();
-        $incident_two = Incident::factory()->create();
-        $incident_three = Incident::factory()->create();
+        $request_one = Request::factory()->create();
+        $request_two = Request::factory()->create();
+        $request_three = Request::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->call('columnHeaderClicked', 'id')
             ->call('columnHeaderClicked', 'id')
-            ->assertSeeInOrder([$incident_three->caller->name, $incident_two->caller->name, $incident_one->caller->name]);
+            ->assertSeeInOrder([$request_three->caller->name, $request_two->caller->name, $request_one->caller->name]);
     }
 
     /** @test */
-    function it_renders_incidents_in_ascending_order_if_wire_click_on_priority_header()
+    function it_renders_requests_in_ascending_order_if_wire_click_on_priority_header()
     {
-        $incident_one = Incident::factory()->create();
-        $incident_two = Incident::factory()->create();
-        $incident_three = Incident::factory()->create();
+        $request_one = Request::factory()->create();
+        $request_two = Request::factory()->create();
+        $request_three = Request::factory()->create();
         $resolver = User::factory()->resolver()->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->call('columnHeaderClicked', 'id')
             ->call('columnHeaderClicked', 'id')
-            ->assertSeeInOrder([$incident_three->caller->name, $incident_two->caller->name, $incident_one->caller->name]);
+            ->assertSeeInOrder([$request_three->caller->name, $request_two->caller->name, $request_one->caller->name]);
     }
 
     /** @test */
-    function it_renders_incidents_in_ascending_order_based_on_priority_if_wire_click_on_priority_header()
+    function it_renders_requests_in_ascending_order_based_on_priority_if_wire_click_on_priority_header()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident_one = Incident::factory(['priority' => Priority::ONE])->create();
-        $incident_two = Incident::factory(['priority' => Priority::TWO])->create();
-        $incident_three = Incident::factory(['priority' => Priority::THREE])->create();
-        $incident_four = Incident::factory(['priority' => Priority::FOUR])->create();
+        $request_one = Request::factory(['priority' => Priority::ONE])->create();
+        $request_two = Request::factory(['priority' => Priority::TWO])->create();
+        $request_three = Request::factory(['priority' => Priority::THREE])->create();
+        $request_four = Request::factory(['priority' => Priority::FOUR])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->call('columnHeaderClicked', 'priority.value')
             ->assertSeeInOrder([Priority::ONE->value, Priority::TWO->value, Priority::THREE->value, Priority::FOUR->value]);
     }
 
     /** @test */
-    function it_filters_incidents_based_on_id_search_text_input()
+    function it_filters_requests_based_on_id_search_text_input()
     {
         $resolver = User::factory()->resolver()->create();
-        Incident::factory(['id' => 1234])->create();
-        Incident::factory(['id' => 5678])->create();
+        Request::factory(['id' => 1234])->create();
+        Request::factory(['id' => 5678])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->assertSee('1234')
             ->assertSee('5678')
             ->set('searchCases.id', '1234')
@@ -142,18 +142,18 @@ class IncidentsTableTest extends TestCase
     }
 
     /** @test */
-    function it_filters_incidents_based_on_description_search_text_input()
+    function it_filters_requests_based_on_description_search_text_input()
     {
         $resolver = User::factory()->resolver()->create();
-        Incident::factory([
+        Request::factory([
             'description' => 'My computer is not working'
         ])->create();
-        Incident::factory([
+        Request::factory([
             'description' => 'Server is down'
         ])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->assertSee('My computer is not working')
             ->assertSee('Server is down')
             ->set('searchCases.description', 'My c')
@@ -171,18 +171,18 @@ class IncidentsTableTest extends TestCase
     }
 
     /** @test */
-    function it_filters_incidents_based_on_caller_search_text_input()
+    function it_filters_requests_based_on_caller_search_text_input()
     {
         $resolver = User::factory()->resolver()->create();
-        Incident::factory([
+        Request::factory([
             'caller_id' => User::factory(['name' => 'Eugen Slavic'])->create()
         ])->create();
-        Incident::factory([
+        Request::factory([
             'caller_id' => User::factory(['name' => 'Anastasia Yosling'])->create()
         ])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->assertSee('Eugen Slavic')
             ->assertSee('Anastasia Yosling')
             ->set('searchCases.caller.name', 'Eug')
@@ -197,18 +197,18 @@ class IncidentsTableTest extends TestCase
     }
 
     /** @test */
-    function it_filters_incidents_based_on_resolver_search_text_input()
+    function it_filters_requests_based_on_resolver_search_text_input()
     {
         $resolver = User::factory()->resolver()->create();
-        Incident::factory([
+        Request::factory([
             'resolver_id' => User::factory(['name' => 'Eugen Slavic'])->resolver()->create()
         ])->create();
-        Incident::factory([
+        Request::factory([
             'resolver_id' => User::factory(['name' => 'Anastasia Yosling'])->resolver()->create()
         ])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->assertSee('Eugen Slavic')
             ->assertSee('Anastasia Yosling')
             ->set('searchCases.resolver.name', 'Eug')
@@ -223,15 +223,15 @@ class IncidentsTableTest extends TestCase
     }
 
     /** @test */
-    function it_filters_incidents_based_on_status_search_text_input()
+    function it_filters_requests_based_on_status_search_text_input()
     {
         $resolver = User::factory()->resolver()->create();
-        Incident::factory()->statusCancelled()->create();
-        Incident::factory()->statusInProgress()->create();
-        Incident::factory()->statusResolved()->create();
+        Request::factory()->statusCancelled()->create();
+        Request::factory()->statusInProgress()->create();
+        Request::factory()->statusResolved()->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
+            ->test(RequestsTable::class)
             ->assertSee('Cancelled')
             ->assertSee('In Progress')
             ->assertSee('Resolved')
@@ -254,88 +254,88 @@ class IncidentsTableTest extends TestCase
     }
 
     /** @test */
-    function it_filters_incidents_based_on_priority_search_text_input()
+    function it_filters_requests_based_on_priority_search_text_input()
     {
         $resolver = User::factory()->resolver()->create();
-        $incident_priority_one = Incident::factory([
+        $request_priority_one = Request::factory([
             'id' => 99999996,
             'priority' => Priority::ONE
         ])->create();
-        $incident_priority_two = Incident::factory([
+        $request_priority_two = Request::factory([
             'id' => 99999997,
             'priority' => Priority::TWO
         ])->create();
-        $incident_priority_three = Incident::factory([
+        $request_priority_three = Request::factory([
             'id' => 99999998,
             'priority' => Priority::THREE
         ])->create();
-        $incident_priority_four = Incident::factory([
+        $request_priority_four = Request::factory([
             'id' => 99999999,
             'priority' => Priority::FOUR
         ])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
-            ->assertSee($incident_priority_one->id)
-            ->assertSee($incident_priority_two->id)
-            ->assertSee($incident_priority_three->id)
-            ->assertSee($incident_priority_four->id)
+            ->test(RequestsTable::class)
+            ->assertSee($request_priority_one->id)
+            ->assertSee($request_priority_two->id)
+            ->assertSee($request_priority_three->id)
+            ->assertSee($request_priority_four->id)
             ->set('searchCases.priority.value', '1')
-            ->assertSee($incident_priority_one->id)
-            ->assertDontSee($incident_priority_two->id)
-            ->assertDontSee($incident_priority_three->id)
-            ->assertDontSee($incident_priority_four->id)
+            ->assertSee($request_priority_one->id)
+            ->assertDontSee($request_priority_two->id)
+            ->assertDontSee($request_priority_three->id)
+            ->assertDontSee($request_priority_four->id)
             ->set('searchCases.priority.value', '2')
-            ->assertDontSee($incident_priority_one->id)
-            ->assertSee($incident_priority_two->id)
-            ->assertDontSee($incident_priority_three->id)
-            ->assertDontSee($incident_priority_four->id)
+            ->assertDontSee($request_priority_one->id)
+            ->assertSee($request_priority_two->id)
+            ->assertDontSee($request_priority_three->id)
+            ->assertDontSee($request_priority_four->id)
             ->set('searchCases.priority.value', '3')
-            ->assertDontSee($incident_priority_one->id)
-            ->assertDontSee($incident_priority_two->id)
-            ->assertSee($incident_priority_three->id)
-            ->assertDontSee($incident_priority_four->id)
+            ->assertDontSee($request_priority_one->id)
+            ->assertDontSee($request_priority_two->id)
+            ->assertSee($request_priority_three->id)
+            ->assertDontSee($request_priority_four->id)
             ->set('searchCases.priority.value', '4')
-            ->assertDontSee($incident_priority_one->id)
-            ->assertDontSee($incident_priority_two->id)
-            ->assertDontSee($incident_priority_three->id)
-            ->assertSee($incident_priority_four->id)
+            ->assertDontSee($request_priority_one->id)
+            ->assertDontSee($request_priority_two->id)
+            ->assertDontSee($request_priority_three->id)
+            ->assertSee($request_priority_four->id)
             ->set('searchCases.priority.value', '')
-            ->assertSee($incident_priority_one->id)
-            ->assertSee($incident_priority_two->id)
-            ->assertSee($incident_priority_three->id)
-            ->assertSee($incident_priority_four->id);
+            ->assertSee($request_priority_one->id)
+            ->assertSee($request_priority_two->id)
+            ->assertSee($request_priority_three->id)
+            ->assertSee($request_priority_four->id);
     }
 
     /** @test */
-    function it_paginates_25_incidents_per_page_by_default()
+    function it_paginates_25_requests_per_page_by_default()
     {
         $resolver = User::factory()->resolver()->create();
-        // Order is supposed to be descendant by default, therefore second bulk of incidents should be displayed on the first page
-        Incident::factory(25, ['description' => 'Second page incident'])->create();
-        Incident::factory(25, ['description' => 'First page incident'])->create();
+        // Order is supposed to be descendant by default, therefore second bulk of requests should be displayed on the first page
+        Request::factory(25, ['description' => 'Second page request'])->create();
+        Request::factory(25, ['description' => 'First page request'])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
-            ->assertSee('First page incident')
-            ->assertDontSee('Second page incident');
+            ->test(RequestsTable::class)
+            ->assertSee('First page request')
+            ->assertDontSee('Second page request');
     }
 
     /** @test */
-    function it_renders_incidents_based_on_pagination_index_input_field()
+    function it_renders_requests_based_on_pagination_index_input_field()
     {
         $resolver = User::factory()->resolver()->create();
-        // Order is supposed to be descendant by default, therefore second bulk of incidents should be displayed on the first page
-        Incident::factory(Table::DEFAULT_PAGINATION)->create();
-        Incident::factory(Table::DEFAULT_PAGINATION, ['description' => 'Test incident'])->create();
+        // Order is supposed to be descendant by default, therefore second bulk of requests should be displayed on the first page
+        Request::factory(Table::DEFAULT_PAGINATION)->create();
+        Request::factory(Table::DEFAULT_PAGINATION, ['description' => 'Test request'])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
-            ->assertSee('Test incident')
+            ->test(RequestsTable::class)
+            ->assertSee('Test request')
             ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
-            ->assertDontSee('Test incident')
+            ->assertDontSee('Test request')
             ->set('paginationIndex', 1)
-            ->assertSee('Test incident');
+            ->assertSee('Test request');
     }
 
     /**
@@ -345,20 +345,20 @@ class IncidentsTableTest extends TestCase
     function it_renders_first_pagination_page_if_pagination_index_input_is_invalid($invalidInput)
     {
         $resolver = User::factory()->resolver()->create();
-        // Order is supposed to be descendant by default, therefore second bulk of incidents should be displayed on the first page
-        Incident::factory(Table::DEFAULT_PAGINATION, ['description' => 'Second page incident'])->create();
-        Incident::factory(Table::DEFAULT_PAGINATION, ['description' => 'First page incident'])->create();
+        // Order is supposed to be descendant by default, therefore second bulk of requests should be displayed on the first page
+        Request::factory(Table::DEFAULT_PAGINATION, ['description' => 'Second page request'])->create();
+        Request::factory(Table::DEFAULT_PAGINATION, ['description' => 'First page request'])->create();
 
         Livewire::actingAs($resolver)
-            ->test(IncidentsTable::class)
-            ->assertSee('First page incident')
-            ->assertDontSee('Second page incident')
+            ->test(RequestsTable::class)
+            ->assertSee('First page request')
+            ->assertDontSee('Second page request')
             ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
-            ->assertDontSee('First page incident')
-            ->assertSee('Second page incident')
+            ->assertDontSee('First page request')
+            ->assertSee('Second page request')
             ->set('paginationIndex', $invalidInput)
-            ->assertSee('First page incident')
-            ->assertDontSee('Second page incident');
+            ->assertSee('First page request')
+            ->assertDontSee('Second page request');
     }
 
     static function invalidPaginationIndexInput(): array
