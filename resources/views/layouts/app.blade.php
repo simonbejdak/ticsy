@@ -35,7 +35,7 @@
                 <div class="flex flex-row">
                     @auth
                         @if(auth()->user()->hasPermissionTo('view_resolver_panel'))
-                            <x-resolver-panel />
+                            <livewire:resolver-panel />
                         @endif
                     @endauth
                     <div class="px-10 w-full">

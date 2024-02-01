@@ -183,6 +183,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'ResolverPanelTab' => App\Enums\ResolverPanelTab::class,
         'SortOrder' => App\Enums\SortOrder::class,
         'TableColumnSearchTextInput' => App\Helpers\Fields\TableColumnSearchTextInput::class,
         'TablePaginationIndexTextInput' => App\Helpers\Fields\TablePaginationIndexTextInput::class,
