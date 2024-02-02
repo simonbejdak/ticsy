@@ -473,7 +473,10 @@ class UpdateTest extends TestCase
     }
 
     static function invalidStatuses(){
-        return ['word', ''];
+        return [
+            ['word'],
+            [''],
+        ];
     }
 
     static function invalidOnHoldReasons(){

@@ -20,7 +20,7 @@ class ResolverPanelOption extends Component
     #[Locked]
     public bool $favorite;
 
-    function mount(\App\Enums\ResolverPanelOption $option, bool $selected): void
+    function mount(\App\Enums\ResolverPanelOption $option, bool $selected = false): void
     {
         $this->option = $option;
         $this->value = $this->option->value;

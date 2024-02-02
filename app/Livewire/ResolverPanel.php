@@ -16,7 +16,7 @@ class ResolverPanel extends Component
     #[Locked]
     public array $options;
     #[Locked]
-    public string $currentRoute;
+    public string|null $currentRoute;
 
     function mount(): void
     {
