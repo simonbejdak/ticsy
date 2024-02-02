@@ -62,7 +62,18 @@ class TableBuilder
         return $this->table->create();
     }
 
-    public function searchCase(string $propertyPath, string $value): self
+    public function searchCases(array $searchCases): self
+    {
+        foreach($searchCases as $propertyPath => $value){
+            if(is_array($value)){
+                $value = array_values($value)[0];
+            }
+            $this->searchCase($propertyPath, $value);
+        }
+        return $this;
+    }
+
+    protected function searchCase(string $propertyPath, string $value): self
     {
         $this->table->addSearchCase($propertyPath, $value);
         return $this;

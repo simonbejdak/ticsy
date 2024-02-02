@@ -32,20 +32,12 @@ abstract class Table extends Component
     abstract function schema(): TableBuilder;
 
     function tableBuilder(): TableBuilder{
-        $tableBuilder = \App\Helpers\Table\Table::make($this->query())
+        return \App\Helpers\Table\Table::make($this->query())
             ->sortByColumn($this->columnToSortBy)
             ->sortOrder($this->sortOrder)
             ->paginate($this->pagination)
-            ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1);
-
-        foreach($this->searchCases as $propertyPath => $value){
-            if(is_array($value)){
-                $value = array_values($value)[0];
-            }
-            $tableBuilder->searchCase($propertyPath, $value);
-        }
-
-        return $tableBuilder;
+            ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
+            ->searchCases($this->searchCases);
     }
 
     function mount(): void
