@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Enums\ResolverPanelOption;
+use App\Models\FavoriteResolverPanelOption;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
@@ -55,6 +57,21 @@ class UserTest extends TestCase
 
         $this->assertEquals($resolverTwo->id, $incident->resolver_id);
         $this->assertNotEquals($resolverOne->id, $incident->resolver_id);
+    }
+
+    public function test_it_has_many_favorite_resolver_panel_options()
+    {
+        $user = User::factory()->create();
+        FavoriteResolverPanelOption::factory([
+            'user_id' => $user,
+            'option' => ResolverPanelOption::INCIDENTS,
+        ])->create();
+        FavoriteResolverPanelOption::factory([
+            'user_id' => $user,
+            'option' => ResolverPanelOption::REQUESTS,
+        ])->create();
+
+        $this->assertCount(2, $user->favoriteResolverPanelOptions);
     }
 
     public function test_it_has_correct_default_profile_picture()

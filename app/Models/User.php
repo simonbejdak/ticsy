@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ResolverPanelOption;
+use App\Enums\ResolverPanelTab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,7 +19,12 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     public const DEFAULT_PROFILE_PICTURE = 'default_profile_picture.png';
 
+    protected $attributes = [
+        'selected_resolver_panel_tab' => ResolverPanelTab::ALL,
+    ];
+
     protected $casts = [
+        'selected_resolver_panel_tab' => ResolverPanelTab::class,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
@@ -55,6 +62,11 @@ class User extends Authenticatable
         return $this->hasMany(Request::class, 'resolver_id');
     }
 
+    public function favoriteResolverPanelOptions(): HasMany
+    {
+        return $this->hasMany(FavoriteResolverPanelOption::class);
+    }
+
     public function isGroupMember(Group $group)
     {
         return $this->groups()->where('id', $group->id)->exists();
@@ -63,6 +75,16 @@ class User extends Authenticatable
     public function isResolver(): bool
     {
         return $this->hasRole('resolver');
+    }
+
+    public function hasFavoriteResolverPanelOption(ResolverPanelOption $option): bool
+    {
+        return count($this->favoriteResolverPanelOptions()->where('option', '=', $option)->get()) == 1;
+    }
+
+    public function getFavoriteResolverPanelOption(ResolverPanelOption $option): FavoriteResolverPanelOption
+    {
+        return $this->favoriteResolverPanelOptions()->where('option', '=', $option)->first();
     }
 
     public static function getSystemUser()
@@ -78,5 +100,19 @@ class User extends Authenticatable
         }
 
         return $value;
+    }
+
+    public function getFavoriteResolverPanelOptions(): array
+    {
+        $options = [];
+        foreach ($this->favoriteResolverPanelOptions as $option){
+            $options[] = $option->option;
+        }
+        return $options;
+    }
+
+    public function getSelectedResolverPanelTab(): ResolverPanelTab
+    {
+        return $this->selected_resolver_panel_tab;
     }
 }
