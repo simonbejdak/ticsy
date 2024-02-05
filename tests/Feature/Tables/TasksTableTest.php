@@ -322,13 +322,13 @@ class TasksTableTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
-        Task::factory(Table::DEFAULT_PAGINATION)->started()->create();
-        Task::factory(Table::DEFAULT_PAGINATION, ['description' => 'Test task'])->started()->create();
+        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE)->started()->create();
+        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Test task'])->started()->create();
 
         Livewire::actingAs($resolver)
             ->test(TasksTable::class)
             ->assertSee('Test task')
-            ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
             ->assertDontSee('Test task')
             ->set('paginationIndex', 1)
             ->assertSee('Test task');
@@ -342,14 +342,14 @@ class TasksTableTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
-        Task::factory(Table::DEFAULT_PAGINATION, ['description' => 'Second page task'])->started()->create();
-        Task::factory(Table::DEFAULT_PAGINATION, ['description' => 'First page task'])->started()->create();
+        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Second page task'])->started()->create();
+        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'First page task'])->started()->create();
 
         Livewire::actingAs($resolver)
             ->test(TasksTable::class)
             ->assertSee('First page task')
             ->assertDontSee('Second page task')
-            ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
             ->assertDontSee('First page task')
             ->assertSee('Second page task')
             ->set('paginationIndex', $invalidInput)
@@ -361,7 +361,7 @@ class TasksTableTest extends TestCase
     {
         return [
             [0],
-            [(Table::DEFAULT_PAGINATION * 2) + 1],
+            [(Table::DEFAULT_ITEMS_PER_PAGE * 2) + 1],
             ['zero'],
         ];
     }

@@ -7,11 +7,11 @@
                     <th class="text-left pl-3 py-1 bg-white">
                         <span
                             class="flex flex-row items-center cursor-pointer"
-                            :class="'{{ $columnToSortBy == $header['propertyPath'] ? 'text-blue-500' : ' ' }}'"
-                            wire:click="columnHeaderClicked('{{ $header['propertyPath'] }}')"
+                            :class="'{{ $propertyToSortBy == $header['property'] ? 'text-blue-500' : ' ' }}'"
+                            wire:click="columnHeaderClicked('{{ $header['property'] }}')"
                         >
                             {{ $header['header'] }}
-                            @if($columnToSortBy == $header['propertyPath'])
+                            @if($propertyToSortBy == $header['property'])
                                 @if($sortOrder == SortOrder::ASCENDING)
                                     {{-- Downward --}}
                                     <div class="ml-1">
@@ -36,7 +36,7 @@
                 <tr class="border-t border-gray-300">
                     @foreach($table->getHeaders() as $header)
                         <td class="px-2 py-1 bg-slate-200 border-r border-white">
-                            <x-field :field="TableColumnSearchTextInput::make()->propertyPath($header['propertyPath'])" />
+                            <x-field :field="TableColumnSearchTextInput::make()->property($header['property'])" />
                         </td>
                     @endforeach
                 </tr>

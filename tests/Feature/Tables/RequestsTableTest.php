@@ -326,13 +326,13 @@ class RequestsTableTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         // Order is supposed to be descendant by default, therefore second bulk of requests should be displayed on the first page
-        Request::factory(Table::DEFAULT_PAGINATION)->create();
-        Request::factory(Table::DEFAULT_PAGINATION, ['description' => 'Test request'])->create();
+        Request::factory(Table::DEFAULT_ITEMS_PER_PAGE)->create();
+        Request::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Test request'])->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestsTable::class)
             ->assertSee('Test request')
-            ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
             ->assertDontSee('Test request')
             ->set('paginationIndex', 1)
             ->assertSee('Test request');
@@ -346,14 +346,14 @@ class RequestsTableTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         // Order is supposed to be descendant by default, therefore second bulk of requests should be displayed on the first page
-        Request::factory(Table::DEFAULT_PAGINATION, ['description' => 'Second page request'])->create();
-        Request::factory(Table::DEFAULT_PAGINATION, ['description' => 'First page request'])->create();
+        Request::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Second page request'])->create();
+        Request::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'First page request'])->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestsTable::class)
             ->assertSee('First page request')
             ->assertDontSee('Second page request')
-            ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
             ->assertDontSee('First page request')
             ->assertSee('Second page request')
             ->set('paginationIndex', $invalidInput)
@@ -365,7 +365,7 @@ class RequestsTableTest extends TestCase
     {
         return [
             [0],
-            [(Table::DEFAULT_PAGINATION * 2) + 1],
+            [(Table::DEFAULT_ITEMS_PER_PAGE * 2) + 1],
             ['zero'],
         ];
     }

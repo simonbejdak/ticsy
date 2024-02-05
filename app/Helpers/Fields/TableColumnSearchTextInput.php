@@ -13,9 +13,9 @@ class TableColumnSearchTextInput extends TextInput
         return $static;
     }
 
-    function propertyPath(string $propertyPath): self
+    function property(string $property): self
     {
-        $this->wireModel('searchCases.' . $propertyPath);
+        $this->wireModel('searchCases.' . $property);
         return $this;
     }
 }

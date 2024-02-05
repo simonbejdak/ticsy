@@ -14,17 +14,17 @@ abstract class Table extends Component
     public $paginationIndex = 1;
     public array $searchCases = [];
     #[Locked]
-    public $pagination = 25;
+    public $itemsPerPage = 25;
     #[Locked]
     public int $modelCount;
     #[Locked]
-    public array $propertyPaths;
+    public array $properties;
     #[Locked]
     public bool $paginate;
     #[Locked]
     public bool $columnSearch;
     #[Locked]
-    public string $columnToSortBy = 'id';
+    public string $propertyToSortBy = 'id';
     #[Locked]
     public SortOrder $sortOrder = SortOrder::DESCENDING;
 
@@ -33,9 +33,9 @@ abstract class Table extends Component
 
     function tableBuilder(): TableBuilder{
         return \App\Helpers\Table\Table::make($this->query())
-            ->sortByColumn($this->columnToSortBy)
+            ->sortByProperty($this->propertyToSortBy)
             ->sortOrder($this->sortOrder)
-            ->paginate($this->pagination)
+            ->itemsPerPage($this->itemsPerPage)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
             ->searchCases($this->searchCases);
     }
@@ -47,7 +47,7 @@ abstract class Table extends Component
         $this->paginate = $table->paginate;
         $this->columnSearch = $table->columnSearch;
         foreach($table->columns as $column){
-            $this->propertyPaths[] = $column['propertyPath'];
+            $this->properties[] = $column['property'];
         }
     }
 
@@ -61,23 +61,23 @@ abstract class Table extends Component
         return view('livewire.table', ['table' => $this->table()]);
     }
 
-    function columnHeaderClicked(string $column): void
+    function columnHeaderClicked(string $property): void
     {
-        if($this->isPropertyPathValid($column)){
-            if($this->columnToSortBy == $column){
+        if($this->isPropertyPathValid($property)){
+            if($this->propertyToSortBy == $property){
                 $this->switchSortOrder();
             } else {
                 $this->sortOrder = SortOrder::ASCENDING;
             }
-            $this->columnToSortBy = $column;
+            $this->propertyToSortBy = $property;
             $this->render();
         }
     }
 
-    function searchCase(string $propertyPath): void
+    function searchCase(string $property): void
     {
-        if($this->isPropertyPathValid($propertyPath) && $this->columnSearch){
-            $this->searchCases[$propertyPath] = $this->{$propertyPath};
+        if($this->isPropertyPathValid($property) && $this->columnSearch){
+            $this->searchCases[$property] = $this->{$property};
         }
     }
 
@@ -88,25 +88,25 @@ abstract class Table extends Component
 
     function backwardsClicked(): void
     {
-        if($this->paginationIndex - $this->pagination < 1){
+        if($this->paginationIndex - $this->itemsPerPage < 1){
             $this->paginationIndex = 1;
         } else {
-            $this->paginationIndex -= $this->pagination;
+            $this->paginationIndex -= $this->itemsPerPage;
         }
     }
 
     function forwardClicked(): void
     {
-        if($this->paginationIndex + $this->pagination > $this->modelCount - $this->pagination){
-            $this->paginationIndex = $this->modelCount - $this->pagination;
+        if($this->paginationIndex + $this->itemsPerPage > $this->modelCount - $this->itemsPerPage){
+            $this->paginationIndex = $this->modelCount - $this->itemsPerPage;
         } else {
-            $this->paginationIndex += $this->pagination;
+            $this->paginationIndex += $this->itemsPerPage;
         }
     }
 
     function doubleForwardClicked(): void
     {
-        $this->paginationIndex = $this->modelCount - $this->pagination;
+        $this->paginationIndex = $this->modelCount - $this->itemsPerPage;
     }
 
     protected function switchSortOrder(): void
@@ -128,8 +128,8 @@ abstract class Table extends Component
         return false;
     }
 
-    protected function isPropertyPathValid(string $propertyPath): bool
+    protected function isPropertyPathValid(string $property): bool
     {
-        return in_array($propertyPath, $this->propertyPaths);
+        return in_array($property, $this->properties);
     }
 }

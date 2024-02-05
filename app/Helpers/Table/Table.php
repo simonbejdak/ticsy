@@ -10,17 +10,17 @@ use UnitEnum;
 
 class Table
 {
-    const DEFAULT_PAGINATION = 25;
+    const DEFAULT_ITEMS_PER_PAGE = 25;
 
     public Builder $builder;
     public array $columns;
     public array $searchCases;
     public bool $paginate;
     public bool $columnSearch;
-    public int $pagination;
+    public int $itemsPerPage;
     public int $paginationIndex;
     public int $modelCount;
-    public string $sortByColumn;
+    public string $sortByProperty;
     public SortOrder $sortOrder;
     public Collection $models;
     public Collection $paginatedModels;
@@ -33,7 +33,7 @@ class Table
         $static->searchCases = [];
         $static->paginate = true;
         $static->columnSearch = true;
-        $static->pagination = $static::DEFAULT_PAGINATION;
+        $static->itemsPerPage = $static::DEFAULT_ITEMS_PER_PAGE;
         $static->paginationIndex = 1;
         $static->builder = $builder;
         $static->sortOrder = SortOrder::ASCENDING;
@@ -47,7 +47,7 @@ class Table
 
     function isNextPage(): int
     {
-        return $this->paginationIndex < ($this->modelCount - $this->pagination);
+        return $this->paginationIndex < ($this->modelCount - $this->itemsPerPage);
     }
 
     function getHeaders(): array
@@ -56,7 +56,7 @@ class Table
         foreach (array_keys($this->columns) as $header){
             $headers[] = [
                 'header' => $header,
-                'propertyPath' => $this->columns[$header]['propertyPath'],
+                'property' => $this->columns[$header]['property'],
             ];
         }
         return $headers;
@@ -69,7 +69,7 @@ class Table
             $row = [];
             foreach ($this->columns as $column){
                 $row[] = [
-                    'value' => $this->getValue($model, $column['propertyPath']),
+                    'value' => $this->getValue($model, $column['property']),
                     'anchor' => $column['route'] ? route($column['route'][0], $this->getValue($model, $column['route'][1])) : null,
                 ];
             }
@@ -81,31 +81,31 @@ class Table
     function create(): self
     {
         $this->models = $this->builder->get();
-        foreach ($this->searchCases as $propertyPath => $value){
-            $this->models = $this->models->filter(function ($model) use ($propertyPath, $value){
-                return str_contains($this->data_get($model, $propertyPath), $value);
+        foreach ($this->searchCases as $property => $value){
+            $this->models = $this->models->filter(function ($model) use ($property, $value){
+                return str_contains($this->data_get($model, $property), $value);
             });
         }
-        $this->models = $this->sortOrder == SortOrder::DESCENDING ? $this->models->sortByDesc($this->sortByColumn) : $this->models->sortBy($this->sortByColumn);
+        $this->models = $this->sortOrder == SortOrder::DESCENDING ? $this->models->sortByDesc($this->sortByProperty) : $this->models->sortBy($this->sortByProperty);
         $this->paginatedModels = $this->getPaginated();
         $this->modelCount = count($this->models);
         return $this;
     }
 
-    function addSearchCase(string $propertyPath, string $value): self
+    function addSearchCase(string $property, string $value): self
     {
-        $this->searchCases[$propertyPath] = $value;
+        $this->searchCases[$property] = $value;
         return $this;
     }
 
     function to(): int
     {
-        return $this->paginationIndex + $this->pagination;
+        return $this->paginationIndex + $this->itemsPerPage;
     }
 
-    protected function getValue($model, $propertyPath): string|null
+    protected function getValue($model, $property): string|null
     {
-        return array_reduce(explode('.', $propertyPath),
+        return array_reduce(explode('.', $property),
             function ($o, $p) {
                 return is_numeric($p) ? ($o[$p] ?? null) : ($o->$p ?? null);
             }, $model
@@ -114,12 +114,12 @@ class Table
 
     protected function getPaginated(): Collection
     {
-        return $this->models->skip($this->paginationIndex - 1)->take($this->pagination);
+        return $this->models->skip($this->paginationIndex - 1)->take($this->itemsPerPage);
     }
 
-    protected function data_get($target, string $propertyPath): string
+    protected function data_get($target, string $property): string
     {
-        $data = data_get($target, $propertyPath);
+        $data = data_get($target, $property);
         if($data instanceof UnitEnum){
             $data = $data->value;
         }

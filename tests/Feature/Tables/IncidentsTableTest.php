@@ -326,13 +326,13 @@ class IncidentsTableTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         // Order is supposed to be descendant by default, therefore second bulk of incidents should be displayed on the first page
-        Incident::factory(Table::DEFAULT_PAGINATION)->create();
-        Incident::factory(Table::DEFAULT_PAGINATION, ['description' => 'Test incident'])->create();
+        Incident::factory(Table::DEFAULT_ITEMS_PER_PAGE)->create();
+        Incident::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Test incident'])->create();
 
         Livewire::actingAs($resolver)
             ->test(IncidentsTable::class)
             ->assertSee('Test incident')
-            ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
             ->assertDontSee('Test incident')
             ->set('paginationIndex', 1)
             ->assertSee('Test incident');
@@ -346,14 +346,14 @@ class IncidentsTableTest extends TestCase
     {
         $resolver = User::factory()->resolver()->create();
         // Order is supposed to be descendant by default, therefore second bulk of incidents should be displayed on the first page
-        Incident::factory(Table::DEFAULT_PAGINATION, ['description' => 'Second page incident'])->create();
-        Incident::factory(Table::DEFAULT_PAGINATION, ['description' => 'First page incident'])->create();
+        Incident::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Second page incident'])->create();
+        Incident::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'First page incident'])->create();
 
         Livewire::actingAs($resolver)
             ->test(IncidentsTable::class)
             ->assertSee('First page incident')
             ->assertDontSee('Second page incident')
-            ->set('paginationIndex', Table::DEFAULT_PAGINATION + 1)
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
             ->assertDontSee('First page incident')
             ->assertSee('Second page incident')
             ->set('paginationIndex', $invalidInput)
@@ -365,7 +365,7 @@ class IncidentsTableTest extends TestCase
     {
         return [
             [0],
-            [(Table::DEFAULT_PAGINATION * 2) + 1],
+            [(Table::DEFAULT_ITEMS_PER_PAGE * 2) + 1],
             ['zero'],
         ];
     }

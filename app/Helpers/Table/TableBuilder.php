@@ -12,18 +12,18 @@ class TableBuilder
         $this->table = $table;
     }
 
-    function column(string $title, string $propertyPath, array $route = null): self
+    function column(string $title, string $property, array $route = null): self
     {
         $this->table->columns[$title] = [
-            'propertyPath' => $propertyPath,
+            'property' => $property,
             'route' => $route,
         ];
         return $this;
     }
 
-    function paginate(int $number): self
+    function itemsPerPage(int $number): self
     {
-        $this->table->pagination = $number;
+        $this->table->itemsPerPage = $number;
         return $this;
     }
 
@@ -33,9 +33,9 @@ class TableBuilder
         return $this;
     }
 
-    function sortByColumn(string $column): self
+    function sortByProperty(string $property): self
     {
-        $this->table->sortByColumn = $column;
+        $this->table->sortByProperty = $property;
         return $this;
     }
 
@@ -64,18 +64,18 @@ class TableBuilder
 
     public function searchCases(array $searchCases): self
     {
-        foreach($searchCases as $propertyPath => $value){
+        foreach($searchCases as $property => $value){
             if(is_array($value)){
                 $value = array_values($value)[0];
             }
-            $this->searchCase($propertyPath, $value);
+            $this->searchCase($property, $value);
         }
         return $this;
     }
 
-    protected function searchCase(string $propertyPath, string $value): self
+    protected function searchCase(string $property, string $value): self
     {
-        $this->table->addSearchCase($propertyPath, $value);
+        $this->table->addSearchCase($property, $value);
         return $this;
     }
 }
