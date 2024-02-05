@@ -1,4 +1,4 @@
-<div class="flex flex-col mb-8">
+<div class="flex flex-col">
     <div class="flex flex-row">
         @foreach($this->tabs() as $tab)
             <div
