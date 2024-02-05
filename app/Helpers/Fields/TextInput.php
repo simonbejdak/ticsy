@@ -35,7 +35,7 @@ class TextInput extends Field
     function style(): string
     {
         return parent::style() .
-            ($this->hasAnchor() ? 'hover:cursor-pointer hover:border-gray-400 transform ease-in duration-150 ' : ' ') .
+            ($this->hasAnchor() ? 'hover:cursor-pointer hover:border-gray-400 transform ease-in duration-150 ' : '') .
             ($this->disabled && !$this->hasAnchor() ? 'pointer-events-none ' : 'caret-gray-200 ');
     }
 }

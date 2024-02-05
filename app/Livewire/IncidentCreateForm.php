@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
-class IncidentCreateForm extends Form
+class IncidentCreateForm extends CreateForm
 {
     use HasFields;
 
@@ -43,11 +43,6 @@ class IncidentCreateForm extends Form
         $this->category = null;
         $this->item = null;
         $this->description = null;
-    }
-
-    public function render()
-    {
-        return view('livewire.create-form');
     }
 
     public function create()

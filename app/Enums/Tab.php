@@ -6,7 +6,6 @@ use Illuminate\Testing\Exceptions\InvalidArgumentException;
 
 enum Tab: string
 {
-    case ACTIVITIES = 'activities';
     case TASKS = 'tasks';
 
     static function getEnumByValue(string $value): self

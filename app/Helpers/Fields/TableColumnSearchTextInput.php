@@ -9,6 +9,7 @@ class TableColumnSearchTextInput extends TextInput
         $static = parent::make('tableSearch');
         $static->withoutLabel();
         $static->placeholder('Search');
+        $static->width = 'w-full';
 
         return $static;
     }

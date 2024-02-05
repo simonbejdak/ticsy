@@ -18,13 +18,13 @@ use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 
-class IncidentEditForm extends Form
+class IncidentEditForm extends EditForm
 {
-    use HasFields, HasTabs;
+    use HasFields;
 
     public Incident $incident;
-    public Collection $activities;
     public Status $status;
     public OnHoldReason|null $onHoldReason;
     public Priority $priority;
@@ -68,6 +68,7 @@ class IncidentEditForm extends Form
     public function mount(Incident $incident){
         $this->incident = $incident;
         $this->model = $incident;
+        $this->setActivities();
         $this->status = $this->incident->status;
         $this->onHoldReason = $this->incident->on_hold_reason;
         $this->priority = $this->incident->priority;
@@ -184,11 +185,6 @@ class IncidentEditForm extends Form
                 ->displayName('Add a comment')
                 ->outsideGrid(),
         );
-    }
-
-    function tabs(): array
-    {
-        return [Tab::ACTIVITIES];
     }
 
     protected function isFieldDisabled(string $name): bool

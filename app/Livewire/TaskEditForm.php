@@ -18,14 +18,13 @@ use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 
-class TaskEditForm extends Form
+class TaskEditForm extends EditForm
 {
-    use HasFields, HasTabs;
+    use HasFields;
 
     public Task $task;
-    public array $tabs = ['activities'];
-    public Collection $activities;
     public Status $status;
     public OnHoldReason|null $onHoldReason;
     public Priority $priority;
@@ -70,6 +69,7 @@ class TaskEditForm extends Form
     public function mount(Task $task){
         $this->task = $task;
         $this->model = $task;
+        $this->setActivities();
         $this->status = $this->task->status;
         $this->onHoldReason = $this->task->on_hold_reason;
         $this->priority = $this->task->priority;
@@ -222,10 +222,5 @@ class TaskEditForm extends Form
                 $this->priority == $this->task->priority,
             default => false,
         };
-    }
-
-    function tabs(): array
-    {
-        return [Tab::ACTIVITIES];
     }
 }

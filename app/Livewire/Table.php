@@ -63,7 +63,7 @@ abstract class Table extends Component
 
     function columnHeaderClicked(string $property): void
     {
-        if($this->isPropertyPathValid($property)){
+        if($this->isPropertyValid($property)){
             if($this->propertyToSortBy == $property){
                 $this->switchSortOrder();
             } else {
@@ -76,7 +76,7 @@ abstract class Table extends Component
 
     function searchCase(string $property): void
     {
-        if($this->isPropertyPathValid($property) && $this->columnSearch){
+        if($this->isPropertyValid($property) && $this->columnSearch){
             $this->searchCases[$property] = $this->{$property};
         }
     }
@@ -128,7 +128,7 @@ abstract class Table extends Component
         return false;
     }
 
-    protected function isPropertyPathValid(string $property): bool
+    protected function isPropertyValid(string $property): bool
     {
         return in_array($property, $this->properties);
     }

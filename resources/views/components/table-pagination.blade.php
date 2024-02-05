@@ -23,7 +23,7 @@
         <div>
             <x-field :field="TablePaginationIndexTextInput::make()" />
         </div>
-        <div class="text-black text-xs px-1">
+        <div class="text-black text-xs px-1 ml-4">
             {{ 'to ' . $table->to() . ' from ' . $table->modelCount }}
         </div>
         {{-- Forward --}}

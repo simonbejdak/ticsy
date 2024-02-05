@@ -20,14 +20,13 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 
-class RequestEditForm extends Form
+class RequestEditForm extends EditForm
 {
     use HasFields, HasTabs;
 
     public Request $request;
     #[Locked]
     public array $tabs;
-    public Collection $activities;
     public Status $status;
     public OnHoldReason|null $onHoldReason;
     public Priority $priority;
@@ -71,6 +70,7 @@ class RequestEditForm extends Form
     public function mount(Request $request){
         $this->request = $request;
         $this->model = $request;
+        $this->setActivities();
         $this->status = $this->request->status;
         $this->onHoldReason = $this->request->on_hold_reason;
         $this->priority = $this->request->priority;
@@ -191,7 +191,7 @@ class RequestEditForm extends Form
 
     function tabs(): array
     {
-        return [Tab::ACTIVITIES, Tab::TASKS];
+        return [Tab::TASKS];
     }
 
     protected function isFieldDisabled(string $name): bool

@@ -27,7 +27,7 @@ abstract class Field
         $static = new static;
         $static->name = $name;
         $static->value = '';
-        $static->width = 'w-full';
+        $static->width = 'w-3/5';
         $static->wireModel = $static->name;
         $static->hasLabel = true;
         $static->hideable = false;
@@ -126,6 +126,7 @@ abstract class Field
     function outsideGrid(): self
     {
         $this->position = FieldPosition::OUTSIDE_GRID;
+        $this->width = 'w-4/5';
         return $this;
     }
 
@@ -155,8 +156,8 @@ abstract class Field
     function style(): string
     {
         return
-            ($this->disabled ? 'text-gray-500 bg-slate-200 ' : 'bg-white ') .
+            ($this->disabled ? 'text-gray-500 bg-slate-100 cursor-not-allowed ' : 'bg-white ') .
             ($this->error ? 'ring-1 ring-red-500 ' : '') .
-            'appearance-none px-2 ' . $this->width . ' h-6 rounded-sm text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
+            'appearance-none px-2 h-6 rounded-sm shadow-inner text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }

@@ -1,15 +1,12 @@
 <x-field-layout :hidden="$field->isHidden()">
     @if($field->hasLabel)
         <div class="flex flex-row">
-            <x-field-label :value="$field->getDisplayName()" />
-            @if($required)
-                <span class="text-red-500 text-sm align-top ml-1">*</span>
-            @endif
+            <x-field-label :value="$field->getDisplayName()"  :required="$required" />
         </div>
     @endif
     <div
         wire:key="{{ rand() }}"
-        class="relative"
+        class="relative {{ $field->width }}"
         x-data="{
         error: @json($errors->has($field->name)),
         disabled: @json($field->isDisabled())
@@ -18,7 +15,7 @@
             @click="error = false"
             wire:model.lazy="{{ $field->wireModel }}"
             id="{{ $field->name }}"
-            class="{{ $field->style() }}"
+            class="w-full {{ $field->style() }}"
             :class="error ? 'ring-1 ring-red-500 ' : ''"
             {{ ($field->isDisabled()) ? ' disabled' : '' }}
         >

@@ -18,26 +18,15 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 16. E-mail notification on Incident and Request when opened to caller -- done
 17. Resolver required_if Status in_progress -- done
 18. Comment required_if Status resolved -- done
-
-19. Resolver Panel -- in progress
-- flexible sidebar -- done
-- reusable table definition to examine existing entities (Incident, Request, Task, Change, etc..) in application -- done
-- if resolver is in specific sidebar tab, make it apparent it is selected -- done
-- ability to sort table results by clicking on table header either in ascendant, or descendant order -- done
-- ability to paginate through the table -- done
-- resolver panel tabs should be visible only by resolvers and managers -- done
-- make sure, that malicious user cannot manipulate propertyPaths -- done
-- ability to search through each column by typing text -- done
-- resolver panel pages should be visible only by resolvers and managers, i.e. wrap the ResolverPanelController to middleware -- done
-- ability to save favorite sidebar tab, and lookup saved favorites in sidebar navigation on top -- done
-
-20. Statistics
-21. Knowledge articles for common problems
-22. Change templates
-23. Subcategories
-24. Watch list for tickets
+19. Resolver Panel -- done
+20. Configuration items
+21. Table filters
+22. Knowledge articles for common problems
+23. Change templates
+24. Subcategories
 25. Make TicketEditForm be synchronized in real time between browsers
 26. Send e-mail, when Ticket SLA is before expiration
+27. Statistics
 
 Use case problems:
 - Priority 1 is shown even if user has no permission to set priority one
