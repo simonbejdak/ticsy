@@ -1,6 +1,6 @@
 <div>
     @if($paginate)<x-table-pagination :$table />@endif
-    <div class="border border-gray-300 rounded-sm overflow-hidden text-sm">
+    <div class="border border-gray-300 rounded-sm overflow-hidden text-xs shadow-md">
         <table class="w-full">
             <tr>
                 @foreach($table->getHeaders() as $header)

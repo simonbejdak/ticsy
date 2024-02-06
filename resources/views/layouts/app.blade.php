@@ -17,19 +17,10 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-gray-100 dark:bg-slate-100">
+    <body class="font-sans antialiased bg-white">
         <x-flash-messages></x-flash-messages>
         <div class="min-h-screen">
             <x-navbar />
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
             <!-- Page Content -->
             <main>
                 <div class="flex flex-row">
@@ -38,7 +29,7 @@
                             <livewire:resolver-panel />
                         @endif
                     @endauth
-                    <div class="px-10 w-full">
+                    <div class="w-full px-8 py-4">
                         {{ $slot }}
                     </div>
                 </div>

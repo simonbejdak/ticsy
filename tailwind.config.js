@@ -10,7 +10,6 @@ export default {
         "./resources/**/*.vue",
     ],
     theme: {
-
       fontFamily: {
         'sans': ['Oswald', 'system-ui'],
       },
@@ -18,11 +17,8 @@ export default {
         borderWidth: {
           '3': '3px',
         },
-      gridTemplateRows: {
+        gridTemplateRows: {
           '7': 'repeat(7, minmax(0, 1fr))',
-        },
-        width: {
-          '2.5': '10rem',
         },
         scale: {
           '101': '1.01',

@@ -1,5 +1,5 @@
 <div
-    class="-mt-8 border-t border-gray-200 min-h-screen flex flex-col justify-between bg-white text-sm shadow-md transition-all"
+    class="relative border-r border-gray-300 bg-gray-600 min-h-screen flex flex-col justify-between text-sm transition-all shadow-md"
     x-data="{ open: true }"
     :class="open ? 'w-64' : 'w-8'"
     x-transition
@@ -7,8 +7,8 @@
     <div x-show="open" class="flex flex-row ">
         <div
             class="flex
-            {{ $selectedTab == ResolverPanelTab::ALL ? 'bg-slate-800 text-white hover:bg-slate-700' : 'text-slate-800 hover:bg-gray-200' }}
-            w-1/2 justify-center py-2 hover:cursor-pointer"
+            {{ $selectedTab == ResolverPanelTab::ALL ? 'bg-gray-500 ' : 'text-gray-100 hover:bg-gray-500' }}
+            w-1/2 border-r border-gray-700 justify-center py-2 hover:cursor-pointer text-gray-100"
             wire:click="allTabClicked"
         >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -17,7 +17,7 @@
         </div>
         <div
             class="flex
-            {{ $selectedTab == ResolverPanelTab::FAVORITES ? 'bg-slate-800 text-white hover:bg-slate-700' : 'text-slate-800 hover:bg-gray-200' }}
+            {{ $selectedTab == ResolverPanelTab::FAVORITES ? 'bg-gray-300 text-slate-800 hover:bg-gray-200' : 'text-gray-100 hover:bg-gray-500' }}
             w-1/2 justify-center py-2 hover:cursor-pointer"
             wire:click="favoritesTabClicked"
         >

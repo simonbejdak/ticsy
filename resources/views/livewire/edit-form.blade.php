@@ -1,5 +1,5 @@
-<div class="bg-white rounded-sm p-8 shadow-lg">
-    <div class="pr-28">
+<div class="bg-white rounded-sm p-8">
+    <div class="pr-48">
         @if(hasTrait(\App\Traits\HasFields::class, $this))
             <form wire:submit="save">
                 <div class="flex flex-col space-y-4 mb-4">
