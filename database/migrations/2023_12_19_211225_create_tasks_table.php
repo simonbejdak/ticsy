@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('resolver_id')->nullable()->constrained()->references('id')->on('users');
             $table->string('taskable_type')->nullable();
             $table->unsignedInteger('taskable_id')->nullable();
-//            $table->foreignId('request_id')->constrained();
             $table->text('description');
             $table->string('status');
             $table->string('on_hold_reason')->nullable();

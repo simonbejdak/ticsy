@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextArea;
 use App\Helpers\Fields\TextInput;
 use App\Mail\IncidentCreated;
 use App\Models\Incident;
@@ -70,7 +71,7 @@ class IncidentCreateForm extends CreateForm
             Select::make('item')
                 ->options(IncidentCategory::find($this->category) ? IncidentCategory::find($this->category)->items()->get() : [])
                 ->blank(),
-            TextInput::make('description'),
+            TextArea::make('description'),
         );
     }
 }

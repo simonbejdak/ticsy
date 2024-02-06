@@ -4,6 +4,7 @@ namespace App\View\Components;
 
 use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextArea;
 use App\Helpers\Fields\TextInput;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -24,6 +25,8 @@ class Field extends Component
     {
         if($this->field instanceof TextInput){
             return view('components.text-input');
+        } elseif($this->field instanceof TextArea){
+            return view('components.text-area');
         } elseif($this->field instanceof Select){
             return view('components.select');
         } elseif($this->field instanceof Bar){

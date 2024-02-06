@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextArea;
 use App\Helpers\Fields\TextInput;
 use App\Mail\RequestCreated;
 use App\Models\Request;
@@ -70,7 +71,7 @@ class RequestCreateForm extends CreateForm
             Select::make('item')
                 ->options(RequestCategory::find($this->category) ? RequestCategory::find($this->category)->items()->get() : [])
                 ->blank(),
-            TextInput::make('description'),
+            TextArea::make('description'),
         );
     }
 }

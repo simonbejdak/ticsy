@@ -12,6 +12,7 @@ abstract class Field
     public string $value;
     public string $rules;
     public string $width;
+    public string $height;
     public string $wireModel;
     protected string $displayName;
     public bool $hideable;
@@ -28,6 +29,7 @@ abstract class Field
         $static->name = $name;
         $static->value = '';
         $static->width = 'w-3/5';
+        $static->height = 'h-6';
         $static->wireModel = $static->name;
         $static->hasLabel = true;
         $static->hideable = false;
@@ -158,6 +160,7 @@ abstract class Field
         return
             ($this->disabled ? 'text-gray-500 bg-slate-100 cursor-not-allowed ' : 'bg-white ') .
             ($this->error ? 'ring-1 ring-red-500 ' : '') .
-            'appearance-none px-2 h-6 rounded-sm shadow-inner text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
+            $this->height .
+            ' appearance-none px-2 rounded-sm shadow-inner text-xs border border-gray-300 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }

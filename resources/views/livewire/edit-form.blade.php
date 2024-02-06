@@ -8,11 +8,11 @@
                             <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)"/>
                         @endforeach
                     </x-field-grid>
-                    <x-field-grid class="grid-cols-1 grid-rows-2 relative right-0.5">
+                    <div class="flex flex-col relative right-0.5 space-y-1">
                         @foreach($this->fields()->outsideGrid() as $field)
                             <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)" />
                         @endforeach
-                    </x-field-grid>
+                    </div>
                     <div class="flex flex-row justify-end">
                         <x-secondary-button>Update</x-secondary-button>
                     </div>

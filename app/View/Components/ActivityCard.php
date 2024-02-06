@@ -33,17 +33,17 @@ class ActivityCard extends Component
 
     protected function setBody(): string|array{
         if($this->activity->event === 'comment' || $this->activity->event === 'priority_change_reason'){
-            $body = '<p>' . htmlspecialchars($this->activity->description) . '</p>';
+            $body = '<p>' . nl2br(e(htmlspecialchars($this->activity->description))) . '</p>';
         } else {
-            $body = '<table class="border-separate border-spacing-x-2 w-1/2">';
+            $body = '<table class="border-separate border-spacing-x-2 w-full">';
 
             foreach ($this->activity->changes['attributes'] as $field => $value) {
                 $fieldName = makeDisplayName(str_replace('.name', '', $field));
                 $newFieldValue = ($value !== null) ? $value : 'empty';
 
-                $body .= '<tr class="border-spacing-y-3">';
-                $body .= '<td class="text-right w-1/6">' . htmlspecialchars($fieldName) . ': </td>';
-                $body .= '<td class="text-left">' . htmlspecialchars($newFieldValue);
+                $body .= '<tr>';
+                $body .= '<td class="text-right w-1/6 pt-0.5 align-top">' . htmlspecialchars($fieldName) . ': </td>';
+                $body .= '<td class="text-left pt-0.5">' . nl2br(e(htmlspecialchars($newFieldValue)));
 
                 if ($this->activity->event === 'updated') {
                     $oldFieldValue = ($this->activity->changes['old'][$field] !== null) ? $this->activity->changes['old'][$field] : 'empty';

@@ -9,6 +9,7 @@ use App\Enums\Tab;
 use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
+use App\Helpers\Fields\TextArea;
 use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Incident;
@@ -174,14 +175,14 @@ class IncidentEditForm extends EditForm
                         ->pulse();
                 } return null;
             },
-            TextInput::make('priorityChangeReason')
+            TextArea::make('priorityChangeReason')
                 ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
                 ->outsideGrid(),
-            TextInput::make('description')
+            TextArea::make('description')
                 ->value($this->incident->description)
                 ->disabled()
                 ->outsideGrid(),
-            TextInput::make('comment')
+            TextArea::make('comment')
                 ->displayName('Add a comment')
                 ->outsideGrid(),
         );

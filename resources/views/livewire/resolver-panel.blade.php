@@ -17,8 +17,8 @@
         </div>
         <div
             class="flex
-            {{ $selectedTab == ResolverPanelTab::FAVORITES ? 'bg-gray-300 text-slate-800 hover:bg-gray-200' : 'text-gray-100 hover:bg-gray-500' }}
-            w-1/2 justify-center py-2 hover:cursor-pointer"
+            {{ $selectedTab == ResolverPanelTab::FAVORITES ? 'bg-gray-500 ' : 'text-gray-100 hover:bg-gray-500' }}
+            w-1/2 justify-center py-2 hover:cursor-pointer text-gray-100"
             wire:click="favoritesTabClicked"
         >
             <svg fill="currentColor" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="w-6 h-6">
