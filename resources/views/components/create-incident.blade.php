@@ -1,6 +1,6 @@
 <a href="{{route('incidents.create', ['type' => 'incident'])}}">
     <x-card>
-        <div class="flex flex-row px-2 py-2 my-2 justify-between items-center max-w-xs">
+        <div class="flex flex-row px-2 py-2 my-1 justify-between items-center max-w-xs">
             <div class="flex flex-row w-full justify-center">
                 <div class="mr-2 flex flex-col justify-center">
                     <svg class="w-16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
