@@ -11,31 +11,35 @@
         </div>
     </section>
     <section>
-        <div class="w-3/4">
+        <div class="flex flex-row w-3/4 space-x-6">
             @isset($incidents)
-                <div class="mt-12 flex flex-row justify-between items-end">
-                    <h4>Your recent incidents: </h4>
-                    <a href="{{route('incidents.index')}}">
-                        <x-secondary-button>See All</x-secondary-button>
-                    </a>
-                </div>
-                <div class="my-4 flex flex-col justify-start space-y-4">
-                    @foreach($incidents as $incident)
-                        <x-incident-card :$incident />
-                    @endforeach
+                <div class="w-1/2">
+                    <h4 class="mt-12">Your recent incidents</h4>
+                    <div class="my-4 flex flex-col justify-start space-y-4">
+                        @foreach($incidents as $incident)
+                            <x-incident-card :$incident />
+                        @endforeach
+                        <div class="flex flex-row justify-end">
+                            <a href="{{route('incidents.index')}}">
+                                <x-secondary-button>See All</x-secondary-button>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             @endif
             @isset($requests)
-                <div class="mt-12 flex flex-row justify-between items-end">
-                    <h4>Your recent requests: </h4>
-                    <a href="{{route('requests.index')}}">
-                        <x-secondary-button>See All</x-secondary-button>
-                    </a>
-                </div>
-                <div class="mb-4 flex flex-col justify-start mt-4 space-y-4">
-                    @foreach($requests as $request)
-                        <x-request-card :$request />
-                    @endforeach
+                <div class="w-1/2">
+                    <h4 class="mt-12">Your recent requests</h4>
+                    <div class="my-4 flex flex-col justify-start space-y-4">
+                        @foreach($requests as $request)
+                            <x-request-card :$request />
+                        @endforeach
+                        <div class="flex flex-row justify-end">
+                            <a href="{{route('requests.index')}}">
+                                <x-secondary-button>See All</x-secondary-button>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>

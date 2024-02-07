@@ -2,6 +2,7 @@
 
 namespace App\Helpers\Fields;
 
+use App\Enums\FieldLabelPosition;
 use App\Enums\FieldPosition;
 use App\Interfaces\Fieldable;
 
@@ -20,6 +21,7 @@ abstract class Field
     public bool $hidden;
     public bool $error;
     public FieldPosition $position;
+    public FieldLabelPosition $labelPosition;
 
     protected function __construct(){}
 
@@ -37,6 +39,7 @@ abstract class Field
         $static->hidden = false;
         $static->error = session('error') ? session('error')->first($static->name) : false;
         $static->position = FieldPosition::INSIDE_GRID;
+        $static->labelPosition = FieldLabelPosition::LEFT;
 
         return $static;
     }
@@ -152,6 +155,12 @@ abstract class Field
     function wireModel(string $wireModel): self
     {
         $this->wireModel = $wireModel;
+        return $this;
+    }
+
+    function labelPosition(FieldLabelPosition $labelPosition): self
+    {
+        $this->labelPosition = $labelPosition;
         return $this;
     }
 

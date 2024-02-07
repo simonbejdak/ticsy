@@ -183,6 +183,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'FieldLabelPosition' => App\Enums\FieldLabelPosition::class,
         'ResolverPanelOption' => App\Enums\ResolverPanelOption::class,
         'ResolverPanelTab' => App\Enums\ResolverPanelTab::class,
         'SortOrder' => App\Enums\SortOrder::class,

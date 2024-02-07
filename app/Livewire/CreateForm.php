@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class CreateForm extends Form
 {
+    public $formTitle;
+    public $formDescription;
+
     public function render()
     {
         return view('livewire.create-form');

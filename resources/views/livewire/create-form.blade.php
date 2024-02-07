@@ -1,13 +1,20 @@
 <form wire:submit="create">
     <div class="flex flex-row w-full items-center justify-center">
-        <div class="flex flex-col space-y-2 w-3/5">
-            <div class="font-light text-3xl mt-16 mb-4 text-center">{{ $formName }}</div>
-            @foreach($this->fields() as $field)
-                <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)"/>
-            @endforeach
-            <div class="flex flex-row">
-                <x-secondary-button class="w-full mt-2">Create</x-secondary-button>
-            </div>
+        <div class="flex flex-col w-full mt-4">
+            <section>
+                <h2>{{ $formTitle }}</h2>
+                <p class="mt-2">{{ $formDescription }}</p>
+            </section>
+            <section>
+                <div class="flex flex-col space-y-4 mt-8">
+                    @foreach($this->fields() as $field)
+                        <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)"/>
+                    @endforeach
+                    <div class="flex flex-row justify-end w-4/5">
+                        <x-secondary-button class="mt-2">Create</x-secondary-button>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </form>

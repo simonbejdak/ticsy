@@ -16,7 +16,10 @@
         @apply font-medium;
     }
     h6 {
-        @apply text-xs font-light
+        @apply text-xs font-light;
+    }
+    p {
+        @apply text-sm;
     }
 }
 

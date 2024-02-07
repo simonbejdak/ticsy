@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\FieldLabelPosition;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextArea;
@@ -19,7 +20,6 @@ class RequestCreateForm extends CreateForm
 {
     use HasFields;
 
-    public $formName;
     public $category;
     public $item;
     public $description;
@@ -40,7 +40,8 @@ class RequestCreateForm extends CreateForm
 
     public function mount()
     {
-        $this->formName = 'Create Request';
+        $this->formTitle = 'Create Request';
+        $this->formDescription = 'Create a Request to ask something from us';
         $this->category = null;
         $this->item = null;
         $this->description = null;
@@ -67,11 +68,18 @@ class RequestCreateForm extends CreateForm
         return new Fields(
             Select::make('category')
                 ->options(RequestCategory::all())
-                ->blank(),
+                ->blank()
+                ->outsideGrid()
+                ->labelPosition(FieldLabelPosition::TOP),
             Select::make('item')
                 ->options(RequestCategory::find($this->category) ? RequestCategory::find($this->category)->items()->get() : [])
-                ->blank(),
-            TextArea::make('description'),
+                ->blank()
+                ->outsideGrid()
+                ->labelPosition(FieldLabelPosition::TOP),
+            TextArea::make('description')
+                ->displayName('Please describe what do you need')
+                ->outsideGrid()
+                ->labelPosition(FieldLabelPosition::TOP),
         );
     }
 }

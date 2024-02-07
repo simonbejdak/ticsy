@@ -33,9 +33,9 @@
                 @endforeach
             </tr>
             @if($columnSearch)
-                <tr class="border-t border-slate-400 [&>*:last-child]:border-none">
+                <tr class="border-t border-slate-300 [&>*:last-child]:border-none">
                     @foreach($table->getHeaders() as $header)
-                        <td class="px-2 py-1 bg-slate-200 border-r border-slate-400">
+                        <td class="px-2 py-1 bg-slate-200 border-r border-slate-300">
                             <x-field :field="TableColumnSearchTextInput::make()->property($header['property'])" />
                         </td>
                     @endforeach
@@ -45,7 +45,7 @@
                 <tr
                     class="
                         {{ isEven($rowNumber) ? 'bg-gray-100 ' : 'bg-white ' }}
-                        border-t border-slate-400 hover:bg-gray-200 ease-in transition duration-75
+                        border-t border-slate-300 hover:bg-gray-200 ease-in transition duration-75
                     "
                 >
                     @foreach($row as $cell)

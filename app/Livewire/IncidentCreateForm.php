@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\FieldLabelPosition;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextArea;
@@ -19,7 +20,6 @@ class IncidentCreateForm extends CreateForm
 {
     use HasFields;
 
-    public $formName;
     public $category;
     public $item;
     public $description;
@@ -40,7 +40,8 @@ class IncidentCreateForm extends CreateForm
 
     public function mount()
     {
-        $this->formName = 'Create Incident';
+        $this->formTitle = 'Create Incident';
+        $this->formDescription = 'Create an Incident record to report and request assistance with an issue you are having';
         $this->category = null;
         $this->item = null;
         $this->description = null;
@@ -67,11 +68,19 @@ class IncidentCreateForm extends CreateForm
         return new Fields(
             Select::make('category')
                 ->options(IncidentCategory::all())
-                ->blank(),
+                ->blank()
+                ->outsideGrid()
+                ->labelPosition(FieldLabelPosition::TOP)
+            ,
             Select::make('item')
                 ->options(IncidentCategory::find($this->category) ? IncidentCategory::find($this->category)->items()->get() : [])
-                ->blank(),
-            TextArea::make('description'),
+                ->blank()
+                ->outsideGrid()
+                ->labelPosition(FieldLabelPosition::TOP),
+            TextArea::make('description')
+                ->displayName('Please describe what issue you are facing')
+                ->outsideGrid()
+                ->labelPosition(FieldLabelPosition::TOP),
         );
     }
 }
