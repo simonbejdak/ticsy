@@ -11,9 +11,6 @@ export default {
         "./resources/**/*.vue",
     ],
     theme: {
-      fontFamily: {
-        'sans': ['Oswald', 'system-ui'],
-      },
       extend: {
         borderWidth: {
           '3': '3px',
@@ -34,6 +31,8 @@ export default {
             display: ["group-hover"],
         },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/line-clamp'),
+    ],
 }
 
