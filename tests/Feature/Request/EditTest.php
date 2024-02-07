@@ -208,7 +208,7 @@ class EditTest extends TestCase
         $request = Request::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $request])
+            ->test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder([
                 'Status:', 'Open',
@@ -232,7 +232,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -257,7 +257,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
@@ -279,7 +279,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -301,7 +301,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
@@ -322,7 +322,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Priority:', '3', 'was', Request::DEFAULT_PRIORITY]);
     }
@@ -343,7 +343,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
@@ -363,7 +363,7 @@ class EditTest extends TestCase
 
         $request->refresh();
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
@@ -385,7 +385,7 @@ class EditTest extends TestCase
         $request->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $request])
+            ->test(RequestEditForm::class, ['request' => $request])
             ->assertSeeInOrder([
                 'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
@@ -436,7 +436,7 @@ class EditTest extends TestCase
             ->set('comment', 'Test comment')
             ->call('save');
 
-        Livewire::test(Activities::class, ['model' => $request])
+        Livewire::test(RequestEditForm::class, ['request' => $request])
             ->assertSee('Test comment');
 
         $this->assertDatabaseHas('activity_log', [
@@ -456,8 +456,7 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         foreach ($tasks as $task){
-            Livewire::test(Tabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
-                ->call('setViewedTab', 'tasks')
+            Livewire::test(Tabs::class, ['tabs' => [Tab::TASKS], 'model' => $request])
                 ->assertSee($task->description);
         }
     }
@@ -473,14 +472,12 @@ class EditTest extends TestCase
         Livewire::actingAs($resolver);
 
         foreach ($startedTasks as $task){
-            Livewire::test(Tabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
-                ->call('setViewedTab', 'tasks')
+            Livewire::test(Tabs::class, ['tabs' => [Tab::TASKS], 'model' => $request])
                 ->assertSee($task->description);
         }
 
         foreach ($notStartedTasks as $task){
-            Livewire::test(Tabs::class, ['tabs' => [Tab::ACTIVITIES, Tab::TASKS], 'model' => $request])
-                ->call('setViewedTab', 'tasks')
+            Livewire::test(Tabs::class, ['tabs' => [Tab::TASKS], 'model' => $request])
                 ->assertDontSee($task->description);
         }
     }

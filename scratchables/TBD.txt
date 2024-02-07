@@ -41,4 +41,5 @@ Use case problems:
 Refactor Ideas:
 - change TicketTrait to separate traits
 - Table class is too big, in 2 months we will not know what is going on there
+- try to duplicate as least logic in respective Field view files (select, text-area, text-input etc.) as possible
 

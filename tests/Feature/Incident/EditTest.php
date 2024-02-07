@@ -6,7 +6,6 @@ namespace Tests\Feature\Incident;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident;
@@ -196,7 +195,7 @@ class EditTest extends TestCase
         $incident = Incident::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $incident])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder([
                 'Status:', 'Open',
@@ -220,7 +219,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -245,7 +244,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
@@ -266,7 +265,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -287,7 +286,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
@@ -307,7 +306,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Priority:', '3', 'was', Incident::DEFAULT_PRIORITY]);
     }
@@ -327,7 +326,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
@@ -346,7 +345,7 @@ class EditTest extends TestCase
 
         $incident = $incident->refresh();
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
@@ -367,7 +366,7 @@ class EditTest extends TestCase
         $incident->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $incident])
+            ->test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSeeInOrder([
                 'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
@@ -416,7 +415,7 @@ class EditTest extends TestCase
             ->set('comment', 'Test comment')
             ->call('save');
 
-        Livewire::test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSee('Test comment');
 
         $this->assertDatabaseHas('activity_log', [

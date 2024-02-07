@@ -455,13 +455,13 @@ class UpdateTest extends TestCase
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
 
-        Livewire::actingAs($resolver)
-            ->test(IncidentEditForm::class, ['incident' => $incident])
+        Livewire::actingAs($resolver);
+
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->set('comment', 'Test comment')
             ->call('save');
 
-        Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $incident])
+        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
             ->assertSee('Test comment');
 
         $this->assertDatabaseHas('activity_log', [

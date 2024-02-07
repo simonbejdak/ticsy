@@ -49,7 +49,7 @@ class HomeTest extends TestCase
         $this->actingAs($caller);
         $response = $this->get(route('home'));
 
-        $response->assertSee('Recent incidents you have already created');
+        $response->assertSee('Your recent incidents:');
         $response->assertSee('Incident Description');
     }
 

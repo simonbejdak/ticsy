@@ -5,7 +5,6 @@ namespace Tests\Feature\Task;
 
 use App\Enums\OnHoldReason;
 use App\Enums\Status;
-use App\Livewire\Activities;
 use App\Livewire\TaskEditForm;
 use App\Models\Group;
 use App\Models\Request;
@@ -192,7 +191,7 @@ class EditTest extends TestCase
         $task = Task::factory()->create();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $task])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder([
                 'Status:', 'Open',
@@ -216,7 +215,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -241,7 +240,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
@@ -263,7 +262,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
@@ -285,7 +284,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
@@ -306,7 +305,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Priority:', '3', 'was', Task::DEFAULT_PRIORITY]);
     }
@@ -327,7 +326,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
@@ -347,7 +346,7 @@ class EditTest extends TestCase
 
         $task->refresh();
 
-        Livewire::test(Activities::class, ['model' => $task])
+        Livewire::test(TaskEditForm::class, ['task' => $task])
             ->assertSuccessful()
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
@@ -369,7 +368,7 @@ class EditTest extends TestCase
         $task->refresh();
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $task])
+            ->test(TaskEditForm::class, ['task' => $task])
             ->assertSeeInOrder([
                 'Status:', 'Monitoring', 'was', 'In Progress',
                 'Test Comment',
@@ -487,9 +486,14 @@ class EditTest extends TestCase
         TaskService::startTask($task);
 
         Livewire::actingAs($resolver)
-            ->test(Activities::class, ['model' => $task])
-            ->assertSuccessful()
-            ->assertDontSeeText('Updated');
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->set('status' , Status::MONITORING->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        Livewire::actingAs($resolver)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->assertDontSeeText('Updated &bullet;');
     }
 
     /** @test */
