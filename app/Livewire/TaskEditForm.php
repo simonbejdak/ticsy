@@ -54,9 +54,9 @@ class TaskEditForm extends EditForm
             ],
             'comment' => [
                 'max:255',
-                Rule::requiredIf($this->status == Status::RESOLVED),
-                Rule::requiredIf($this->status == Status::CANCELLED),
-                Rule::requiredIf($this->status == Status::ON_HOLD),
+                Rule::requiredIf($this->status == Status::RESOLVED && $this->status != $this->task->status),
+                Rule::requiredIf($this->status == Status::CANCELLED && $this->status != $this->task->status),
+                Rule::requiredIf($this->status == Status::ON_HOLD && $this->status != $this->task->status),
                 Rule::requiredIf($this->priority != $this->task->priority),
                 'nullable',
             ],

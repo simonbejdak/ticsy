@@ -167,9 +167,7 @@ abstract class Field
     function style(): string
     {
         return
-            ($this->disabled ? 'text-gray-800 bg-slate-100 cursor-not-allowed ' : 'bg-white ') .
-            ($this->error ? 'ring-1 ring-red-500 ' : '') .
             $this->height .
-            ' appearance-none px-2 rounded-sm shadow-inner text-xs border border-slate-400 text-black caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
+            ' bg-white disabled:opacity-100 disabled:text-gray-800 disabled:bg-slate-100 disabled:cursor-not-allowed appearance-none px-2 rounded-sm shadow-inner text-xs border border-slate-400 caret-inherit focus:border-indigo-500 focus:ring-indigo-500 ';
     }
 }
