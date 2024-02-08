@@ -7,11 +7,11 @@
                     <th class="text-left pl-3 py-1 bg-white">
                         <span
                             class="flex flex-row items-center cursor-pointer"
-                            :class="'{{ $propertyToSortBy == $header['property'] ? 'text-blue-500' : ' ' }}'"
+                            :class="'{{ $sortProperty == $header['property'] ? 'text-blue-500' : ' ' }}'"
                             wire:click="columnHeaderClicked('{{ $header['property'] }}')"
                         >
                             {{ $header['header'] }}
-                            @if($propertyToSortBy == $header['property'])
+                            @if($sortProperty == $header['property'])
                                 @if($sortOrder == SortOrder::ASCENDING)
                                     {{-- Downward --}}
                                     <div class="ml-1">
@@ -32,7 +32,7 @@
                     </th>
                 @endforeach
             </tr>
-            @if($columnSearch)
+            @if($columnTextSearch)
                 <tr class="border-t border-slate-300 [&>*:last-child]:border-none">
                     @foreach($table->getHeaders() as $header)
                         <td class="px-2 py-1 bg-slate-200 border-r border-slate-300">

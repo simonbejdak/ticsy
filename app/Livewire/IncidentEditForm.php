@@ -17,6 +17,7 @@ use App\Services\ActivityService;
 use App\Traits\HasFields;
 use App\Traits\HasTabs;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
@@ -83,8 +84,8 @@ class IncidentEditForm extends EditForm
         if($property === 'status' && $value == Status::OPEN){
             $this->resolver = null;
         }
-        if($property === 'priority' && $value == Priority::ONE){
-            $this->authorize('setPriorityOne', Incident::class);
+        if($property === 'priority'){
+            $this->authorize('setPriority', Incident::class);
         }
     }
 
@@ -192,10 +193,9 @@ class IncidentEditForm extends EditForm
         }
 
         return match($name){
-            'onHoldReason' =>
-                $this->status != Status::ON_HOLD,
-            'priority', 'group', 'resolver' =>
-                $this->status == Status::RESOLVED,
+            'onHoldReason' => $this->status != Status::ON_HOLD,
+            'priority' => $this->status == Status::RESOLVED || !Auth::user()->hasPermissionTo('set_priority'),
+            'group', 'resolver' => $this->status == Status::RESOLVED,
             default => false,
         };
     }

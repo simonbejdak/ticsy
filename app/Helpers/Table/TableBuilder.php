@@ -27,15 +27,15 @@ class TableBuilder
         return $this;
     }
 
-    function paginationIndex(int $paginationIndex): self
+    function paginationIndex(int $number): self
     {
-        $this->table->paginationIndex = $paginationIndex;
+        $this->table->paginationIndex = $number;
         return $this;
     }
 
-    function sortByProperty(string $property): self
+    function sortProperty(string $property): self
     {
-        $this->table->sortByProperty = $property;
+        $this->table->sortProperty = $property;
         return $this;
     }
 
@@ -53,16 +53,16 @@ class TableBuilder
 
     function withoutColumnSearch(): self
     {
-        $this->table->columnSearch = false;
+        $this->table->columnTextSearch = false;
         return $this;
     }
 
-    function get(): Table
+    function create(): Table
     {
         return $this->table->create();
     }
 
-    public function searchCases(array $searchCases): self
+    function searchCases(array $searchCases): self
     {
         foreach($searchCases as $property => $value){
             if(is_array($value)){

@@ -21,14 +21,17 @@ use Tests\TestCase;
 class EditTest extends TestCase
 {
     use RefreshDatabase;
-    function test_it_redirect_guests_to_login_page()
+
+    /** @test */
+    function it_redirect_guests_to_login_page()
     {
         $response = $this->get(route('incidents.edit', 1));
 
         $response->assertRedirectToRoute('login');
     }
 
-    function test_it_errors_to_403_to_unauthorized_users()
+    /** @test */
+    function it_errors_to_403_to_unauthorized_users()
     {
         $incident = Incident::factory()->create();
 
@@ -38,7 +41,8 @@ class EditTest extends TestCase
         $response->assertForbidden();
     }
 
-    function test_it_authorizes_caller_to_view(){
+    /** @test */
+    function it_authorizes_caller_to_view(){
         $user = User::factory()->create();
         $incident = Incident::factory(['caller_id' => $user])->create();
 
@@ -47,7 +51,8 @@ class EditTest extends TestCase
         $response->assertSuccessful();
     }
 
-    function test_it_authorizes_resolver_to_view(){
+    /** @test */
+    function it_authorizes_resolver_to_view(){
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
 
@@ -56,7 +61,8 @@ class EditTest extends TestCase
         $response->assertSuccessful();
     }
 
-    public function test_it_displays_incident_data()
+    /** @test */
+    function it_displays_incident_data()
     {
         $category = IncidentCategory::firstOrFail();
         $item = IncidentItem::firstOrFail();
@@ -87,7 +93,8 @@ class EditTest extends TestCase
         $response->assertSee($status->value);
     }
 
-    public function test_it_displays_comments()
+    /** @test */
+    function it_displays_comments()
     {
         $user = User::factory()->create();
         $incident = Incident::factory(['caller_id' => $user])->create();
@@ -100,7 +107,8 @@ class EditTest extends TestCase
         $response->assertSee('Comment Body');
     }
 
-    public function test_on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
+    /** @test */
+    function on_hold_reason_field_is_hidden_when_status_is_not_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->statusInProgress()->create();
@@ -110,7 +118,8 @@ class EditTest extends TestCase
             ->assertDontSeeHtml('> On hold reason </label>');
     }
 
-    public function test_on_hold_reason_field_is_shown_when_status_is_on_hold()
+    /** @test */
+    function on_hold_reason_field_is_shown_when_status_is_on_hold()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory(['on_hold_reason' => OnHoldReason::WAITING_FOR_VENDOR])
@@ -121,7 +130,8 @@ class EditTest extends TestCase
             ->assertSee('On hold reason');
     }
 
-    public function test_status_can_be_set_to_cancelled_if_previous_status_is_different()
+    /** @test */
+    function status_can_be_set_to_cancelled_if_previous_status_is_different()
     {
         $incident = Incident::factory()->create();
         $resolver = User::factory()->resolver()->create();
@@ -139,7 +149,8 @@ class EditTest extends TestCase
         ]);
     }
 
-    public function test_it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_incident()
+    /** @test */
+    function it_returns_forbidden_if_user_with_no_permission_sets_priority_one_to_a_incident()
     {
         // resolver does not have a permisssion to set priority one
         $resolver = User::factory()->resolver()->create();
@@ -151,7 +162,8 @@ class EditTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_incident()
+    /** @test */
+    function it_does_not_return_forbidden_if_user_with_permission_assigns_priority_one_to_a_incident()
     {
         // manager has a permisssion to set priority one
         $manager = User::factory()->manager()->create();
@@ -170,7 +182,8 @@ class EditTest extends TestCase
         ]);
     }
 
-    public function test_it_allows_user_with_permission_to_set_priority_one_to_also_set_lower_priorities()
+    /** @test */
+    function it_allows_user_with_permission_to_set_priority_one_to_also_set_lower_priorities()
     {
         // manager has a permisssion to set priority one
         $user = User::factory()->manager()->create();
@@ -189,7 +202,8 @@ class EditTest extends TestCase
         ]);
     }
 
-    public function test_it_displays_incident_created_activity()
+    /** @test */
+    function it_displays_incident_created_activity()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
@@ -204,7 +218,8 @@ class EditTest extends TestCase
             ]);
     }
 
-    public function test_it_displays_changes_activity_dynamically()
+    /** @test */
+    function it_displays_changes_activity_dynamically()
     {
         $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory(['status' => Status::OPEN])->create();
@@ -224,7 +239,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
-    public function test_it_displays_multiple_activity_changes()
+    /** @test */
+    function it_displays_multiple_activity_changes()
     {
         $group = Group::factory(['name' => 'TEST-GROUP'])->create();
         $resolver = User::factory()->resolverAllGroups()->create();
@@ -250,7 +266,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
-    public function test_it_displays_status_changes_activity()
+    /** @test */
+    function it_displays_status_changes_activity()
     {
         $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory(['status' => Status::OPEN])->create();
@@ -270,7 +287,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
     }
 
-    public function test_it_displays_on_hold_reason_changes_activity()
+    /** @test */
+    function it_displays_on_hold_reason_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
@@ -291,7 +309,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
     }
 
-    public function test_it_displays_priority_changes_activity()
+    /** @test */
+    function it_displays_priority_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory(['priority' => Incident::DEFAULT_PRIORITY])->create();
@@ -311,7 +330,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['Priority:', '3', 'was', Incident::DEFAULT_PRIORITY]);
     }
 
-    public function test_it_displays_group_changes_activity()
+    /** @test */
+    function it_displays_group_changes_activity()
     {
         $resolver = User::factory()->resolver()->create();
         $group = Group::factory(['name' => 'TEST-GROUP'])->create();
@@ -331,7 +351,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
-    public function test_it_displays_resolver_changes_activity()
+    /** @test */
+    function it_displays_resolver_changes_activity()
     {
         $resolver = User::factory(['name' => 'Average Joe'])->resolverAllGroups()->create();
         $incident = Incident::factory()->create();
@@ -350,7 +371,8 @@ class EditTest extends TestCase
             ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
     }
 
-    public function test_it_displays_activities_in_descending_order()
+    /** @test */
+    function it_displays_activities_in_descending_order()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
@@ -375,7 +397,8 @@ class EditTest extends TestCase
             ]);
     }
 
-    public function test_it_requires_comment_if_priority_changes()
+    /** @test */
+    function it_requires_comment_if_priority_changes()
     {
         $incident = Incident::factory()->create();
         $resolver = User::factory()->resolver()->create();
@@ -391,7 +414,8 @@ class EditTest extends TestCase
             ->assertSuccessful();
     }
 
-    public function test_sla_bar_shows_correct_minutes()
+    /** @test */
+    function sla_bar_shows_correct_minutes()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->create();
@@ -404,7 +428,8 @@ class EditTest extends TestCase
             ->assertSee($incident->sla->minutesTillExpires() . ' minutes');
     }
 
-    public function test_it_allows_to_add_comment_to_caller()
+    /** @test */
+    function it_allows_to_add_comment_to_caller()
     {
         $caller = User::factory()->create();
         $incident = Incident::factory(['caller_id' => $caller])->create();
@@ -426,7 +451,8 @@ class EditTest extends TestCase
         ]);
     }
 
-    public function test_resolver_is_required_if_status_in_progress()
+    /** @test */
+    function resolver_is_required_if_status_in_progress()
     {
         $incident = Incident::factory()->create();
         $resolver = User::factory()->resolver()->create();
@@ -438,7 +464,8 @@ class EditTest extends TestCase
             ->assertHasErrors(['resolver' => 'required']);
     }
 
-    public function test_resolver_set_to_null_if_status_is_open()
+    /** @test */
+    function resolver_set_to_null_if_status_is_open()
     {
         $resolver = User::factory()->resolverAllGroups()->create();
         $incident = Incident::factory(['resolver_id' => $resolver])->statusInProgress()->create();
@@ -450,7 +477,8 @@ class EditTest extends TestCase
             ->assertSet('resolver', null);
     }
 
-    public function test_it_does_not_require_comment_if_status_is_on_hold_and_status_was_not_changed()
+    /** @test */
+    function it_does_not_require_comment_if_status_is_on_hold_and_status_was_not_changed()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->statusOnHold()->create();
@@ -461,7 +489,8 @@ class EditTest extends TestCase
             ->assertHasNoErrors(['comment', 'required']);
     }
 
-    public function test_it_does_not_require_comment_if_status_is_resolved_and_status_was_not_changed()
+    /** @test */
+    function it_does_not_require_comment_if_status_is_resolved_and_status_was_not_changed()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->statusResolved()->create();
@@ -472,7 +501,8 @@ class EditTest extends TestCase
             ->assertHasNoErrors(['comment', 'required']);
     }
 
-    public function test_it_does_not_require_comment_if_status_is_cancelled_and_status_was_not_changed()
+    /** @test */
+    function it_does_not_require_comment_if_status_is_cancelled_and_status_was_not_changed()
     {
         $resolver = User::factory()->resolver()->create();
         $incident = Incident::factory()->statusCancelled()->create();
@@ -481,5 +511,36 @@ class EditTest extends TestCase
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->call('save')
             ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    /** @test */
+    function resolver_cannot_change_priority()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('priority', Priority::THREE->value)
+            ->assertForbidden();
+    }
+
+    /** @test */
+    function manager_can_change_priority()
+    {
+        $manager = User::factory()->manager()->create();
+        $incident = Incident::factory()->create();
+
+        Livewire::actingAs($manager)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->set('priority', Priority::THREE->value)
+            ->set('comment', 'Production Issue')
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('incidents', [
+            'id' => $incident->id,
+            'priority' => Priority::THREE->value,
+        ]);
     }
 }

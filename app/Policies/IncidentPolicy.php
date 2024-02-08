@@ -17,9 +17,9 @@ class IncidentPolicy
         return $user->hasPermissionTo('update_all_tickets');
     }
 
-    public function setPriorityOne(User $user): bool
+    public function setPriority(User $user): bool
     {
-        return $user->hasPermissionTo('set_priority_one');
+        return $user->hasPermissionTo('set_priority');
     }
 
     public function addComment(User $user, Incident $ticket): bool

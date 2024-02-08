@@ -16,15 +16,15 @@ abstract class Table extends Component
     #[Locked]
     public $itemsPerPage = 25;
     #[Locked]
-    public int $modelCount;
+    public int $count;
     #[Locked]
     public array $properties;
     #[Locked]
     public bool $paginate;
     #[Locked]
-    public bool $columnSearch;
+    public bool $columnTextSearch;
     #[Locked]
-    public string $propertyToSortBy = 'id';
+    public string $sortProperty = 'id';
     #[Locked]
     public SortOrder $sortOrder = SortOrder::DESCENDING;
 
@@ -33,7 +33,7 @@ abstract class Table extends Component
 
     function tableBuilder(): TableBuilder{
         return \App\Helpers\Table\Table::make($this->query())
-            ->sortByProperty($this->propertyToSortBy)
+            ->sortProperty($this->sortProperty)
             ->sortOrder($this->sortOrder)
             ->itemsPerPage($this->itemsPerPage)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
@@ -42,10 +42,10 @@ abstract class Table extends Component
 
     function mount(): void
     {
-        $table = $this->schema()->get();
-        $this->modelCount = $table->modelCount;
+        $table = $this->table();
+        $this->count = $table->count;
         $this->paginate = $table->paginate;
-        $this->columnSearch = $table->columnSearch;
+        $this->columnTextSearch = $table->columnTextSearch;
         foreach($table->columns as $column){
             $this->properties[] = $column['property'];
         }
@@ -53,7 +53,7 @@ abstract class Table extends Component
 
     function table(): \App\Helpers\Table\Table
     {
-        return $this->schema()->get();
+        return $this->schema()->create();
     }
 
     function render()
@@ -64,19 +64,19 @@ abstract class Table extends Component
     function columnHeaderClicked(string $property): void
     {
         if($this->isPropertyValid($property)){
-            if($this->propertyToSortBy == $property){
+            if($this->sortProperty == $property){
                 $this->switchSortOrder();
             } else {
                 $this->sortOrder = SortOrder::ASCENDING;
             }
-            $this->propertyToSortBy = $property;
+            $this->sortProperty = $property;
             $this->render();
         }
     }
 
     function searchCase(string $property): void
     {
-        if($this->isPropertyValid($property) && $this->columnSearch){
+        if($this->isPropertyValid($property) && $this->columnTextSearch){
             $this->searchCases[$property] = $this->{$property};
         }
     }
@@ -97,8 +97,8 @@ abstract class Table extends Component
 
     function forwardClicked(): void
     {
-        if($this->paginationIndex + $this->itemsPerPage > $this->modelCount - $this->itemsPerPage){
-            $this->paginationIndex = $this->modelCount - $this->itemsPerPage;
+        if($this->paginationIndex + $this->itemsPerPage > $this->count - $this->itemsPerPage){
+            $this->paginationIndex = $this->count - $this->itemsPerPage;
         } else {
             $this->paginationIndex += $this->itemsPerPage;
         }
@@ -106,7 +106,7 @@ abstract class Table extends Component
 
     function doubleForwardClicked(): void
     {
-        $this->paginationIndex = $this->modelCount - $this->itemsPerPage;
+        $this->paginationIndex = $this->count - $this->itemsPerPage;
     }
 
     protected function switchSortOrder(): void
@@ -120,7 +120,7 @@ abstract class Table extends Component
             if($this->paginationIndex == 1){
                 return true;
             } else {
-                if($this->paginationIndex > 1 && $this->paginationIndex <= $this->modelCount){
+                if($this->paginationIndex > 1 && $this->paginationIndex <= $this->count){
                     return true;
                 }
             }

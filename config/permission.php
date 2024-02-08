@@ -2,7 +2,7 @@
 
 return [
 
-    'models' => [
+    'collection' => [
 
         /*
          * When using the "HasPermissions" trait from this package, we need to know which
@@ -48,7 +48,7 @@ return [
 
         /*
          * When using the "HasPermissions" trait from this package, we need to know which
-         * table should be used to retrieve your models permissions. We have chosen a
+         * table should be used to retrieve your collection permissions. We have chosen a
          * basic default value but you may easily change it to any table you like.
          */
 
@@ -56,7 +56,7 @@ return [
 
         /*
          * When using the "HasRoles" trait from this package, we need to know which
-         * table should be used to retrieve your models roles. We have chosen a
+         * table should be used to retrieve your collection roles. We have chosen a
          * basic default value but you may easily change it to any table you like.
          */
 

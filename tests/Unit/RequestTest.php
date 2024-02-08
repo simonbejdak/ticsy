@@ -190,7 +190,7 @@ class RequestTest extends TestCase
     /** @test */
     public function exception_thrown_if_item_does_not_match_category()
     {
-        // I have to detach below models just to be sure, that in no event they are paired
+        // I have to detach below collection just to be sure, that in no event they are paired
         $category = RequestCategory::firstOrFail();
         $item = RequestItem::firstOrFail();
         $category->items()->detach($item);

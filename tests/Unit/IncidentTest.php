@@ -155,7 +155,7 @@ class IncidentTest extends TestCase
 
     public function test_exception_thrown_if_item_does_not_match_category()
     {
-        // I'm detaching below models together, so they do not match
+        // I'm detaching below collection together, so they do not match
         $category = IncidentCategory::findOrFail(IncidentCategory::NETWORK);
         $item = IncidentItem::findOrFail(IncidentItem::APPLICATION_ERROR);
         $category->items()->detach($item);

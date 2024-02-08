@@ -30,8 +30,8 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 28. Simplified ticket views for regular user
 
 Use case problems:
-- Priority 1 is shown even if user has no permission to set priority one
-- Comment on EditForms required even if status is already on hold, and it was not changed to on hold at all.. we need to required the comment only if the status on hold and it also was changed
+- Priority 1 is shown even if user has no permission to set priority one -- done
+- Comment on EditForms required even if status is already on hold, and it was not changed to on hold at all.. we need to required the comment only if the status on hold and it also was changed -- done
 - Very long descriptions span tables to unlimited width -- done by itself
 - Table component is not horizontally scrollable -- cancelled, not necessary for now
 - remove priority change reason, just ask for comment instead -- done

@@ -16,7 +16,8 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test_it_belongs_to_many_groups()
+    /** @test */
+    function it_belongs_to_many_groups()
     {
         $groupOne = Group::factory(['name' => 'TEST-GROUP-1'])->create();
         $groupTwo = Group::factory(['name' => 'TEST-GROUP-2'])->create();
@@ -27,21 +28,24 @@ class UserTest extends TestCase
         $this->assertCount(2, $resolver->groups);
     }
 
-    function test_it_as_caller_has_many_requests(){
+    /** @test */
+    function it_as_caller_has_many_requests(){
         $caller = User::factory()->create();
         Request::factory(2, ['caller_id' => $caller])->create();
 
         $this->assertCount(2, $caller->requests);
     }
 
-    function test_it_as_resolver_has_many_requests(){
+    /** @test */
+    function it_as_resolver_has_many_requests(){
         $resolver = User::factory()->resolver()->create();
         Request::factory(2, ['resolver_id' => $resolver])->create();
 
         $this->assertCount(2, $resolver->resolverRequests);
     }
 
-    function test_only_one_resolver_can_be_assigned_to_ticket()
+    /** @test */
+    function only_one_resolver_can_be_assigned_to_ticket()
     {
         $incident = Incident::factory()->create();
         $resolverOne = User::factory()->resolver()->create();
@@ -59,7 +63,8 @@ class UserTest extends TestCase
         $this->assertNotEquals($resolverOne->id, $incident->resolver_id);
     }
 
-    public function test_it_has_many_favorite_resolver_panel_options()
+    /** @test */
+    function it_has_many_favorite_resolver_panel_options()
     {
         $user = User::factory()->create();
         FavoriteResolverPanelOption::factory([
@@ -74,17 +79,35 @@ class UserTest extends TestCase
         $this->assertCount(2, $user->favoriteResolverPanelOptions);
     }
 
-    public function test_it_has_correct_default_profile_picture()
+    /** @test */
+    function it_has_correct_default_profile_picture()
     {
         $user = User::factory()->create();
 
         $this->assertEquals(User::DEFAULT_PROFILE_PICTURE, $user->profile_picture);
     }
 
-    public function test_it_has_profile_picture()
+    /** @test */
+    function it_has_profile_picture()
     {
         $user = User::factory(['profile_picture' => 'j2dku8ds.jpg'])->create();
 
         $this->assertEquals('j2dku8ds.jpg', $user->profile_picture);
+    }
+
+    /** @test */
+    function resolver_does_not_have_set_priority_permission()
+    {
+        $resolver = User::factory()->resolver()->create();
+
+        $this->assertFalse($resolver->hasPermissionTo('set_priority'));
+    }
+
+    /** @test */
+    function manager_has_set_priority_permission()
+    {
+        $manager = User::factory()->manager()->create();
+
+        $this->assertTrue($manager->hasPermissionTo('set_priority'));
     }
 }

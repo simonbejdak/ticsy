@@ -4,6 +4,7 @@
 namespace Tests\Feature\Request;
 
 use App\Enums\OnHoldReason;
+use App\Enums\Priority;
 use App\Enums\Status;
 use App\Enums\Tab;
 use App\Livewire\Activities;
@@ -566,5 +567,36 @@ class EditTest extends TestCase
             ->test(RequestEditForm::class, ['request' => $request])
             ->call('save')
             ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    /** @test */
+    function resolver_cannot_change_priority()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $request = Request::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->set('priority', Priority::THREE->value)
+            ->assertForbidden();
+    }
+
+    /** @test */
+    function manager_can_change_priority()
+    {
+        $manager = User::factory()->manager()->create();
+        $request = Request::factory()->create();
+
+        Livewire::actingAs($manager)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->set('priority', Priority::THREE->value)
+            ->set('comment', 'Production Issue')
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('requests', [
+            'id' => $request->id,
+            'priority' => Priority::THREE->value,
+        ]);
     }
 }

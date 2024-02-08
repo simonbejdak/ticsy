@@ -28,7 +28,7 @@ Refactor ideas
 - refactor route web file -- done
 - rename all relationship tests -- done
 - foreach iterations in seeders can be shortened -- done
-- factories for Mappable models should not be used at all -- done
+- factories for Mappable collection should not be used at all -- done
 - refactor ticket field select name variable to be setup on view, not on controller -- done
 - delete render method from child ticketfieldselect components -- done
 - synchronize fields in create view with edit fields view -- done

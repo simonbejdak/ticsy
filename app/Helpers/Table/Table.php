@@ -16,14 +16,14 @@ class Table
     public array $columns;
     public array $searchCases;
     public bool $paginate;
-    public bool $columnSearch;
+    public bool $columnTextSearch;
     public int $itemsPerPage;
     public int $paginationIndex;
-    public int $modelCount;
-    public string $sortByProperty;
+    public int $count;
+    public string $sortProperty;
     public SortOrder $sortOrder;
-    public Collection $models;
-    public Collection $paginatedModels;
+    public Collection $collection;
+    public Collection $paginatedCollection;
 
     protected function __construct(){}
 
@@ -32,7 +32,7 @@ class Table
         $static = new static();
         $static->searchCases = [];
         $static->paginate = true;
-        $static->columnSearch = true;
+        $static->columnTextSearch = true;
         $static->itemsPerPage = $static::DEFAULT_ITEMS_PER_PAGE;
         $static->paginationIndex = 1;
         $static->builder = $builder;
@@ -40,14 +40,25 @@ class Table
         return new TableBuilder($static);
     }
 
-    function isPreviousPage(): bool
+    function hasPreviousPage(): bool
     {
         return $this->paginationIndex > 1;
     }
 
-    function isNextPage(): int
+    function hasNextPage(): int
     {
-        return $this->paginationIndex < ($this->modelCount - $this->itemsPerPage);
+        return $this->paginationIndex < ($this->count - $this->itemsPerPage);
+    }
+
+    function addSearchCase(string $property, string $value): self
+    {
+        $this->searchCases[$property] = $value;
+        return $this;
+    }
+
+    function to(): int
+    {
+        return $this->paginationIndex + $this->itemsPerPage;
     }
 
     function getHeaders(): array
@@ -65,7 +76,7 @@ class Table
     function getRows(): array
     {
         $rows = [];
-        foreach ($this->paginatedModels as $model){
+        foreach ($this->paginatedCollection as $model){
             $row = [];
             foreach ($this->columns as $column){
                 $row[] = [
@@ -78,31 +89,6 @@ class Table
         return $rows;
     }
 
-    function create(): self
-    {
-        $this->models = $this->builder->get();
-        foreach ($this->searchCases as $property => $value){
-            $this->models = $this->models->filter(function ($model) use ($property, $value){
-                return str_contains($this->data_get($model, $property), $value);
-            });
-        }
-        $this->models = $this->sortOrder == SortOrder::DESCENDING ? $this->models->sortByDesc($this->sortByProperty) : $this->models->sortBy($this->sortByProperty);
-        $this->paginatedModels = $this->getPaginated();
-        $this->modelCount = count($this->models);
-        return $this;
-    }
-
-    function addSearchCase(string $property, string $value): self
-    {
-        $this->searchCases[$property] = $value;
-        return $this;
-    }
-
-    function to(): int
-    {
-        return $this->paginationIndex + $this->itemsPerPage;
-    }
-
     protected function getValue($model, $property): string|null
     {
         return array_reduce(explode('.', $property),
@@ -112,9 +98,9 @@ class Table
         );
     }
 
-    protected function getPaginated(): Collection
+    protected function paginateCollection(): Collection
     {
-        return $this->models->skip($this->paginationIndex - 1)->take($this->itemsPerPage);
+        return $this->collection->skip($this->paginationIndex - 1)->take($this->itemsPerPage);
     }
 
     protected function data_get($target, string $property): string
@@ -124,5 +110,19 @@ class Table
             $data = $data->value;
         }
         return $data;
+    }
+
+    function create(): self
+    {
+        $this->collection = $this->builder->get();
+        foreach ($this->searchCases as $property => $value){
+            $this->collection = $this->collection->filter(function ($model) use ($property, $value){
+                return str_contains($this->data_get($model, $property), $value);
+            });
+        }
+        $this->collection = $this->sortOrder == SortOrder::DESCENDING ? $this->collection->sortByDesc($this->sortProperty) : $this->collection->sortBy($this->sortProperty);
+        $this->paginatedCollection = $this->paginateCollection();
+        $this->count = count($this->collection);
+        return $this;
     }
 }
