@@ -1,12 +1,4 @@
-<x-field-layout
-    :hidden="$field->isHidden()"
-    class="{{ $field->labelPosition == FieldLabelPosition::TOP ? 'flex flex-col space-y-1' : '' }}"
->
-    @if($field->hasLabel)
-        <div class="flex flex-row">
-            <x-field-label :value="$field->getDisplayName()"  :required="$required" />
-        </div>
-    @endif
+<x-field-layout :field="$field">
     <div
         wire:key="{{ rand() }}"
         class="relative {{ $field->width }}"

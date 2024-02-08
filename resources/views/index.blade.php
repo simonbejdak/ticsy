@@ -11,10 +11,10 @@
         </div>
     </section>
     <section>
-        <div class="flex flex-row w-3/4 space-x-6">
+        <div class="flex flex-col mt-16 w-2/3">
             @isset($incidents)
-                <div class="w-1/2">
-                    <h4 class="mt-12">Your recent incidents:</h4>
+                <div>
+                    <h4>Your recent incidents:</h4>
                     <div class="my-2 flex flex-col justify-start space-y-4">
                         @foreach($incidents as $incident)
                             <x-incident-card :$incident />
@@ -28,8 +28,8 @@
                 </div>
             @endif
             @isset($requests)
-                <div class="w-1/2">
-                    <h4 class="mt-12">Your recent requests:</h4>
+                <div>
+                    <h4>Your recent requests:</h4>
                     <div class="my-2 flex flex-col justify-start space-y-4">
                         @foreach($requests as $request)
                             <x-request-card :$request />
