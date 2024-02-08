@@ -206,7 +206,7 @@ class UpdateTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('priority', 2)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save');
 
         $this->assertDatabaseHas('incidents', [
@@ -243,7 +243,7 @@ class UpdateTest extends TestCase
             ->test(IncidentEditForm::class, ['incident' => $incident])
             ->set('status', $status->value)
             ->set('priority', $priority->value)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
             ->call('save');

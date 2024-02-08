@@ -15,7 +15,7 @@ abstract class Field
     public string $width;
     public string $height;
     public string $wireModel;
-    protected string $displayName;
+    protected string $label;
     public bool $hideable;
     protected bool $disabled;
     public bool $hidden;
@@ -50,15 +50,15 @@ abstract class Field
         return $this;
     }
 
-    function displayName(string $displayName): self
+    function label(string $label): self
     {
-        $this->displayName = $displayName;
+        $this->label = $label;
         return $this;
     }
 
-    function getDisplayName(): string
+    function getLabel(): string
     {
-        return $this->displayName ?? makeDisplayName($this->name);
+        return $this->label ?? makeDisplayName($this->name);
     }
 
     function hideable(): self

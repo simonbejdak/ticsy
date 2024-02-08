@@ -171,7 +171,7 @@ class EditTest extends TestCase
         Livewire::actingAs($manager)
             ->test(RequestEditForm::class, ['request' => $request])
             ->set('priority', 1)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -191,7 +191,7 @@ class EditTest extends TestCase
         Livewire::actingAs($manager)
             ->test(RequestEditForm::class, ['request' => $request])
             ->set('priority', 2)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -316,7 +316,7 @@ class EditTest extends TestCase
 
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('priority', 3)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -395,7 +395,7 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    public function it_requires_priority_change_reason_if_priority_changes()
+    public function it_requires_comment_if_priority_changes()
     {
         $request = Request::factory()->create();
         $resolver = User::factory()->resolver()->create();
@@ -405,8 +405,8 @@ class EditTest extends TestCase
         Livewire::test(RequestEditForm::class, ['request' => $request])
             ->set('priority', 3)
             ->call('save')
-            ->assertHasErrors(['priorityChangeReason' => 'required'])
-            ->set('priorityChangeReason', 'Production issue')
+            ->assertHasErrors(['comment' => 'required'])
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
     }

@@ -203,7 +203,7 @@ class UpdateTest extends TestCase
         Livewire::actingAs($resolver)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 2)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save');
 
         $this->assertDatabaseHas('tasks', [
@@ -240,7 +240,7 @@ class UpdateTest extends TestCase
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', $status->value)
             ->set('priority', $priority->value)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->set('group', $group->id)
             ->set('resolver', $resolver->id)
             ->call('save');

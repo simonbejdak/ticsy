@@ -29,7 +29,6 @@ class IncidentEditForm extends EditForm
     public Status $status;
     public OnHoldReason|null $onHoldReason;
     public Priority $priority;
-    public string $priorityChangeReason = '';
     public $group;
     public $resolver;
     public string $comment = '';
@@ -44,10 +43,6 @@ class IncidentEditForm extends EditForm
                 'nullable',
             ],
             'priority' => ['required', Rule::enum(Priority::class)],
-            'priorityChangeReason' => [
-                Rule::requiredIf($this->priority != $this->incident->priority),
-                'string',
-            ],
             'group' => ['required', 'exists:App\Models\Group,id'],
             'resolver' => [
                 Rule::in(
@@ -61,6 +56,7 @@ class IncidentEditForm extends EditForm
                 Rule::requiredIf($this->status == Status::RESOLVED),
                 Rule::requiredIf($this->status == Status::CANCELLED),
                 Rule::requiredIf($this->status == Status::ON_HOLD),
+                Rule::requiredIf($this->priority != $this->incident->priority),
                 'nullable',
             ],
         ];
@@ -114,10 +110,6 @@ class IncidentEditForm extends EditForm
         $this->incident->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->incident->save();
 
-        if($this->priorityChangeReason !== ''){
-            ActivityService::priorityChangeReason($this->incident, $this->priorityChangeReason);
-        }
-
         if($this->comment !== ''){
             ActivityService::comment($this->incident, $this->comment);
         }
@@ -136,11 +128,11 @@ class IncidentEditForm extends EditForm
                 ->value($this->incident->caller->name)
                 ->disabled(),
             TextInput::make('created')
-                ->displayName('Created at')
+                ->label('Created at')
                 ->value($this->incident->created_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('updated')
-                ->displayName('Updated at')
+                ->label('Updated at')
                 ->value($this->incident->updated_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('category')
@@ -169,21 +161,18 @@ class IncidentEditForm extends EditForm
             function () {
                 if($this->incident->sla->isOpened()){
                     return Bar::make('sla')
-                        ->displayName('SLA expires at')
+                        ->label('SLA expires at')
                         ->percentage($this->incident->sla->toPercentage())
                         ->value($this->incident->sla->minutesTillExpires() . ' minutes')
                         ->pulse();
                 } return null;
             },
-            TextArea::make('priorityChangeReason')
-                ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
-                ->outsideGrid(),
             TextArea::make('description')
                 ->value($this->incident->description)
                 ->disabled()
                 ->outsideGrid(),
             TextArea::make('comment')
-                ->displayName('Add a comment')
+                ->label('Add a comment')
                 ->outsideGrid(),
         );
     }
@@ -207,8 +196,6 @@ class IncidentEditForm extends EditForm
                 $this->status != Status::ON_HOLD,
             'priority', 'group', 'resolver' =>
                 $this->status == Status::RESOLVED,
-            'priorityChangeReason' =>
-                $this->priority == $this->incident->priority,
             default => false,
         };
     }

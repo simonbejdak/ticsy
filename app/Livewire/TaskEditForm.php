@@ -29,7 +29,6 @@ class TaskEditForm extends EditForm
     public Status $status;
     public OnHoldReason|null $onHoldReason;
     public Priority $priority;
-    public string $priorityChangeReason = '';
     public $group;
     public $resolver;
     public string $comment = '';
@@ -45,10 +44,6 @@ class TaskEditForm extends EditForm
                 'nullable'
             ],
             'priority' => ['required', Rule::enum(Priority::class)],
-            'priorityChangeReason' => [
-                Rule::requiredIf($this->priority != $this->task->priority),
-                'string',
-            ],
             'group' => ['required', 'exists:App\Models\Group,id'],
             'resolver' => [
                 Rule::in(
@@ -62,6 +57,7 @@ class TaskEditForm extends EditForm
                 Rule::requiredIf($this->status == Status::RESOLVED),
                 Rule::requiredIf($this->status == Status::CANCELLED),
                 Rule::requiredIf($this->status == Status::ON_HOLD),
+                Rule::requiredIf($this->priority != $this->task->priority),
                 'nullable',
             ],
         ];
@@ -115,10 +111,6 @@ class TaskEditForm extends EditForm
         $this->task->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->task->save();
 
-        if($this->priorityChangeReason !== ''){
-            ActivityService::priorityChangeReason($this->task, $this->priorityChangeReason);
-        }
-
         if($this->comment !== ''){
             ActivityService::comment($this->task, $this->comment);
         }
@@ -137,21 +129,21 @@ class TaskEditForm extends EditForm
                 ->value($this->task->caller->name)
                 ->disabled(),
             TextInput::make('created')
-                ->displayName('Created at')
+                ->label('Created at')
                 ->value($this->task->created_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('updated')
-                ->displayName('Updated at')
+                ->label('Updated at')
                 ->value($this->task->updated_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             function () {
                 if($this->task->hasTaskable()){
                     return new Fields(
                         TextInput::make('taskable')
-                            ->displayName(get_class_name($this->task->taskable))
+                            ->label(get_class_name($this->task->taskable))
                             ->value($this->task->taskable_id)
                             ->disabled()
-                            ->anchor($this->task->taskable->editFormRoute()),
+                            ->anchor($this->task->taskable->editRoute()),
                         TextInput::make('category')
                             ->value($this->task->categoryName())
                             ->disabled(),
@@ -181,21 +173,18 @@ class TaskEditForm extends EditForm
             function () {
                 if($this->task->sla->isOpened()){
                     return Bar::make('sla')
-                        ->displayName('SLA expires at')
+                        ->label('SLA expires at')
                         ->percentage($this->task->sla->toPercentage())
                         ->value($this->task->sla->minutesTillExpires() . ' minutes')
                         ->pulse();
                 } return null;
             },
-            TextArea::make('priorityChangeReason')
-                ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
-                ->outsideGrid(),
             TextArea::make('description')
                 ->value($this->task->description)
                 ->disabled()
                 ->outsideGrid(),
             TextArea::make('comment')
-                ->displayName('Add a comment')
+                ->label('Add a comment')
                 ->outsideGrid(),
         );
     }
@@ -219,8 +208,6 @@ class TaskEditForm extends EditForm
                 $this->status != Status::ON_HOLD,
             'priority', 'group', 'resolver' =>
                 $this->status == Status::RESOLVED,
-            'priorityChangeReason' =>
-                $this->priority == $this->task->priority,
             default => false,
         };
     }

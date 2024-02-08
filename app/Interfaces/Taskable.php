@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 interface Taskable
 {
     public function tasks(): MorphMany;
-    public function editFormRoute(): string;
+    public function editRoute(): string;
 }

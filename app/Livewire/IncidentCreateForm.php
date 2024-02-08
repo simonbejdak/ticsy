@@ -78,7 +78,7 @@ class IncidentCreateForm extends CreateForm
                 ->outsideGrid()
                 ->labelPosition(FieldLabelPosition::TOP),
             TextArea::make('description')
-                ->displayName('Please describe what issue you are facing')
+                ->label('Please describe what issue you are facing')
                 ->outsideGrid()
                 ->labelPosition(FieldLabelPosition::TOP),
         );

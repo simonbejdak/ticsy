@@ -1,5 +1,5 @@
 <x-field-layout :hidden="$hidden">
-    <x-field-label :value="$displayName"/>
+    <x-field-label :value="$label"/>
     @if($type === \App\Enums\FieldType::TEXT)
         <x-field-input
             class="p-2"

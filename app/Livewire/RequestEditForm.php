@@ -31,7 +31,6 @@ class RequestEditForm extends EditForm
     public Status $status;
     public OnHoldReason|null $onHoldReason;
     public Priority $priority;
-    public string $priorityChangeReason = '';
     public $group;
     public $resolver;
     public string $comment = '';
@@ -46,10 +45,6 @@ class RequestEditForm extends EditForm
                 'nullable',
             ],
             'priority' => ['required', Rule::enum(Priority::class)],
-            'priorityChangeReason' => [
-                Rule::requiredIf($this->priority != $this->request->priority),
-                'string',
-            ],
             'group' => ['required', 'exists:App\Models\Group,id'],
             'resolver' => [
                 Rule::in(
@@ -63,6 +58,7 @@ class RequestEditForm extends EditForm
                 Rule::requiredIf($this->status == Status::RESOLVED),
                 Rule::requiredIf($this->status == Status::CANCELLED),
                 Rule::requiredIf($this->status == Status::ON_HOLD),
+                Rule::requiredIf($this->priority != $this->request->priority),
                 'nullable',
             ],
         ];
@@ -116,10 +112,6 @@ class RequestEditForm extends EditForm
         $this->request->resolver_id = ($this->resolver === '') ? null : $this->resolver;
         $this->request->save();
 
-        if($this->priorityChangeReason !== ''){
-            ActivityService::priorityChangeReason($this->request, $this->priorityChangeReason);
-        }
-
         if($this->comment !== ''){
             ActivityService::comment($this->request, $this->comment);
         }
@@ -138,11 +130,11 @@ class RequestEditForm extends EditForm
                 ->value($this->request->caller->name)
                 ->disabled(),
             TextInput::make('created')
-                ->displayName('Created at')
+                ->label('Created at')
                 ->value($this->request->created_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('updated')
-                ->displayName('Updated at')
+                ->label('Updated at')
                 ->value($this->request->updated_at->format('d.m.Y h:i:s'))
                 ->disabled(),
             TextInput::make('category')
@@ -171,21 +163,18 @@ class RequestEditForm extends EditForm
             function () {
                 if($this->request->sla->isOpened()){
                     return Bar::make('sla')
-                        ->displayName('SLA expires at')
+                        ->label('SLA expires at')
                         ->percentage($this->request->sla->toPercentage())
                         ->value($this->request->sla->minutesTillExpires() . ' minutes')
                         ->pulse();
                 } return null;
             },
-            TextArea::make('priorityChangeReason')
-                ->hiddenIf($this->isFieldDisabled('priorityChangeReason'))
-                ->outsideGrid(),
             TextArea::make('description')
                 ->value($this->request->description)
                 ->disabled()
                 ->outsideGrid(),
             TextArea::make('comment')
-                ->displayName('Add a comment')
+                ->label('Add a comment')
                 ->outsideGrid(),
         );
     }
@@ -214,8 +203,6 @@ class RequestEditForm extends EditForm
                 $this->status != Status::ON_HOLD,
             'priority', 'group', 'resolver' =>
                 $this->status == Status::RESOLVED,
-            'priorityChangeReason' =>
-                $this->priority == $this->request->priority,
             default => false,
         };
     }

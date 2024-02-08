@@ -154,7 +154,7 @@ class EditTest extends TestCase
         Livewire::actingAs($manager)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 1)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -174,7 +174,7 @@ class EditTest extends TestCase
         Livewire::actingAs($manager)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 2)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -299,7 +299,7 @@ class EditTest extends TestCase
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 3)
-            ->set('priorityChangeReason', 'Production issue')
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
 
@@ -378,7 +378,7 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    function it_requires_priority_change_reason_if_priority_changes()
+    function it_requires_comment_if_priority_changes()
     {
         $task = Task::factory()->create();
         $resolver = User::factory()->resolver()->create();
@@ -388,8 +388,8 @@ class EditTest extends TestCase
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 3)
             ->call('save')
-            ->assertHasErrors(['priorityChangeReason' => 'required'])
-            ->set('priorityChangeReason', 'Production issue')
+            ->assertHasErrors(['comment' => 'required'])
+            ->set('comment', 'Production issue')
             ->call('save')
             ->assertSuccessful();
     }
