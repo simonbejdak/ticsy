@@ -449,4 +449,37 @@ class EditTest extends TestCase
             ->set('status', Status::OPEN->value)
             ->assertSet('resolver', null);
     }
+
+    public function test_it_does_not_require_comment_if_status_is_on_hold_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->statusOnHold()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    public function test_it_does_not_require_comment_if_status_is_resolved_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->statusResolved()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    public function test_it_does_not_require_comment_if_status_is_cancelled_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $incident = Incident::factory()->statusCancelled()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(IncidentEditForm::class, ['incident' => $incident])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
 }

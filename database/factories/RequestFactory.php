@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
@@ -79,9 +80,10 @@ class RequestFactory extends Factory
 
     public function statusOnHold()
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
                 'status' => Status::ON_HOLD,
+                'on_hold_reason' => OnHoldReason::CALLER_RESPONSE,
             ];
         });
     }

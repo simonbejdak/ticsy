@@ -5,6 +5,7 @@ namespace Tests\Feature\Task;
 
 use App\Enums\OnHoldReason;
 use App\Enums\Status;
+use App\Livewire\RequestEditForm;
 use App\Livewire\TaskEditForm;
 use App\Models\Group;
 use App\Models\Request;
@@ -504,5 +505,41 @@ class EditTest extends TestCase
         $this->actingAs($resolver);
         $response = $this->get(route('tasks.edit', $task));
         $response->assertSuccessful();
+    }
+
+    /** @test */
+    function it_does_not_require_comment_if_status_is_on_hold_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $task = Task::factory()->statusOnHold()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    /** @test */
+    function it_does_not_require_comment_if_status_is_resolved_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $task = Task::factory()->statusResolved()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    /** @test */
+    function it_does_not_require_comment_if_status_is_cancelled_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $task = Task::factory()->statusCancelled()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TaskEditForm::class, ['task' => $task])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
     }
 }

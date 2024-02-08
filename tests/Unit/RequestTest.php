@@ -62,9 +62,9 @@ class RequestTest extends TestCase
     /** @test */
     public function it_has_on_hold_reason_enum()
     {
-        $request = Request::factory(['on_hold_reason' => OnHoldReason::CALLER_RESPONSE])->statusOnHold()->create();
+        $request = Request::factory()->statusOnHold()->create();
 
-        $this->assertEquals(OnHoldReason::CALLER_RESPONSE, $request->on_hold_reason);
+        $this->assertInstanceOf(OnHoldReason::class, $request->on_hold_reason);
     }
 
     /** @test */

@@ -7,10 +7,12 @@ use App\Enums\OnHoldReason;
 use App\Enums\Status;
 use App\Enums\Tab;
 use App\Livewire\Activities;
+use App\Livewire\IncidentEditForm;
 use App\Livewire\RequestEditForm;
 use App\Livewire\Tabs;
 use App\Livewire\Tasks;
 use App\Models\Group;
+use App\Models\Incident;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
@@ -528,5 +530,41 @@ class EditTest extends TestCase
             ->assertSet('resolver', $resolver->id)
             ->set('status', Status::OPEN->value)
             ->assertSet('resolver', null);
+    }
+
+    /** @test */
+    function it_does_not_require_comment_if_status_is_on_hold_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $request = Request::factory()->statusOnHold()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    /** @test */
+    function it_does_not_require_comment_if_status_is_resolved_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $request = Request::factory()->statusResolved()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
+    }
+
+    /** @test */
+    function it_does_not_require_comment_if_status_is_cancelled_and_status_was_not_changed()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $request = Request::factory()->statusCancelled()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(RequestEditForm::class, ['request' => $request])
+            ->call('save')
+            ->assertHasNoErrors(['comment', 'required']);
     }
 }
