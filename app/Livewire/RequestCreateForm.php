@@ -40,8 +40,8 @@ class RequestCreateForm extends CreateForm
 
     public function mount()
     {
-        $this->formTitle = 'Create Request';
-        $this->formDescription = 'Create a Request to ask something from us';
+        $this->formTitle = 'Create a Request';
+        $this->formDescription = 'Everything works as expected, you just need IT to do something for you';
         $this->category = null;
         $this->item = null;
         $this->description = null;

@@ -11,6 +11,11 @@
         class="{{ 'w-full ' . $field->style() }}"
         wire:model.lazy="{{ $field->wireModel }}"
         placeholder="{{ $field->placeholder }}"
-        {{ ($field->isDisabled()) ? ' disabled' : '' }}
+        @if($field->isDisabled())
+            disabled
+        @else
+            wire:loading.attr="disabled"
+            wire:target="save"
+        @endif
     >{{ $field->value }}</textarea>
 </x-field-layout>

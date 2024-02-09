@@ -10,7 +10,12 @@
         :class="error ? '{{ 'ring-1 ring-red-500 ' }}' : ''"
         wire:model.lazy="{{ $field->wireModel }}"
         placeholder="{{ $field->placeholder }}"
-        {{ ($field->isDisabled()) ? ' disabled' : '' }}
+        @if($field->isDisabled())
+            disabled
+        @else
+            wire:loading.attr="disabled"
+            wire:target="save"
+        @endif
     />
     <div class="absolute bottom-0 -right-[29px]">
         @if($field->hasAnchor())

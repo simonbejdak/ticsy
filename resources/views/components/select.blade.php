@@ -5,11 +5,16 @@
             disabled: @json($field->isDisabled())
         }"
         @click="error = false"
-        wire:model.lazy="{{ $field->wireModel }}"
         id="{{ $field->name }}"
         class="w-full {{ $field->style() }} "
         :class="error ? 'ring-1 ring-red-500 ' : ''"
-        {{ ($field->isDisabled()) ? 'disabled' : '' }}
+        wire:model.lazy="{{ $field->wireModel }}"
+        @if($field->isDisabled())
+            disabled
+        @else
+            wire:loading.attr="disabled"
+            wire:target="save"
+        @endif
     >
         @if($field->blank)
             <x-option />
