@@ -197,10 +197,10 @@ class UpdateTest extends TestCase
 
     function test_user_can_change_priority_with_permission()
     {
-        $resolver = User::factory()->resolver()->create();
+        $manager = User::factory()->manager()->create();
         $task = Task::factory(['priority' => 4])->create();
 
-        Livewire::actingAs($resolver)
+        Livewire::actingAs($manager)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 2)
             ->set('comment', 'Production issue')
@@ -231,18 +231,18 @@ class UpdateTest extends TestCase
     public function test_it_updates_task_when_correct_data_submitted()
     {
         $group = Group::firstOrFail();
-        $resolver = User::factory()->resolverAllGroups()->create();
+        $manager = User::factory()->managerAllGroups()->create();
         $task = Task::factory()->create();
         $status = Status::IN_PROGRESS;
         $priority = Priority::THREE;
 
-        Livewire::actingAs($resolver)
+        Livewire::actingAs($manager)
             ->test(TaskEditForm::class, ['task' => $task])
             ->set('status', $status->value)
             ->set('priority', $priority->value)
             ->set('comment', 'Production issue')
             ->set('group', $group->id)
-            ->set('resolver', $resolver->id)
+            ->set('resolver', $manager->id)
             ->call('save');
 
         $this->assertDatabaseHas('tasks', [
@@ -250,7 +250,7 @@ class UpdateTest extends TestCase
             'priority' => $priority,
             'status' => $status->value,
             'group_id' => $group->id,
-            'resolver_id' => $resolver->id,
+            'resolver_id' => $manager->id,
         ]);
     }
 

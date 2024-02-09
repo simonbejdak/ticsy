@@ -14,11 +14,9 @@ use InvalidArgumentException;
 class Field extends Component
 {
     public \App\Helpers\Fields\Field $field;
-    public bool $required;
 
-    public function __construct(\App\Helpers\Fields\Field $field, bool $required = false){
+    public function __construct(\App\Helpers\Fields\Field $field){
         $this->field = $field;
-        $this->required = $required;
     }
 
     public function render(): View|Closure|string

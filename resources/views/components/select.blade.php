@@ -1,4 +1,4 @@
-<x-field-layout :field="$field" :required="$required">
+<x-field-layout :field="$field">
     <select
         x-data="{
             error: @json($errors->has($field->name)),

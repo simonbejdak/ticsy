@@ -3,28 +3,18 @@
         @if(hasTrait(\App\Traits\HasFields::class, $this))
             <form wire:submit="save">
                 <div class="flex flex-col space-y-4 mb-4">
-                    <x-field-grid class="grid-cols-2 grid-rows-7">
-                        @foreach($this->fields()->insideGrid() as $field)
-                            <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)"/>
-                        @endforeach
-                    </x-field-grid>
-                    <div class="flex flex-col relative right-0.5 space-y-1">
+                    <x-field-grid :fields="$this->fields()->insideGrid()" />
+                    <x-field-grid>
                         @foreach($this->fields()->outsideGrid() as $field)
-                            <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)" />
+                            <x-field :$field />
                         @endforeach
-                    </div>
-                    <div class="flex flex-row justify-end">
-                        <x-secondary-button>Update</x-secondary-button>
-                    </div>
-                    @if(count($activities))
-                        <x-field-grid class="grid-cols-1">
-                            <div class="flex flex-col space-y-2 w-full mt-4">
-                                @foreach($activities as $activity)
-                                    <x-activity-card :activity="$activity" />
-                                @endforeach
+                            <div class="flex flex-row justify-end col-span-2 mt-2 mb-4">
+                                <x-secondary-button>Update</x-secondary-button>
                             </div>
-                        </x-field-grid>
-                    @endif
+                            @foreach($activities as $activity)
+                                <x-activity-card :activity="$activity" />
+                            @endforeach
+                    </x-field-grid>
                 </div>
             </form>
         @endif

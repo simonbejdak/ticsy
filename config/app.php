@@ -183,6 +183,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'FieldPosition' => \App\Enums\FieldPosition::class,
         'FieldLabelPosition' => App\Enums\FieldLabelPosition::class,
         'ResolverPanelOption' => App\Enums\ResolverPanelOption::class,
         'ResolverPanelTab' => App\Enums\ResolverPanelTab::class,

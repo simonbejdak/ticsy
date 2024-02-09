@@ -1,4 +1,4 @@
-<x-field-layout :field="$field" :required="$required">
+<x-field-layout :field="$field">
     <textarea
         x-autosize
         x-data="{
@@ -8,7 +8,7 @@
         rows="3"
         @click="error = false"
         :class="error ? '{{ 'ring-1 ring-red-500 ' }}' : ''"
-        class="{{ 'w-full ' . $field->style() }}"
+        class="{{ $field->style() }}"
         wire:model.lazy="{{ $field->wireModel }}"
         placeholder="{{ $field->placeholder }}"
         @if($field->isDisabled())

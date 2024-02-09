@@ -4,10 +4,11 @@ namespace App\Helpers\Fields;
 
 use App\Enums\FieldPosition;
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 use Traversable;
 
-class Fields implements IteratorAggregate
+class Fields implements IteratorAggregate, Countable
 {
     public array $fields;
 
@@ -49,5 +50,10 @@ class Fields implements IteratorAggregate
     function getIterator(): Traversable
     {
         return new ArrayIterator($this->fields);
+    }
+
+    public function count(): int
+    {
+        return count($this->fields);
     }
 }

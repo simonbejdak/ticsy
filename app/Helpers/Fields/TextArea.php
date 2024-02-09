@@ -20,10 +20,4 @@ class TextArea extends Field
         $this->placeholder = $placeholder;
         return $this;
     }
-
-    function style(): string
-    {
-        return parent::style() .
-            'resize-none pt-0.5';
-    }
 }

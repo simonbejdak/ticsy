@@ -294,10 +294,10 @@ class EditTest extends TestCase
     /** @test */
     function it_displays_priority_changes_activity()
     {
-        $resolver = User::factory()->resolver()->create();
+        $manager = User::factory()->manager()->create();
         $task = Task::factory(['priority' => Task::DEFAULT_PRIORITY])->create();
 
-        Livewire::actingAs($resolver);
+        Livewire::actingAs($manager);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 3)
@@ -383,9 +383,9 @@ class EditTest extends TestCase
     function it_requires_comment_if_priority_changes()
     {
         $task = Task::factory()->create();
-        $resolver = User::factory()->resolver()->create();
+        $manager = User::factory()->manager()->create();
 
-        Livewire::actingAs($resolver);
+        Livewire::actingAs($manager);
 
         Livewire::test(TaskEditForm::class, ['task' => $task])
             ->set('priority', 3)

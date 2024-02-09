@@ -1,4 +1,4 @@
-<x-field-layout :field="$field" :required="$required">
+<x-field-layout :field="$field">
     <input
         x-data="{
             error: @json($errors->has($field->name)),
@@ -17,7 +17,7 @@
             wire:target="save"
         @endif
     />
-    <div class="absolute bottom-0 -right-[29px]">
+    <div class="absolute flex flex-row bottom-0 justify-start w-40 -right-40 space-x-1.5 pl-1.5">
         @if($field->hasAnchor())
             <a href="{{ $field->anchor }}" >
                 <div class="h-6 w-6 border border-slate-400 rounded-sm hover:shadow-md">

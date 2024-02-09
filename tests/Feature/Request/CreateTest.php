@@ -33,7 +33,7 @@ class CreateTest extends TestCase
         $response = $this->get(route('requests.create'));
 
         $response->assertSuccessful();
-        $response->assertSee('Create Request');
+        $response->assertSee('Create a Request');
     }
 
     /**

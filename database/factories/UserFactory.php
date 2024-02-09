@@ -47,4 +47,14 @@ class UserFactory extends Factory
             $user->assignRole('manager');
         });
     }
+
+    public function managerAllGroups(): Factory
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('manager');
+            foreach (Group::all() as $group){
+                $group->resolvers()->attach($user);
+            }
+        });
+    }
 }

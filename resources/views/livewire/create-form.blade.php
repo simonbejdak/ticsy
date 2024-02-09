@@ -8,7 +8,7 @@
             <section>
                 <div class="flex flex-col space-y-4 mt-8">
                     @foreach($this->fields() as $field)
-                        <x-field :$field :required="$this->isFieldMarkedAsRequired($field->name)"/>
+                        <x-field :$field />
                     @endforeach
                     <div class="flex flex-row justify-end w-4/5">
                         <x-secondary-button class="mt-2">Create</x-secondary-button>
