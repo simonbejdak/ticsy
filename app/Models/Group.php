@@ -28,6 +28,11 @@ class Group extends Model
         return $this->hasMany(Request::class);
     }
 
+    function configurationItems(): HasMany
+    {
+        return $this->hasMany(ConfigurationItem::class);
+    }
+
     function getResolverIds(): array
     {
         return $this->resolvers()->select('id')->get()->pluck('id')->toArray();

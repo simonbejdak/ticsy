@@ -19,28 +19,27 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 17. Resolver required_if Status in_progress -- done
 18. Comment required_if Status resolved -- done
 19. Resolver Panel -- done
-20. Configuration items
-21. Table filters
-22. Knowledge articles for common problems
-23. Change templates
-24. Subcategories
-25. Make TicketEditForm be synchronized in real time between browsers
-26. Send e-mail, when Ticket SLA is before expiration
-27. Statistics
-28. Simplified ticket views for regular user
+20. Configuration items -- in progress
 
-Use case problems:
-- Priority 1 is shown even if user has no permission to set priority one -- done
-- Comment on EditForms required even if status is already on hold, and it was not changed to on hold at all.. we need to required the comment only if the status on hold and it also was changed -- done
-- Very long descriptions span tables to unlimited width -- done by itself
-- Table component is not horizontally scrollable -- cancelled, not necessary for now
-- remove priority change reason, just ask for comment instead -- done
-- Activity card is unable to inline on hold reason header -- done
-- fields reposition if one of them becomes dynamically required (red asterisk is shown) -- done
+-- primary_key standard -- done
+-- text serialnumber -- done
+-- enum OS
+-- enum type
+-- enum status
+-- relationship group
+-- relationship primary user
+-- enum location
+-- table with all configuration items
 
-Refactor Ideas:
-- change TicketTrait to separate traits
-- Table class is too big, in 2 months we will not know what is going on there
-- try to duplicate as least logic in respective Field view files (select, text-area, text-input etc.) as possible -- done
-- fields outside grid and activity cards are not aligned with pixel precision
+21. Users
+22. Table filters
+23. Knowledge articles for common problems
+24. Change templates
+25. Subcategories
+26. Make TicketEditForm be synchronized in real time between browsers
+27. Send e-mail, when Ticket SLA is before expiration
+28. Statistics
+29. Simplified ticket views for regular user
+30. Searchable select fields
+31. Locations
 

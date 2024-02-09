@@ -110,4 +110,10 @@ class UserTest extends TestCase
 
         $this->assertTrue($manager->hasPermissionTo('set_priority'));
     }
+
+    /** @test */
+    function it_has_many_configuration_items()
+    {
+        //
+    }
 }

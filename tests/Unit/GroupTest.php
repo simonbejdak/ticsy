@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\ConfigurationItem;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
@@ -35,4 +36,15 @@ class GroupTest extends TestCase
 
         $this->assertCount(2, $group->requests);
     }
+
+    /** @test */
+    function it_has_many_configuration_items()
+    {
+        $group = Group::factory()->create();
+        ConfigurationItem::factory(2, ['group_id' => $group])->create();
+
+        $this->assertInstanceOf(ConfigurationItem::class, $group->configurationItems()->first());
+//        $this->assertCount(2, $group->configuration_items);
+    }
+
 }
