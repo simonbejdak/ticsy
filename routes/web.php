@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfigurationItemsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentsController;
 use App\Http\Controllers\ProfileController;
@@ -13,6 +14,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function (){
 
+    Route::resource('/configuration-items', ConfigurationItemsController::class)->only(['edit']);
     Route::resource('/incidents', IncidentsController::class)->only(['index', 'create', 'edit']);
     Route::resource('/requests', RequestsController::class)->only(['index', 'create', 'edit']);
     Route::resource('/tasks', TasksController::class)->only(['edit']);
@@ -22,6 +24,7 @@ Route::middleware('auth')->group(function (){
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(ResolverPanel::class)->group(function (){
+        Route::get('/resolver/panel/configuration-items', [ResolverPanelController::class, 'configurationItems'])->name('resolver-panel.configuration-items');
         Route::get('/resolver/panel/incidents', [ResolverPanelController::class, 'incidents'])->name('resolver-panel.incidents');
         Route::get('/resolver/panel/requests', [ResolverPanelController::class, 'requests'])->name('resolver-panel.requests');
         Route::get('/resolver/panel/tasks', [ResolverPanelController::class, 'tasks'])->name('resolver-panel.tasks');

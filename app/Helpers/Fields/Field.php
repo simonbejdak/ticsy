@@ -4,7 +4,6 @@ namespace App\Helpers\Fields;
 
 use App\Enums\FieldLabelPosition;
 use App\Enums\FieldPosition;
-use App\Interfaces\Fieldable;
 
 abstract class Field
 {
@@ -12,7 +11,6 @@ abstract class Field
     public bool $hasLabel;
     public string $value;
     public string $rules;
-    public string $width;
     public string $height;
     public string $wireModel;
     protected string $label;

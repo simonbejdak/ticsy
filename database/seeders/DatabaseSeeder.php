@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Comment;
+use App\Models\ConfigurationItem;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
@@ -41,6 +42,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'manager@gmail.com',
         ])->manager()->create();
 
+        ConfigurationItem::factory(100)->create();
         Incident::factory(100)->create();
         Request::factory(100)->create();
 

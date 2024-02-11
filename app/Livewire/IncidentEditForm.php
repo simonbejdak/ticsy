@@ -32,7 +32,7 @@ class IncidentEditForm extends EditForm
     public Priority $priority;
     public $group;
     public $resolver;
-    public string $comment = '';
+    public string $comment;
 
     public function rules()
     {
@@ -72,11 +72,7 @@ class IncidentEditForm extends EditForm
         $this->priority = $this->incident->priority;
         $this->group = $this->incident->group_id;
         $this->resolver = $this->incident->resolver_id;
-    }
-
-    public function render()
-    {
-        return view('livewire.edit-form');
+        $this->comment = '';
     }
 
     public function updating($property, $value): void

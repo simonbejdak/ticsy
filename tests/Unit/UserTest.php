@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Enums\ResolverPanelOption;
+use App\Models\ConfigurationItem;
 use App\Models\FavoriteResolverPanelOption;
 use App\Models\Group;
 use App\Models\Incident;
@@ -114,6 +115,10 @@ class UserTest extends TestCase
     /** @test */
     function it_has_many_configuration_items()
     {
-        //
+        $user = User::factory()->create();
+        ConfigurationItem::factory(2, ['user_id' => $user])->create();
+
+        $this->assertInstanceOf(ConfigurationItem::class, $user->configurationItems->first());
+        $this->assertCount(2, $user->configurationItems);
     }
 }

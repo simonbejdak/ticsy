@@ -14,7 +14,12 @@ return new class extends Migration
         Schema::create('configuration_items', function (Blueprint $table) {
             $table->id();
             $table->string('serial_number');
+            $table->string('location');
+            $table->string('operating_system');
+            $table->string('status');
+            $table->string('type');
             $table->foreignId('group_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

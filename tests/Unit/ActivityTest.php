@@ -4,9 +4,11 @@
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
+use App\Models\ConfigurationItem;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
+use App\Models\Task;
 use App\Models\Ticket;
 use App\Models\User;
 use Tests\TestCase;
@@ -25,6 +27,22 @@ class ActivityTest extends TestCase
     {
         $request = Request::factory()->create();
         $activity = $request->activities->first();
+
+        $this->assertEquals('created', $activity->event);
+    }
+
+    public function test_it_logs_task_created_event()
+    {
+        $task = Task::factory()->create();
+        $activity = $task->activities->first();
+
+        $this->assertEquals('created', $activity->event);
+    }
+
+    public function test_it_logs_configuration_item_created_event()
+    {
+        $configuration_item = ConfigurationItem::factory()->create();
+        $activity = $configuration_item->activities->first();
 
         $this->assertEquals('created', $activity->event);
     }

@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Enums\ResolverPanelOption;
 use App\Enums\ResolverPanelTab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,17 +43,17 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function groups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class);
     }
 
-    public function incidents()
+    public function incidents(): HasMany
     {
         return $this->hasMany(Incident::class, 'caller_id');
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(Request::class, 'caller_id');
     }
@@ -65,6 +66,11 @@ class User extends Authenticatable
     public function favoriteResolverPanelOptions(): HasMany
     {
         return $this->hasMany(FavoriteResolverPanelOption::class);
+    }
+
+    public function configurationItems(): HasMany
+    {
+        return $this->hasMany(ConfigurationItem::class);
     }
 
     public function isGroupMember(Group $group)

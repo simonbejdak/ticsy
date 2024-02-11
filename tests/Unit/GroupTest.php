@@ -44,7 +44,7 @@ class GroupTest extends TestCase
         ConfigurationItem::factory(2, ['group_id' => $group])->create();
 
         $this->assertInstanceOf(ConfigurationItem::class, $group->configurationItems()->first());
-//        $this->assertCount(2, $group->configuration_items);
+        $this->assertCount(2, $group->configurationItems);
     }
 
 }
