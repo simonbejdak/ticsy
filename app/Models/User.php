@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Location;
 use App\Enums\ResolverPanelOption;
 use App\Enums\ResolverPanelTab;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,9 +26,10 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'selected_resolver_panel_tab' => ResolverPanelTab::class,
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'email_verified_at' => 'datetime',
+        'location' => Location::class,
+        'selected_resolver_panel_tab' => ResolverPanelTab::class,
     ];
 
     protected $table = 'users';

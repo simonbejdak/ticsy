@@ -23,4 +23,13 @@ class ConfigurationItemFactory extends Factory
             'user_id' => User::factory(),
         ];
     }
+
+    public function primary()
+    {
+        return $this->state(function () {
+            return [
+                'type' => ConfigurationItemType::PRIMARY,
+            ];
+        });
+    }
 }

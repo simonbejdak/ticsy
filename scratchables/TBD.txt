@@ -19,19 +19,10 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 17. Resolver required_if Status in_progress -- done
 18. Comment required_if Status resolved -- done
 19. Resolver Panel -- done
-20. Configuration items -- in progress
+20. Configuration items -- done
 
--- primary_key standard -- done
--- text serialnumber -- done
--- enum OS
--- enum type
--- enum status
--- relationship group
--- relationship primary user
--- enum location
--- table with all configuration items
+21. Users -- in progress
 
-21. Users
 22. Table filters
 23. Knowledge articles for common problems
 24. Change templates

@@ -62,20 +62,11 @@ class RequestCreateForm extends CreateForm
     function schema(): Fields
     {
         return new Fields(
-            Select::make('category')
-                ->options(RequestCategory::all())
-                ->blank()
-                ->outsideGrid()
-                ->labelPosition(FieldLabelPosition::TOP),
+            Select::make('category')->options(RequestCategory::all())->blank(),
             Select::make('item')
                 ->options(RequestCategory::find($this->category) ? RequestCategory::find($this->category)->items()->get() : [])
-                ->blank()
-                ->outsideGrid()
-                ->labelPosition(FieldLabelPosition::TOP),
-            TextArea::make('description')
-                ->label('Please describe what do you need')
-                ->outsideGrid()
-                ->labelPosition(FieldLabelPosition::TOP),
+                ->blank(),
+            TextArea::make('description')->label('Please describe what do you need')
         );
     }
 

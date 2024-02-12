@@ -62,15 +62,11 @@ class IncidentCreateForm extends CreateForm
     function schema(): Fields
     {
         return new Fields(
-            Select::make('category')
-                ->options(IncidentCategory::all())
-                ->blank(),
+            Select::make('category')->options(IncidentCategory::all())->blank(),
             Select::make('item')
                 ->options(IncidentCategory::find($this->category) ? IncidentCategory::find($this->category)->items()->get() : [])
                 ->blank(),
-            TextArea::make('description')
-                ->label('Please describe what issue you are facing')
-                ->labelPosition(FieldLabelPosition::TOP),
+            TextArea::make('description')->label('Please describe what issue you are facing')->labelPosition(FieldLabelPosition::TOP),
         );
     }
 
