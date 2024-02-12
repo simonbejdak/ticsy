@@ -7,13 +7,14 @@ use App\Enums\ConfigurationItemType;
 use App\Enums\Location;
 use App\Enums\OperatingSystem;
 use App\Interfaces\Activitable;
+use App\Interfaces\Entity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class ConfigurationItem extends Model implements Activitable
+class ConfigurationItem extends Model implements Entity, Activitable
 {
     use HasFactory, LogsActivity;
 
@@ -22,6 +23,10 @@ class ConfigurationItem extends Model implements Activitable
         'operating_system' => OperatingSystem::class,
         'status' => ConfigurationItemStatus::class,
         'type' => ConfigurationItemType::class,
+    ];
+
+    protected $attributes = [
+        'group_id' => Group::SERVICE_DESK_ID,
     ];
 
     function group(): BelongsTo
@@ -34,7 +39,12 @@ class ConfigurationItem extends Model implements Activitable
         return $this->belongsTo(User::class);
     }
 
-    public function getActivityLogOptions(): LogOptions
+    function isArchived(): bool
+    {
+        return $this->status == ConfigurationItemStatus::RETIRED;
+    }
+
+    function getActivityLogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly([

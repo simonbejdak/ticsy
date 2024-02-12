@@ -2,11 +2,9 @@
 
 namespace App\Livewire\Tables;
 
-use App\Enums\SortOrder;
 use App\Helpers\Table\TableBuilder;
 use App\Livewire\Table;
 use App\Models\ConfigurationItem;
-use App\Models\Incident;
 use Illuminate\Database\Eloquent\Builder;
 
 class ConfigurationItemsTable extends Table

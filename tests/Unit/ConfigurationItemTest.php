@@ -70,4 +70,12 @@ class ConfigurationItemTest extends TestCase
 
         $this->assertInstanceOf(ConfigurationItemStatus::class, $configurationItem->status);
     }
+
+    /** @test */
+    function it_is_archived_if_its_status_is_retired()
+    {
+        $configurationItem = ConfigurationItem::factory(['status' => ConfigurationItemStatus::RETIRED])->create();
+
+        $this->assertTrue($configurationItem->isArchived());
+    }
 }

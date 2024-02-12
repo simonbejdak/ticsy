@@ -14,9 +14,6 @@ use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Request;
 use App\Services\ActivityService;
-use App\Traits\HasFields;
-use App\Traits\HasTabs;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -24,8 +21,6 @@ use Livewire\Attributes\Locked;
 
 class RequestEditForm extends EditForm
 {
-    use HasFields, HasTabs;
-
     public Request $request;
     #[Locked]
     public array $tabs;
@@ -36,7 +31,7 @@ class RequestEditForm extends EditForm
     public $resolver;
     public string $comment;
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'status' => ['required', Rule::enum(Status::class)],
@@ -65,7 +60,8 @@ class RequestEditForm extends EditForm
         ];
     }
 
-    public function mount(Request $request){
+    public function mount(Request $request): void
+    {
         $this->request = $request;
         $this->model = $request;
         $this->setActivities();
@@ -117,46 +113,20 @@ class RequestEditForm extends EditForm
         return redirect()->route('requests.edit', $this->request);
     }
 
-    function fields(): Fields
+    function schema(): Fields
     {
         return new Fields(
-            TextInput::make('number')
-                ->value($this->request->id)
-                ->disabled(),
-            TextInput::make('caller')
-                ->value($this->request->caller->name)
-                ->disabled(),
-            TextInput::make('created')
-                ->label('Created at')
-                ->value($this->request->created_at->format('d.m.Y h:i:s'))
-                ->disabled(),
-            TextInput::make('updated')
-                ->label('Updated at')
-                ->value($this->request->updated_at->format('d.m.Y h:i:s'))
-                ->disabled(),
-            TextInput::make('category')
-                ->value($this->request->category->name)
-                ->disabled(),
-            TextInput::make('item')
-                ->value($this->request->item->name)
-                ->disabled(),
-            Select::make('status')
-                ->options(Status::class)
-                ->disabledIf($this->isFieldDisabled('status')),
-            Select::make('onHoldReason')
-                ->options(OnHoldReason::class)
-                ->hiddenIf($this->isFieldDisabled('onHoldReason'))
-                ->blank(),
-            Select::make('priority')
-                ->options(Priority::class)
-                ->disabledIf($this->isFieldDisabled('priority')),
-            Select::make('group')
-                ->options(Group::all())
-                ->disabledIf($this->isFieldDisabled('group')),
-            Select::make('resolver')
-                ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
-                ->disabledIf($this->isFieldDisabled('resolver'))
-                ->blank(),
+            TextInput::make('number')->value($this->request->id),
+            TextInput::make('caller')->value($this->request->caller->name),
+            TextInput::make('created')->label('Created at')->value($this->request->created_at->format('d.m.Y h:i:s')),
+            TextInput::make('updated')->label('Updated at')->value($this->request->updated_at->format('d.m.Y h:i:s')),
+            TextInput::make('category')->value($this->request->category->name),
+            TextInput::make('item')->value($this->request->item->name),
+            Select::make('status')->options(Status::class),
+            Select::make('onHoldReason')->options(OnHoldReason::class)->hiddenIf($this->isFieldDisabled('onHoldReason'))->blank(),
+            Select::make('priority')->options(Priority::class),
+            Select::make('group')->options(Group::all()),
+            Select::make('resolver')->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])->blank(),
             function () {
                 if($this->request->sla->isOpened()){
                     return Bar::make('sla')
@@ -166,19 +136,9 @@ class RequestEditForm extends EditForm
                         ->pulse();
                 } return null;
             },
-            TextArea::make('description')
-                ->value($this->request->description)
-                ->disabled()
-                ->outsideGrid(),
-            TextArea::make('comment')
-                ->label('Add a comment')
-                ->outsideGrid(),
+            TextArea::make('description')->value($this->request->description)->outsideGrid(),
+            TextArea::make('comment')->label('Add a comment')->outsideGrid(),
         );
-    }
-
-    function tabs(): array
-    {
-        return [Tab::TASKS];
     }
 
     protected function isFieldDisabled(string $name): bool
@@ -196,10 +156,16 @@ class RequestEditForm extends EditForm
         }
 
         return match($name){
+            'number', 'caller', 'created', 'updated', 'category', 'item', 'description' => true,
             'onHoldReason' => $this->status != Status::ON_HOLD,
             'priority' => $this->status == Status::RESOLVED || !Auth::user()->hasPermissionTo('set_priority'),
             'group', 'resolver' => $this->status == Status::RESOLVED,
             default => false,
         };
+    }
+
+    function tabs(): array
+    {
+        return [Tab::TASKS];
     }
 }

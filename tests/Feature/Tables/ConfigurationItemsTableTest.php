@@ -4,7 +4,9 @@ namespace Tables;
 
 use App\Enums\Priority;
 use App\Helpers\Table\Table;
+use App\Livewire\Tables\ConfigurationItemsTable;
 use App\Livewire\Tables\TasksTable;
+use App\Models\ConfigurationItem;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,355 +17,186 @@ class ConfigurationItemsTableTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function it_renders_column_headers_in_correct_order()
+    /**
+     * @dataProvider headers
+     * @test
+     */
+    function it_renders_headers_in_correct_order($headers)
     {
-//        $resolver = User::factory()->resolver()->create();
-//
-//        $this->actingAs($resolver);
-//        $response = $this->get(route('resolver-panel.tasks'));
-//
-//        $response->assertSeeInOrder(['Number', 'Description', 'Caller', 'Resolver', 'Status', 'Priority']);
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('resolver-panel.configuration-items'));
+
+        $response->assertSeeInOrder($headers);
     }
 
     /** @test */
-    function it_renders_tasks_data_in_correct_order()
+    function it_renders_data_in_correct_order()
     {
-//        $tasks = Task::factory(3)->started()->withResolver()->create();
-//        $resolver = User::factory()->resolver()->create();
-//
-//        $this->actingAs($resolver);
-//        $response = $this->get(route('resolver-panel.tasks'));
-//        foreach ($tasks as $task) {
-//            $response->assertSeeInOrder([
-//                $task->id,
-//                $task->description,
-//                $task->caller->name,
-//                $task->resolver->name,
-//                $task->status->value,
-//                $task->priority->value,
-//            ]);
-//        }
+        $configurationItems = ConfigurationItem::factory(3)->create();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('resolver-panel.configuration-items'));
+        foreach ($configurationItems as $configurationItem) {
+            $response->assertSeeInOrder([
+                $configurationItem->serial_number,
+                $configurationItem->user->name,
+                $configurationItem->location,
+            ]);
+        }
     }
 
     /** @test */
-    function it_renders_tasks_in_descending_order_by_default()
+    function it_renders_configuration_items_in_descending_order_by_default()
     {
-//        $task_one = Task::factory()->started()->started()->create();
-//        $task_two = Task::factory()->started()->started()->create();
-//        $task_three = Task::factory()->started()->started()->create();
-//        $resolver = User::factory()->resolver()->create();
-//
-//        $this->actingAs($resolver);
-//        $response = $this->get(route('resolver-panel.tasks'));
-//
-//        $response->assertSeeInOrder([$task_three->caller->name, $task_two->caller->name, $task_one->caller->name]);
+        $configurationItemOne = ConfigurationItem::factory()->create();
+        $configurationItemTwo = ConfigurationItem::factory()->create();
+        $configurationItemThree = ConfigurationItem::factory()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        $this->actingAs($resolver);
+        $response = $this->get(route('resolver-panel.configuration-items'));
+
+        $response->assertSeeInOrder([
+            $configurationItemThree->serial_number,
+            $configurationItemTwo->serial_number,
+            $configurationItemOne->serial_number,
+        ]);
     }
 
     /** @test */
-    function it_renders_tasks_in_ascending_order_if_wire_click_on_number_header()
+    function it_renders_configuration_items_in_ascending_order_if_wire_click_on_serial_number_header()
     {
-//        $task_one = Task::factory()->started()->create();
-//        $task_two = Task::factory()->started()->create();
-//        $task_three = Task::factory()->started()->create();
-//        $resolver = User::factory()->resolver()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->call('columnHeaderClicked', 'id')
-//            ->assertSeeInOrder([$task_one->caller->name, $task_two->caller->name, $task_three->caller->name]);
+        $configurationItemOne = Task::factory()->started()->create();
+        $configurationItemTwo = Task::factory()->started()->create();
+        $configurationItemThree = Task::factory()->started()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TasksTable::class)
+            ->call('columnHeaderClicked', 'serial_number')
+            ->assertSeeInOrder([
+                $configurationItemOne->caller->name,
+                $configurationItemTwo->caller->name,
+                $configurationItemThree->caller->name
+            ]);
     }
 
     /** @test */
-    function it_renders_tasks_in_descending_order_if_wire_click_twice_on_number_header()
+    function it_renders_configuration_items_in_descending_order_if_wire_click_twice_on_number_header()
     {
-//        $task_one = Task::factory()->started()->create();
-//        $task_two = Task::factory()->started()->create();
-//        $task_three = Task::factory()->started()->create();
-//        $resolver = User::factory()->resolver()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->call('columnHeaderClicked', 'id')
-//            ->call('columnHeaderClicked', 'id')
-//            ->assertSeeInOrder([$task_three->caller->name, $task_two->caller->name, $task_one->caller->name]);
+        $configurationItemOne = Task::factory()->started()->create();
+        $configurationItemTwo = Task::factory()->started()->create();
+        $configurationItemThree = Task::factory()->started()->create();
+        $resolver = User::factory()->resolver()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(TasksTable::class)
+            ->call('columnHeaderClicked', 'serial_number')
+            ->call('columnHeaderClicked', 'serial_number')
+            ->assertSeeInOrder([
+                $configurationItemThree->caller->name,
+                $configurationItemTwo->caller->name,
+                $configurationItemOne->caller->name,
+            ]);
     }
 
     /** @test */
-    function it_renders_tasks_in_ascending_order_if_wire_click_on_priority_header()
+    function it_filters_configuration_items_based_on_serial_number_search_text_input()
     {
-//        $task_one = Task::factory()->started()->create();
-//        $task_two = Task::factory()->started()->create();
-//        $task_three = Task::factory()->started()->create();
-//        $resolver = User::factory()->resolver()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->call('columnHeaderClicked', 'id')
-//            ->call('columnHeaderClicked', 'id')
-//            ->assertSeeInOrder([$task_three->caller->name, $task_two->caller->name, $task_one->caller->name]);
+        $resolver = User::factory()->resolver()->create();
+        ConfigurationItem::factory(['serial_number' => '1234'])->create();
+        ConfigurationItem::factory(['serial_number' => '5678'])->create();
+
+        Livewire::actingAs($resolver)
+            ->test(ConfigurationItemsTable::class)
+            ->assertSee('1234')
+            ->assertSee('5678')
+            ->set('searchCases.serial_number', '1234')
+            ->assertSee('1234')
+            ->assertDontSee('5678')
+            ->set('searchCases.serial_number', '5678')
+            ->assertDontSee('1234')
+            ->assertSee('5678')
+            ->set('searchCases.serial_number', 'trt')
+            ->assertDontSee('1234')
+            ->assertDontSee('5678');
     }
 
     /** @test */
-    function it_renders_tasks_in_ascending_order_based_on_priority_if_wire_click_on_priority_header()
+    function it_paginates_25_configuration_items_per_page_by_default()
     {
-//        $resolver = User::factory()->resolver()->create();
-//        $task_one = Task::factory(['priority' => Priority::ONE])->create();
-//        $task_two = Task::factory(['priority' => Priority::TWO])->create();
-//        $task_three = Task::factory(['priority' => Priority::THREE])->create();
-//        $task_four = Task::factory(['priority' => Priority::FOUR])->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->call('columnHeaderClicked', 'priority.value')
-//            ->assertSeeInOrder([Priority::ONE->value, Priority::TWO->value, Priority::THREE->value, Priority::FOUR->value]);
+        $resolver = User::factory()->resolver()->create();
+        // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
+        // PG2 stands for page 2
+        ConfigurationItem::factory(25, ['serial_number' => 'PG2'])->create();
+        ConfigurationItem::factory(25, ['serial_number' => 'PG1'])->create();
+
+        Livewire::actingAs($resolver)
+            ->test(ConfigurationItemsTable::class)
+            ->assertSee('PG1')
+            ->assertDontSee('PG2');
     }
 
     /** @test */
-    function it_filters_tasks_based_on_id_search_text_input()
+    function it_renders_configuration_items_based_on_pagination_index_input_field()
     {
-//        $resolver = User::factory()->resolver()->create();
-//        Task::factory(['id' => 1234])->started()->create();
-//        Task::factory(['id' => 5678])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('1234')
-//            ->assertSee('5678')
-//            ->set('searchCases.id', '1234')
-//            ->assertSee('1234')
-//            ->assertDontSee('5678')
-//            ->set('searchCases.id', '5678')
-//            ->assertDontSee('1234')
-//            ->assertSee('5678')
-//            ->set('searchCases.id', 'trt')
-//            ->assertDontSee('1234')
-//            ->assertDontSee('5678');
+        $resolver = User::factory()->resolver()->create();
+        // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
+        // TSTCI stands for Test Configuration item
+        ConfigurationItem::factory(Table::DEFAULT_ITEMS_PER_PAGE)->create();
+        ConfigurationItem::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['serial_number' => 'TSTCI'])->create();
+
+        Livewire::actingAs($resolver)
+            ->test(ConfigurationItemsTable::class)
+            ->assertSee('TSTCI')
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
+            ->assertDontSee('TSTCI')
+            ->set('paginationIndex', 1)
+            ->assertSee('TSTCI');
     }
 
-    /** @test */
-    function it_filters_tasks_based_on_description_search_text_input()
+    static function invalidPaginationIndexInput(): array
     {
-//        $resolver = User::factory()->resolver()->create();
-//        Task::factory([
-//            'description' => 'My computer is not working'
-//        ])->started()->create();
-//        Task::factory([
-//            'description' => 'Server is down'
-//        ])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('My computer is not working')
-//            ->assertSee('Server is down')
-//            ->set('searchCases.description', 'My c')
-//            ->assertSee('My computer is not working')
-//            ->assertDontSee('Server is down')
-//            ->set('searchCases.description', 'Serv')
-//            ->assertDontSee('My computer is not working')
-//            ->assertSee('Server is down')
-//            ->set('searchCases.description', 'Applica')
-//            ->assertDontSee('My computer is not working')
-//            ->assertDontSee('Server is down')
-//            ->set('searchCases.description', '')
-//            ->assertSee('My computer is not working')
-//            ->assertSee('Server is down');
+        return [
+            [0],
+            [(Table::DEFAULT_ITEMS_PER_PAGE * 2) + 1],
+            ['zero'],
+        ];
     }
 
-    /** @test */
-    function it_filters_tasks_based_on_caller_search_text_input()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $task = Task::factory()->withCaller(User::factory(['name' => 'Eugen Slavic'])->create())->started()->create();
-//        $task = Task::factory()->withCaller(User::factory(['name' => 'Anastasia Yosling'])->create())->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('Eugen Slavic')
-//            ->assertSee('Anastasia Yosling')
-//            ->set('searchCases.caller.name', 'Eug')
-//            ->assertSee('Eugen Slavic')
-//            ->assertDontSee('Anastasia Yosling')
-//            ->set('searchCases.caller.name', 'Anas')
-//            ->assertDontSee('Eugen Slavic')
-//            ->assertSee('Anastasia Yosling')
-//            ->set('searchCases.caller.name', 'Joe')
-//            ->assertDontSee('Eugen Slavic')
-//            ->assertDontSee('Anastasia Yosling');
-    }
-
-    /** @test */
-    function it_filters_tasks_based_on_resolver_search_text_input()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        Task::factory([
-//            'resolver_id' => User::factory(['name' => 'Eugen Slavic'])->resolver()->create()
-//        ])->started()->create();
-//        Task::factory([
-//            'resolver_id' => User::factory(['name' => 'Anastasia Yosling'])->resolver()->create()
-//        ])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('Eugen Slavic')
-//            ->assertSee('Anastasia Yosling')
-//            ->set('searchCases.resolver.name', 'Eug')
-//            ->assertSee('Eugen Slavic')
-//            ->assertDontSee('Anastasia Yosling')
-//            ->set('searchCases.resolver.name', 'Anas')
-//            ->assertDontSee('Eugen Slavic')
-//            ->assertSee('Anastasia Yosling')
-//            ->set('searchCases.resolver.name', 'Joe')
-//            ->assertDontSee('Eugen Slavic')
-//            ->assertDontSee('Anastasia Yosling');
-    }
-
-    /** @test */
-    function it_filters_tasks_based_on_status_search_text_input()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        Task::factory()->started()->statusCancelled()->create();
-//        Task::factory()->started()->statusInProgress()->create();
-//        Task::factory()->started()->statusResolved()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('Cancelled')
-//            ->assertSee('In Progress')
-//            ->assertSee('Resolved')
-//            ->set('searchCases.status.value', 'Can')
-//            ->assertSee('Cancelled')
-//            ->assertDontSee('In Progress')
-//            ->assertDontSee('Resolved')
-//            ->set('searchCases.status.value', 'In Prog')
-//            ->assertDontSee('Cancelled')
-//            ->assertSee('In Progress')
-//            ->assertDontSee('Resolved')
-//            ->set('searchCases.status.value', 'Resol')
-//            ->assertDontSee('Cancelled')
-//            ->assertDontSee('In Progress')
-//            ->assertSee('Resolved')
-//            ->set('searchCases.status.value', '')
-//            ->assertSee('Cancelled')
-//            ->assertSee('In Progress')
-//            ->assertSee('Resolved');
-    }
-
-    /** @test */
-    function it_filters_tasks_based_on_priority_search_text_input()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $task_priority_one = Task::factory([
-//            'id' => 99999996,
-//            'priority' => Priority::ONE
-//        ])->started()->create();
-//        $task_priority_two = Task::factory([
-//            'id' => 99999997,
-//            'priority' => Priority::TWO
-//        ])->started()->create();
-//        $task_priority_three = Task::factory([
-//            'id' => 99999998,
-//            'priority' => Priority::THREE
-//        ])->started()->create();
-//        $task_priority_four = Task::factory([
-//            'id' => 99999999,
-//            'priority' => Priority::FOUR
-//        ])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee($task_priority_one->id)
-//            ->assertSee($task_priority_two->id)
-//            ->assertSee($task_priority_three->id)
-//            ->assertSee($task_priority_four->id)
-//            ->set('searchCases.priority.value', '1')
-//            ->assertSee($task_priority_one->id)
-//            ->assertDontSee($task_priority_two->id)
-//            ->assertDontSee($task_priority_three->id)
-//            ->assertDontSee($task_priority_four->id)
-//            ->set('searchCases.priority.value', '2')
-//            ->assertDontSee($task_priority_one->id)
-//            ->assertSee($task_priority_two->id)
-//            ->assertDontSee($task_priority_three->id)
-//            ->assertDontSee($task_priority_four->id)
-//            ->set('searchCases.priority.value', '3')
-//            ->assertDontSee($task_priority_one->id)
-//            ->assertDontSee($task_priority_two->id)
-//            ->assertSee($task_priority_three->id)
-//            ->assertDontSee($task_priority_four->id)
-//            ->set('searchCases.priority.value', '4')
-//            ->assertDontSee($task_priority_one->id)
-//            ->assertDontSee($task_priority_two->id)
-//            ->assertDontSee($task_priority_three->id)
-//            ->assertSee($task_priority_four->id)
-//            ->set('searchCases.priority.value', '')
-//            ->assertSee($task_priority_one->id)
-//            ->assertSee($task_priority_two->id)
-//            ->assertSee($task_priority_three->id)
-//            ->assertSee($task_priority_four->id);
-    }
-
-    /** @test */
-    function it_paginates_25_tasks_per_page_by_default()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
-//        Task::factory(25, ['description' => 'Second page task'])->started()->create();
-//        Task::factory(25, ['description' => 'First page task'])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('First page task')
-//            ->assertDontSee('Second page task');
-    }
-
-    /** @test */
-    function it_renders_tasks_based_on_pagination_index_input_field()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
-//        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE)->started()->create();
-//        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Test task'])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('Test task')
-//            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
-//            ->assertDontSee('Test task')
-//            ->set('paginationIndex', 1)
-//            ->assertSee('Test task');
-    }
-
-//    /**
-//     * @test
-//     * @dataProvider invalidPaginationIndexInput
-//     */
+    /**
+     * @test
+     * @dataProvider invalidPaginationIndexInput
+     */
     function it_renders_first_pagination_page_if_pagination_index_input_is_invalid($invalidInput)
     {
-//        $resolver = User::factory()->resolver()->create();
-//        // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
-//        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'Second page task'])->started()->create();
-//        Task::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['description' => 'First page task'])->started()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(TasksTable::class)
-//            ->assertSee('First page task')
-//            ->assertDontSee('Second page task')
-//            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
-//            ->assertDontSee('First page task')
-//            ->assertSee('Second page task')
-//            ->set('paginationIndex', $invalidInput)
-//            ->assertSee('First page task')
-//            ->assertDontSee('Second page task');
+        $resolver = User::factory()->resolver()->create();
+        // Order is supposed to be descendant by default, therefore second bulk of tasks should be displayed on the first page
+        ConfigurationItem::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['serial_number' => 'CI2'])->create();
+        ConfigurationItem::factory(Table::DEFAULT_ITEMS_PER_PAGE, ['serial_number' => 'CI1'])->create();
+
+        Livewire::actingAs($resolver)
+            ->test(ConfigurationItemsTable::class)
+            ->assertSee('CI1')
+            ->assertDontSee('CI2')
+            ->set('paginationIndex', Table::DEFAULT_ITEMS_PER_PAGE + 1)
+            ->assertDontSee('CI1')
+            ->assertSee('CI2')
+            ->set('paginationIndex', $invalidInput)
+            ->assertSee('CI1')
+            ->assertDontSee('CI2');
     }
 
-//    static function invalidPaginationIndexInput(): array
-//    {
-//        return [
-//            [0],
-//            [(Table::DEFAULT_ITEMS_PER_PAGE * 2) + 1],
-//            ['zero'],
-//        ];
-//    }
+    static function headers(): array
+    {
+        return [
+            [
+                ['Serial Number', 'User', 'Location']
+            ]
+        ];
+    }
 }
 

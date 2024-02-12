@@ -6,11 +6,9 @@ use App\Enums\FieldLabelPosition;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextArea;
-use App\Helpers\Fields\TextInput;
 use App\Mail\RequestCreated;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
-use App\Traits\HasFields;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -18,13 +16,11 @@ use Illuminate\Validation\Rule;
 
 class RequestCreateForm extends CreateForm
 {
-    use HasFields;
-
     public $category;
     public $item;
     public $description;
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'category' => ['required', Rule::in(RequestCategory::MAP)],
@@ -38,7 +34,7 @@ class RequestCreateForm extends CreateForm
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->formTitle = 'Create a Request';
         $this->formDescription = 'Everything works as expected, you just need IT to do something for you';
@@ -63,7 +59,7 @@ class RequestCreateForm extends CreateForm
         return redirect()->route('requests.edit', $request);
     }
 
-    function fields(): Fields
+    function schema(): Fields
     {
         return new Fields(
             Select::make('category')
@@ -81,5 +77,15 @@ class RequestCreateForm extends CreateForm
                 ->outsideGrid()
                 ->labelPosition(FieldLabelPosition::TOP),
         );
+    }
+
+    protected function isFieldDisabled(string $name): bool
+    {
+        return false;
+    }
+
+    function tabs(): array
+    {
+        return [];
     }
 }

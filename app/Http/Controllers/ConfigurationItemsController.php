@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\ConfigurationItem;
-use App\Models\Incident;
-use App\Models\Incident\IncidentCategory;
-use Illuminate\Support\Facades\Auth;
 
 class ConfigurationItemsController extends Controller
 {

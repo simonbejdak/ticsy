@@ -7,11 +7,13 @@ use App\Enums\ConfigurationItemStatus;
 use App\Enums\ConfigurationItemType;
 use App\Enums\Location;
 use App\Enums\OperatingSystem;
+use App\Livewire\ConfigurationItemEditForm;
 use App\Models\ConfigurationItem;
 use App\Models\Group;
 use App\Models\User;
 use App\Services\ActivityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class EditTest extends TestCase
@@ -77,7 +79,7 @@ class EditTest extends TestCase
         $response->assertSee($serialNumber);
         $response->assertSee($location->value);
         $response->assertSee($operatingSystem->value);
-        $response->assertSee($status->name);
+        $response->assertSee($status->value);
         $response->assertSee($type->value);
         $response->assertSee($group->name);
         $response->assertSee($user->name);
@@ -98,344 +100,192 @@ class EditTest extends TestCase
     }
 
     /** @test */
-    function it_displays_incident_created_activity()
+    function it_displays_configuration_created_activity()
     {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder([
-//                'Status:', 'Open',
-//                'Priority', '4',
-//                'Group:', 'SERVICE-DESK',
-//            ]);
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory()->create();
+
+        Livewire::actingAs($resolver)
+            ->test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder([
+                'Location:', 'Námestovo',
+                'Status:', 'Installed',
+                'Type:', 'Primary',
+                'Operating system:', 'Windows 10',
+            ]);
     }
 
     /** @test */
     function it_displays_changes_activity_dynamically()
     {
-//        $resolver = User::factory()->resolverAllGroups()->create();
-//        $incident = Incident::factory(['status' => Status::OPEN])->create();
-//
-//        Livewire::actingAs($resolver);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('status', Status::IN_PROGRESS->value)
-//            ->set('resolver', $resolver->id)
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['status' => ConfigurationItemStatus::IN_STOCK])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('status', ConfigurationItemStatus::INSTALLED->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Status:', 'Installed', 'was', 'In Stock']);
     }
 
     /** @test */
     function it_displays_multiple_activity_changes()
     {
-//        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
-//        $resolver = User::factory()->resolverAllGroups()->create();
-//        $incident = Incident::factory([
-//            'status' => Status::OPEN,
-//            'group_id' => Group::SERVICE_DESK_ID,
-//        ])->create();
-//
-//        Livewire::actingAs($resolver);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('status', Status::IN_PROGRESS->value)
-//            ->set('group', $group->id)
-//            ->set('resolver', $resolver->id)
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open'])
-//            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
-    }
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory([
+            'status' => ConfigurationItemStatus::IN_STOCK,
+            'group_id' => Group::SERVICE_DESK_ID,
+        ])->create();
 
-    /** @test */
-    function it_displays_status_changes_activity()
-    {
-//        $resolver = User::factory()->resolverAllGroups()->create();
-//        $incident = Incident::factory(['status' => Status::OPEN])->create();
-//
-//        Livewire::actingAs($resolver);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('status', Status::IN_PROGRESS->value)
-//            ->set('resolver', $resolver->id)
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['Status:', 'In Progress', 'was', 'Open']);
-    }
+        Livewire::actingAs($resolver);
 
-    /** @test */
-    function it_displays_on_hold_reason_changes_activity()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->create();
-//
-//        Livewire::actingAs($resolver);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('status', Status::ON_HOLD->value)
-//            ->set('onHoldReason', OnHoldReason::CALLER_RESPONSE->value)
-//            ->set('comment', 'Test comment')
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['On hold reason:', 'Caller Response', 'was', 'empty']);
-    }
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('status', ConfigurationItemStatus::INSTALLED->value)
+            ->set('group', $group->id)
+            ->call('save')
+            ->assertSuccessful();
 
-    /** @test */
-    function it_displays_priority_changes_activity()
-    {
-//        $manager = User::factory()->manager()->create();
-//        $incident = Incident::factory(['priority' => Incident::DEFAULT_PRIORITY])->create();
-//
-//        Livewire::actingAs($manager);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('priority', 3)
-//            ->set('comment', 'Production issue')
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['Priority:', '3', 'was', Incident::DEFAULT_PRIORITY]);
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Status:', 'Installed', 'was', 'In Stock'])
+            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
     }
 
     /** @test */
     function it_displays_group_changes_activity()
     {
-//        $resolver = User::factory()->resolver()->create();
-//        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
-//        $incident = Incident::factory(['group_id' => Group::SERVICE_DESK_ID])->create();
-//
-//        Livewire::actingAs($resolver);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('group', $group->id)
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['group_id' => Group::SERVICE_DESK_ID])->create();
+        $group = Group::factory(['name' => 'TEST-GROUP'])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('group', $group->id)
+            ->call('save')
+            ->assertSuccessful();
+
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Group:', 'TEST-GROUP', 'was', 'SERVICE-DESK']);    }
+
+    /** @test */
+    function it_displays_status_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['status' => ConfigurationItemStatus::IN_STOCK])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('status', ConfigurationItemStatus::INSTALLED->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Status:', 'Installed', 'was', 'In Stock']);
     }
 
     /** @test */
-    function it_displays_resolver_changes_activity()
+    function it_displays_location_changes_activity()
     {
-//        $resolver = User::factory(['name' => 'Average Joe'])->resolverAllGroups()->create();
-//        $incident = Incident::factory()->create();
-//
-//        Livewire::actingAs($resolver);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('resolver', $resolver->id)
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $incident = $incident->refresh();
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSuccessful()
-//            ->assertSeeInOrder(['Resolver:', 'Average Joe', 'was', 'empty']);
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['location' => Location::DOLNY_KUBIN])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('location', Location::NAMESTOVO->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Location:', 'Námestovo', 'was', 'Dolný Kubín']);
+    }
+
+    /** @test */
+    function it_displays_type_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['type' => ConfigurationItemType::SECONDARY])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('type', ConfigurationItemType::PRIMARY->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Type:', 'Primary', 'was', 'Secondary']);
+    }
+
+    /** @test */
+    function it_displays_operating_system_changes_activity()
+    {
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['operating_system' => OperatingSystem::WINDOWS_7])->create();
+
+        Livewire::actingAs($resolver);
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->set('operatingSystem', OperatingSystem::WINDOWS_10->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        $configurationItem = $configurationItem->refresh();
+
+        Livewire::test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSuccessful()
+            ->assertSeeInOrder(['Operating system:', 'Windows 10', 'was', 'Windows 7']);
     }
 
     /** @test */
     function it_displays_activities_in_descending_order()
     {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->create();
-//
-//        $incident->status = Status::IN_PROGRESS;
-//        $incident->save();
-//
-//        ActivityService::comment($incident, 'Test Comment');
-//
-//        $incident->status = Status::MONITORING;
-//        $incident->save();
-//
-//        $incident->refresh();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSeeInOrder([
-//                'Status:', 'Monitoring', 'was', 'In Progress',
-//                'Test Comment',
-//                'Status:', 'In Progress', 'was', 'Open',
-//                'Created', 'Status:', 'Open',
-//            ]);
+        $resolver = User::factory()->resolver()->create();
+        $configurationItem = ConfigurationItem::factory(['status' => ConfigurationItemStatus::INSTALLED])->create();
+
+        $configurationItem->status = ConfigurationItemStatus::IN_STOCK;
+        $configurationItem->save();
+
+        ActivityService::comment($configurationItem, 'Test Comment');
+
+        $configurationItem->status = ConfigurationItemStatus::RETIRED;
+        $configurationItem->save();
+
+        $configurationItem->refresh();
+
+        Livewire::actingAs($resolver)
+            ->test(ConfigurationItemEditForm::class, ['configurationItem' => $configurationItem])
+            ->assertSeeInOrder([
+                'Status:', 'Retired', 'was', 'In Stock',
+                'Test Comment',
+                'Status:', 'In Stock', 'was', 'Installed',
+                'Created', 'Status:', 'Installed',
+            ]);
     }
 
-    /** @test */
-    function it_requires_comment_if_priority_changes()
-    {
-//        $incident = Incident::factory()->create();
-//        $manager = User::factory()->manager()->create();
-//
-//        Livewire::actingAs($manager);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('priority', 3)
-//            ->call('save')
-//            ->assertHasErrors(['comment' => 'required'])
-//            ->set('comment', 'Production issue')
-//            ->call('save')
-//            ->assertSuccessful();
-    }
-
-    /** @test */
-    function sla_bar_shows_correct_minutes()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->create();
-//
-//        $date = Carbon::now()->addMinutes(10);
-//        Carbon::setTestNow($date);
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSee($incident->sla->minutesTillExpires() . ' minutes');
-    }
-
-    /** @test */
-    function it_allows_to_add_comment_to_caller()
-    {
-//        $caller = User::factory()->create();
-//        $incident = Incident::factory(['caller_id' => $caller])->create();
-//
-//        Livewire::actingAs($caller);
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('comment', 'Test comment')
-//            ->call('save');
-//
-//        Livewire::test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSee('Test comment');
-//
-//        $this->assertDatabaseHas('activity_log', [
-//            'subject_id' => $incident->id,
-//            'causer_id' => $caller->id,
-//            'event' => 'comment',
-//            'description' => 'Test comment'
-//        ]);
-    }
-
-    /** @test */
-    function resolver_is_required_if_status_in_progress()
-    {
-//        $incident = Incident::factory()->create();
-//        $resolver = User::factory()->resolver()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('status', Status::IN_PROGRESS->value)
-//            ->call('save')
-//            ->assertHasErrors(['resolver' => 'required']);
-    }
-
-    /** @test */
-    function resolver_set_to_null_if_status_is_open()
-    {
-//        $resolver = User::factory()->resolverAllGroups()->create();
-//        $incident = Incident::factory(['resolver_id' => $resolver])->statusInProgress()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->assertSet('resolver', $resolver->id)
-//            ->set('status', Status::OPEN->value)
-//            ->assertSet('resolver', null);
-    }
-
-    /** @test */
-    function it_does_not_require_comment_if_status_is_on_hold_and_status_was_not_changed()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->statusOnHold()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->call('save')
-//            ->assertHasNoErrors(['comment', 'required']);
-    }
-
-    /** @test */
-    function it_does_not_require_comment_if_status_is_resolved_and_status_was_not_changed()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->statusResolved()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->call('save')
-//            ->assertHasNoErrors(['comment', 'required']);
-    }
-
-    /** @test */
-    function it_does_not_require_comment_if_status_is_cancelled_and_status_was_not_changed()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->statusCancelled()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->call('save')
-//            ->assertHasNoErrors(['comment', 'required']);
-    }
-
-    /** @test */
-    function resolver_cannot_change_priority()
-    {
-//        $resolver = User::factory()->resolver()->create();
-//        $incident = Incident::factory()->create();
-//
-//        Livewire::actingAs($resolver)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('priority', Priority::THREE->value)
-//            ->assertForbidden();
-    }
-
-    /** @test */
-    function manager_can_change_priority()
-    {
-//        $manager = User::factory()->manager()->create();
-//        $incident = Incident::factory()->create();
-//
-//        Livewire::actingAs($manager)
-//            ->test(IncidentEditForm::class, ['incident' => $incident])
-//            ->set('priority', Priority::THREE->value)
-//            ->set('comment', 'Production Issue')
-//            ->call('save')
-//            ->assertSuccessful();
-//
-//        $this->assertDatabaseHas('incidents', [
-//            'id' => $incident->id,
-//            'priority' => Priority::THREE->value,
-//        ]);
-    }
 }

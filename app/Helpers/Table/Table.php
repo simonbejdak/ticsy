@@ -5,7 +5,6 @@ namespace App\Helpers\Table;
 use App\Enums\SortOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class Table

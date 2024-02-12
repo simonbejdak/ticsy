@@ -6,6 +6,7 @@ use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
 use App\Interfaces\Activitable;
+use App\Interfaces\Entity;
 use App\Interfaces\Slable;
 use App\Interfaces\Ticket;
 use App\Traits\HasSla;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 
-class Task extends Model implements Ticket, Slable, Activitable
+class Task extends Model implements Entity, Ticket, Slable, Activitable
 {
     use HasSla, HasFactory, TicketTrait;
 

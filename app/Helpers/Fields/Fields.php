@@ -27,6 +27,12 @@ class Fields implements IteratorAggregate, Countable
         }
     }
 
+    function add(Field $field): self
+    {
+        $this->fields[] = $field;
+        return $this;
+    }
+
     function insideGrid(): self
     {
         foreach($this->fields as $field){

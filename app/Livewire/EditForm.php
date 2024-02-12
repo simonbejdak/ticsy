@@ -2,13 +2,10 @@
 
 namespace App\Livewire;
 
-use App\Traits\HasFields;
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\FieldLabelPosition;
+use App\Helpers\Fields\Fields;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rules\RequiredIf;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class EditForm extends Form
 {
@@ -23,5 +20,17 @@ abstract class EditForm extends Form
     protected function setActivities(): void
     {
         $this->activities = $this->model->activities()->where('properties', '!=', '{"attributes":[],"old":[]}')->orderByDesc('id')->get();
+    }
+
+    protected function fields(): Fields
+    {
+        $fields = new Fields();
+        foreach ($this->schema() as $field){
+            $fields->add(
+                $field->disabledIf($this->isFieldDisabled($field->name))
+                    ->labelPosition(FieldLabelPosition::LEFT)
+            );
+        }
+        return $fields;
     }
 }

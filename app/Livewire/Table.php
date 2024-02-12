@@ -7,7 +7,6 @@ use App\Helpers\Table\TableBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use UnitEnum;
 
 abstract class Table extends Component
 {

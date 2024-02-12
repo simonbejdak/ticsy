@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Enums\Tab;
 use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;
@@ -14,18 +13,12 @@ use App\Helpers\Fields\TextInput;
 use App\Models\Group;
 use App\Models\Task;
 use App\Services\ActivityService;
-use App\Traits\HasFields;
-use App\Traits\HasTabs;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
-use Livewire\Attributes\Locked;
 
 class TaskEditForm extends EditForm
 {
-    use HasFields;
-
     public Task $task;
     public Status $status;
     public OnHoldReason|null $onHoldReason;
@@ -35,7 +28,7 @@ class TaskEditForm extends EditForm
     public string $comment;
 
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'status' => ['required', Rule::enum(Status::class)],
@@ -64,7 +57,8 @@ class TaskEditForm extends EditForm
         ];
     }
 
-    public function mount(Task $task){
+    public function mount(Task $task): void
+    {
         $this->task = $task;
         $this->model = $task;
         $this->setActivities();
@@ -116,57 +110,30 @@ class TaskEditForm extends EditForm
         return redirect()->route('tasks.edit', $this->task);
     }
 
-    function fields(): Fields
+    function schema(): Fields
     {
         return new Fields(
-            TextInput::make('number')
-                ->value($this->task->id)
-                ->disabled(),
-            TextInput::make('caller')
-                ->value($this->task->caller->name)
-                ->disabled(),
-            TextInput::make('created')
-                ->label('Created at')
-                ->value($this->task->created_at->format('d.m.Y h:i:s'))
-                ->disabled(),
-            TextInput::make('updated')
-                ->label('Updated at')
-                ->value($this->task->updated_at->format('d.m.Y h:i:s'))
-                ->disabled(),
+            TextInput::make('number')->value($this->task->id),
+            TextInput::make('caller')->value($this->task->caller->name),
+            TextInput::make('created')->label('Created at')->value($this->task->created_at->format('d.m.Y h:i:s')),
+            TextInput::make('updated')->label('Updated at')->value($this->task->updated_at->format('d.m.Y h:i:s')),
             function () {
                 if($this->task->hasTaskable()){
                     return new Fields(
                         TextInput::make('taskable')
                             ->label(get_class_name($this->task->taskable))
                             ->value($this->task->taskable_id)
-                            ->disabled()
                             ->anchor($this->task->taskable->editRoute()),
-                        TextInput::make('category')
-                            ->value($this->task->categoryName())
-                            ->disabled(),
-                        TextInput::make('item')
-                            ->value($this->task->itemName())
-                            ->disabled(),
+                        TextInput::make('category')->value($this->task->categoryName()),
+                        TextInput::make('item')->value($this->task->itemName()),
                     );
                 } return null;
             },
-            Select::make('status')
-                ->options(Status::class)
-                ->disabledIf($this->isFieldDisabled('status')),
-            Select::make('onHoldReason')
-                ->options(OnHoldReason::class)
-                ->hiddenIf($this->isFieldDisabled('onHoldReason'))
-                ->blank(),
-            Select::make('priority')
-                ->options(Priority::class)
-                ->disabledIf($this->isFieldDisabled('priority')),
-            Select::make('group')
-                ->options(Group::all())
-                ->disabledIf($this->isFieldDisabled('group')),
-            Select::make('resolver')
-                ->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])
-                ->disabledIf($this->isFieldDisabled('resolver'))
-                ->blank(),
+            Select::make('status')->options(Status::class),
+            Select::make('onHoldReason')->options(OnHoldReason::class)->hiddenIf($this->isFieldDisabled('onHoldReason'))->blank(),
+            Select::make('priority')->options(Priority::class),
+            Select::make('group')->options(Group::all()),
+            Select::make('resolver')->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])->blank(),
             function () {
                 if($this->task->sla->isOpened()){
                     return Bar::make('sla')
@@ -176,13 +143,8 @@ class TaskEditForm extends EditForm
                         ->pulse();
                 } return null;
             },
-            TextArea::make('description')
-                ->value($this->task->description)
-                ->disabled()
-                ->outsideGrid(),
-            TextArea::make('comment')
-                ->label('Add a comment')
-                ->outsideGrid(),
+            TextArea::make('description')->value($this->task->description)->outsideGrid(),
+            TextArea::make('comment')->label('Add a comment')->outsideGrid(),
         );
     }
 
@@ -201,10 +163,16 @@ class TaskEditForm extends EditForm
         }
 
         return match($name){
+            'number', 'caller', 'created', 'updated', 'taskable', 'category', 'item', 'description' => true,
             'onHoldReason' => $this->status != Status::ON_HOLD,
             'priority' => $this->status != Status::ON_HOLD && !Auth::user()->hasPermissionTo('set_priority'),
             'group', 'resolver' => $this->status == Status::RESOLVED,
             default => false,
         };
+    }
+
+    function tabs(): array
+    {
+        return [];
     }
 }

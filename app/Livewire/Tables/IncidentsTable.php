@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Tables;
 
-use App\Enums\SortOrder;
 use App\Helpers\Table\TableBuilder;
 use App\Livewire\Table;
 use App\Models\Incident;

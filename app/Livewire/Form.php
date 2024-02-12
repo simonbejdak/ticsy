@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Traits\HasFields;
+use App\Helpers\Fields\Fields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\RequiredIf;
 use Livewire\Component;
@@ -12,6 +12,11 @@ abstract class Form extends Component
 {
     public Model $model;
 
+    abstract protected function fields(): Fields;
+    abstract protected function schema(): Fields;
+    abstract protected function isFieldDisabled(string $name): bool;
+    abstract function tabs(): array;
+
     public function hydrate(): void
     {
         $this->resetErrorBag();
@@ -20,10 +25,8 @@ abstract class Form extends Component
 
     function updated($property): void
     {
-        if(hasTrait(HasFields::class, $this)){
-            if($this->isFieldDisabled($property)){
-                abort(Response::HTTP_FORBIDDEN);
-            }
+        if($this->isFieldDisabled($property)){
+            abort(Response::HTTP_FORBIDDEN);
         }
     }
 

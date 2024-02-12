@@ -20,7 +20,6 @@ class ConfigurationItemFactory extends Factory
             'operating_system' => OperatingSystem::WINDOWS_10,
             'status' => ConfigurationItemStatus::INSTALLED,
             'type' => ConfigurationItemType::PRIMARY,
-            'group_id' => Group::factory(),
             'user_id' => User::factory(),
         ];
     }
