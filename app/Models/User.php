@@ -6,22 +6,25 @@ namespace App\Models;
 use App\Enums\Location;
 use App\Enums\ResolverPanelOption;
 use App\Enums\ResolverPanelTab;
+use App\Enums\UserStatus;
+use App\Interfaces\Entity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Entity
 {
-    use HasRoles;
-    use HasFactory;
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles, LogsActivity, HasApiTokens, HasFactory, Notifiable;
     public const DEFAULT_PROFILE_PICTURE = 'default_profile_picture.png';
 
     protected $attributes = [
+        'status' => UserStatus::ACTIVE,
         'selected_resolver_panel_tab' => ResolverPanelTab::ALL,
     ];
 
@@ -29,6 +32,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'email_verified_at' => 'datetime',
         'location' => Location::class,
+        'status' => UserStatus::class,
         'selected_resolver_panel_tab' => ResolverPanelTab::class,
     ];
 
@@ -122,5 +126,28 @@ class User extends Authenticatable
     public function getSelectedResolverPanelTab(): ResolverPanelTab
     {
         return $this->selected_resolver_panel_tab;
+    }
+
+    function isArchived(): bool
+    {
+        return $this->status == UserStatus::INACTIVE;
+    }
+
+    function hasPrimaryConfigurationItem(): bool
+    {
+        return count($this->configurationItems()->primary()->get()) >= 1;
+    }
+
+    function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'email',
+                'location',
+                'status',
+
+            ])
+            ->logOnlyDirty();
     }
 }

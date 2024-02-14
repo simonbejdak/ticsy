@@ -12,6 +12,8 @@ class PermissionSeeder extends Seeder
     {
         Permission::create(['name' => 'view_all_tickets']);
         Permission::create(['name' => 'update_all_tickets']);
+        Permission::create(['name' => 'view_all_users']);
+        Permission::create(['name' => 'update_all_users']);
         Permission::create(['name' => 'view_all_configuration_items']);
         Permission::create(['name' => 'set_priority']);
         Permission::create(['name' => 'add_comments_to_all_tickets']);
@@ -21,6 +23,8 @@ class PermissionSeeder extends Seeder
             ->givePermissionTo(
                 'view_all_tickets',
                 'update_all_tickets',
+                'view_all_users',
+                'update_all_users',
                 'view_all_configuration_items',
                 'add_comments_to_all_tickets',
                 'view_resolver_panel',
@@ -28,12 +32,14 @@ class PermissionSeeder extends Seeder
 
         Role::create(['name' => 'manager'])
             ->givePermissionTo(
-            'view_all_tickets',
-            'update_all_tickets',
-            'view_all_configuration_items',
-            'add_comments_to_all_tickets',
-            'set_priority',
-            'view_resolver_panel',
-        );
+                'view_all_tickets',
+                'update_all_tickets',
+                'view_all_users',
+                'update_all_users',
+                'view_all_configuration_items',
+                'add_comments_to_all_tickets',
+                'set_priority',
+                'view_resolver_panel',
+            );
     }
 }

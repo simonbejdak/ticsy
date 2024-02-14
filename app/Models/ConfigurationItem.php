@@ -8,6 +8,7 @@ use App\Enums\Location;
 use App\Enums\OperatingSystem;
 use App\Interfaces\Activitable;
 use App\Interfaces\Entity;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,6 +43,11 @@ class ConfigurationItem extends Model implements Entity, Activitable
     function isArchived(): bool
     {
         return $this->status == ConfigurationItemStatus::RETIRED;
+    }
+
+    function scopePrimary(Builder $query): void
+    {
+        $query->where('type', '=', ConfigurationItemType::PRIMARY->value);
     }
 
     function getActivityLogOptions(): LogOptions

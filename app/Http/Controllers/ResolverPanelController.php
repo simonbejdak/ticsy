@@ -19,4 +19,8 @@ class ResolverPanelController extends Controller
     function tasks(){
         return view('resolver-panel.tasks');
     }
+
+    function users(){
+        return view('resolver-panel.users');
+    }
 }

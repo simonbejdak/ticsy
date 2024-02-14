@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use App\Helpers\Fields\Bar;
+use App\Helpers\Fields\CheckBox;
 use App\Helpers\Fields\Select;
 use App\Helpers\Fields\TextArea;
 use App\Helpers\Fields\TextInput;
@@ -29,6 +30,8 @@ class Field extends Component
             return view('components.select');
         } elseif($this->field instanceof Bar){
             return view('components.bar');
+        } elseif($this->field instanceof CheckBox){
+            return view('components.check-box');
         }
 
         throw new InvalidArgumentException('Field ' . get_class($this->field) . ' cannot be rendered. ');

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('location');
+            $table->string('status');
             $table->string('profile_picture')->nullable();
             $table->string('selected_resolver_panel_tab');
             $table->string('group_id')->nullable();

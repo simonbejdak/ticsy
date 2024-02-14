@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Enums\Location;
 use App\Enums\ResolverPanelOption;
+use App\Enums\UserStatus;
 use App\Models\ConfigurationItem;
 use App\Models\FavoriteResolverPanelOption;
 use App\Models\Group;
@@ -134,6 +135,8 @@ class UserTest extends TestCase
     /** @test */
     function it_has_user_status_enum()
     {
-        //
+        $user = User::factory()->create();
+
+        $this->assertInstanceOf(UserStatus::class, $user->status);
     }
 }
