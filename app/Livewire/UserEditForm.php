@@ -86,7 +86,7 @@ class UserEditForm extends EditForm
         }
 
         return match($name){
-            'name', 'email', 'configurationItem', 'created', 'updated', 'isResolver' => true,
+            'name', 'email', 'configurationItem', 'created', 'updated' => true,
             default => false,
         };
     }

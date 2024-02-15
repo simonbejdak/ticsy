@@ -34,3 +34,6 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 30. Searchable select fields
 31. Locations
 
+Use case problems:
+- checkbox svg does not allow to click on it
+

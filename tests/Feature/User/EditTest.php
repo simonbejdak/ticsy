@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\User;
 
+use App\Enums\Location;
+use App\Enums\UserStatus;
 use App\Livewire\IncidentEditForm;
 use App\Livewire\UserEditForm;
 use App\Models\Incident;
@@ -74,27 +76,74 @@ class EditTest extends TestCase
     function it_renders_created_activity()
     {
         $resolver = User::factory()->resolver()->create();
-        $user = User::factory()->create();
+        $user = User::factory([
+            'name' => 'Average Joe',
+            'email' => 'average.joe@gmail.com',
+            'location' => Location::MICHIGAN,
+            'status' => UserStatus::ACTIVE,
+        ])->create();
 
         Livewire::actingAs($resolver)
             ->test(UserEditForm::class, ['user' => $user])
             ->assertSuccessful()
             ->assertSeeInOrder([
-                'Status:', 'Open',
-                'Priority', '4',
-                'Group:', 'SERVICE-DESK',
+                'Name:', 'Average Joe',
+                'Email', 'average.joe@gmail.com',
+                'Location', 'Michigan',
+                'Status', 'Active',
             ]);
     }
 
     /** @test */
     function it_renders_updated_activities()
     {
-        //
+        $resolver = User::factory()->resolver()->create();
+        $user = User::factory([
+            'name' => 'Average Joe',
+            'email' => 'average.joe@gmail.com',
+            'location' => Location::MICHIGAN,
+            'status' => UserStatus::ACTIVE,
+        ])->create();
+
+        $user->name = 'John Doe';
+        $user->email = 'john.doe@gmail.com';
+        $user->location = Location::DOLNY_KUBIN;
+        $user->status = UserStatus::INACTIVE;
+        $user->save();
+        $user->refresh();
+
+        Livewire::actingAs($resolver)
+            ->test(UserEditForm::class, ['user' => $user])
+            ->assertSuccessful()
+            ->assertSeeInOrder([
+                'Updated',
+                'Name:', 'John Doe',
+                'Email:', 'john.doe@gmail.com',
+                'Location:', 'Dolný Kubín',
+                'Status:', 'Inactive',
+            ]);
     }
 
     /** @test */
-    function it_allows_user_with_permission_update_users_to_update_specified_data()
+    function it_allows_resolver_to_update_specified_data()
     {
-        //
+        $resolver = User::factory()->resolver()->create();
+        $user = User::factory([
+            'location' => Location::DOLNY_KUBIN,
+            'status' => UserStatus::ACTIVE,
+        ])->create();
+
+        Livewire::actingAs($resolver)
+            ->test(UserEditForm::class, ['user' => $user])
+            ->set('location', Location::NAMESTOVO->value)
+            ->set('status', UserStatus::INACTIVE->value)
+            ->call('save')
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'location' => Location::NAMESTOVO->value,
+            'status' => UserStatus::INACTIVE->value,
+        ]);
     }
 }
