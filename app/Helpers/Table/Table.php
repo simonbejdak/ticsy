@@ -9,8 +9,6 @@ use UnitEnum;
 
 class Table
 {
-    const DEFAULT_ITEMS_PER_PAGE = 25;
-
     public Builder $builder;
     public array $columns;
     public array $searchCases;
@@ -32,7 +30,6 @@ class Table
         $static->searchCases = [];
         $static->paginate = true;
         $static->columnTextSearch = true;
-        $static->itemsPerPage = $static::DEFAULT_ITEMS_PER_PAGE;
         $static->paginationIndex = 1;
         $static->builder = $builder;
         $static->sortOrder = SortOrder::ASCENDING;
@@ -47,12 +44,6 @@ class Table
     function hasNextPage(): int
     {
         return $this->paginationIndex < ($this->count - $this->itemsPerPage);
-    }
-
-    function addSearchCase(string $property, string $value): self
-    {
-        $this->searchCases[$property] = $value;
-        return $this;
     }
 
     function to(): int

@@ -10,10 +10,12 @@ use Livewire\Component;
 
 abstract class Table extends Component
 {
+    const DEFAULT_ITEMS_PER_PAGE = 25;
+
     public $paginationIndex = 1;
     public array $searchCases = [];
     #[Locked]
-    public $itemsPerPage = 25;
+    public $itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
     #[Locked]
     public int $count;
     #[Locked]

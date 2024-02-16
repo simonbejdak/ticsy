@@ -75,7 +75,7 @@ class TableBuilder
 
     protected function searchCase(string $property, string $value): self
     {
-        $this->table->addSearchCase($property, $value);
+        $this->table->searchCases[$property] = $value;
         return $this;
     }
 }
