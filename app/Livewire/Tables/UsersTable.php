@@ -17,7 +17,7 @@ class UsersTable extends Table
     function schema(): TableBuilder
     {
         return $this->tableBuilder()
-            ->column('E-mail', 'email', ['users.edit', 'id'])
+            ->column('E-mail', 'email', 'users.edit', ['id'])
             ->column('Name', 'name')
             ->column('Location', 'location.value')
             ->column('Status', 'status.value');

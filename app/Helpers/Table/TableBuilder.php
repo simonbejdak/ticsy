@@ -12,11 +12,12 @@ class TableBuilder
         $this->table = $table;
     }
 
-    function column(string $title, string $property, array $route = null): self
+    function column(string $title, string $property, string $route = null, array $routeArguments = null): self
     {
         $this->table->columns[$title] = [
             'property' => $property,
             'route' => $route,
+            'routeArguments' => $routeArguments,
         ];
         return $this;
     }

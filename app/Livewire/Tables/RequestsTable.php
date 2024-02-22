@@ -17,7 +17,7 @@ class RequestsTable extends Table
     function schema(): TableBuilder
     {
         return $this->tableBuilder()
-            ->column('Number', 'id', ['requests.edit', 'id'])
+            ->column('Number', 'id', 'requests.edit', ['id'])
             ->column('Description', 'description')
             ->column('Caller', 'caller.name')
             ->column('Resolver', 'resolver.name')

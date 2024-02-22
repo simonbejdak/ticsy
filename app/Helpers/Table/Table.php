@@ -5,6 +5,7 @@ namespace App\Helpers\Table;
 use App\Enums\SortOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class Table
@@ -71,7 +72,7 @@ class Table
             foreach ($this->columns as $column){
                 $row[] = [
                     'value' => $this->getValue($model, $column['property']),
-                    'anchor' => $column['route'] ? route($column['route'][0], $this->getValue($model, $column['route'][1])) : null,
+                    'anchor' => $this->getAnchor($model, $column)
                 ];
             }
             $rows[] = $row;
@@ -79,13 +80,25 @@ class Table
         return $rows;
     }
 
-    protected function getValue($model, $property): string|null
+    protected function getValue(Model $model, $property): string|null
     {
         return array_reduce(explode('.', $property),
             function ($o, $p) {
                 return is_numeric($p) ? ($o[$p] ?? null) : ($o->$p ?? null);
             }, $model
         );
+    }
+
+    protected function getAnchor(Model $model, array $column): string|null
+    {
+        if(isset($column['route'])){
+            $arguments = [];
+            foreach ($column['routeArguments'] as $argument){
+                $arguments[] = $this->getValue($model, $argument);
+            }
+            return route($column['route'], $arguments);
+        }
+        return null;
     }
 
     protected function paginateCollection(): Collection

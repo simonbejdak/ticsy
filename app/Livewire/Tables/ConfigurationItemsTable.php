@@ -17,7 +17,7 @@ class ConfigurationItemsTable extends Table
     function schema(): TableBuilder
     {
         return $this->tableBuilder()
-            ->column('Serial Number', 'serial_number', ['configuration-items.edit', 'id'])
+            ->column('Serial Number', 'serial_number', 'configuration-items.edit', ['id'])
             ->column('User', 'user.name')
             ->column('Location', 'location.value');
     }

@@ -17,7 +17,7 @@ class IncidentsTable extends Table
     function schema(): TableBuilder
     {
         return $this->tableBuilder()
-            ->column('Number', 'id', ['incidents.edit', 'id'])
+            ->column('Number', 'id', 'incidents.edit', ['id'])
             ->column('Description', 'description')
             ->column('Caller', 'caller.name')
             ->column('Resolver', 'resolver.name')
