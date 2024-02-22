@@ -20,7 +20,7 @@ class TicketService
         $ticket->save();
     }
 
-    public static function cancelTicket(Ticket $ticket)
+    public static function cancelTicket(Ticket $ticket): void
     {
         $ticket->status = Status::CANCELLED;
         $ticket->save();

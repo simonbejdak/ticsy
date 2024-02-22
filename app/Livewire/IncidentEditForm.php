@@ -124,7 +124,7 @@ class IncidentEditForm extends EditForm
             Select::make('group')->options(Group::all()),
             Select::make('resolver')->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])->blank(),
             function () {
-                if($this->incident->sla->isOpened()){
+                if($this->incident->sla){
                     return Bar::make('sla')
                         ->label('SLA expires at')
                         ->percentage($this->incident->sla->toPercentage())

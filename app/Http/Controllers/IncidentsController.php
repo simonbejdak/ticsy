@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class IncidentsController extends Controller
 {
-    const DEFAULT_PAGINATION = 10;
+    const DEFAULT_INDEX_PAGINATION = 10;
 
     public function index()
     {
@@ -16,14 +16,14 @@ class IncidentsController extends Controller
         $incidents = $user->incidents()
             ->with(['category', 'caller', 'resolver'])
             ->orderByDesc('id')
-            ->simplePaginate(self::DEFAULT_PAGINATION);
+            ->simplePaginate(self::DEFAULT_INDEX_PAGINATION);
 
         return view('incidents.index', ['incidents' => $incidents]);
     }
 
     public function create()
     {
-        return view('incidents.create', ['categories' => IncidentCategory::all()]);
+        return view('incidents.create');
     }
 
     public function edit($id)

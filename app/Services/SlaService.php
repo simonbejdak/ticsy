@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Interfaces\Slable;
+use App\Interfaces\SLAble;
 use App\Models\Sla;
 use Illuminate\Support\Carbon;
 
 class SlaService
 {
-    public static function createSla(Slable $slable): void
+    public static function createSla(SLAble $slable): void
     {
         $sla = new Sla;
         $sla->slable()->associate($slable);
@@ -16,9 +16,11 @@ class SlaService
         $sla->save();
     }
 
-    public static function closeSla(Sla $sla): void
+    public static function closeSla(Sla|null $sla): void
     {
-        $sla->closed_at = Carbon::now();
-        $sla->save();
+        if($sla){
+            $sla->closed_at = Carbon::now();
+            $sla->save();
+        }
     }
 }

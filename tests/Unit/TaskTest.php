@@ -106,13 +106,13 @@ class TaskTest extends TestCase
     function sla_is_closed_when_status_changes_to_sla_closing_statuses($status){
         $task = Task::factory()->create();
 
-        $this->assertFalse($task->sla->isClosed());
+        $this->assertNotNull($task->sla);
 
         $task->status = $status;
         $task->save();
         $task->refresh();
 
-        $this->assertTrue($task->sla->isClosed());
+        $this->assertNull($task->sla);
     }
 
     static function slaClosingStatuses(){

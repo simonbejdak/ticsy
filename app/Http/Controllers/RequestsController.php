@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestsController extends Controller
 {
-    const DEFAULT_PAGINATION = 10;
+    const DEFAULT_INDEX_PAGINATION = 10;
 
     public function index()
     {
@@ -15,7 +15,7 @@ class RequestsController extends Controller
         $requests = $user->requests()
             ->with(['category', 'caller', 'resolver'])
             ->orderByDesc('id')
-            ->simplePaginate(self::DEFAULT_PAGINATION);
+            ->simplePaginate(self::DEFAULT_INDEX_PAGINATION);
 
         return view('requests.index', ['requests' => $requests]);
     }

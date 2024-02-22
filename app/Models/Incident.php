@@ -5,21 +5,19 @@ namespace App\Models;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Interfaces\Activitable;
-use App\Interfaces\Entity;
-use App\Interfaces\Slable;
+use App\Interfaces\SLAble;
 use App\Interfaces\Ticket;
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;
-use App\Traits\HasSla;
 use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
 
-class Incident extends Model implements Entity, Ticket, Slable, Activitable
+class Incident extends Model implements Ticket, SLAble
 {
-    use HasSla, HasFactory, TicketTrait;
+    use TicketTrait, HasFactory;
 
     protected $guarded = [];
     protected $casts = [
@@ -69,5 +67,21 @@ class Incident extends Model implements Entity, Ticket, Slable, Activitable
     function item(): BelongsTo
     {
         return $this->belongsTo(IncidentItem::class, 'item_id');
+    }
+
+    function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'category.name',
+                'item.name',
+                'description',
+                'status',
+                'on_hold_reason',
+                'priority',
+                'group.name',
+                'resolver.name',
+            ])
+            ->logOnlyDirty();
     }
 }

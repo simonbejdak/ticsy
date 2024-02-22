@@ -47,7 +47,7 @@ class IndexTest extends TestCase
             'caller_id' => $user,
         ])->create();
 
-        Request::factory(RequestsController::DEFAULT_PAGINATION, [
+        Request::factory(RequestsController::DEFAULT_INDEX_PAGINATION, [
             'caller_id' => $user,
         ])->create();
 

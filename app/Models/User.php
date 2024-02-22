@@ -7,7 +7,7 @@ use App\Enums\Location;
 use App\Enums\ResolverPanelOption;
 use App\Enums\ResolverPanelTab;
 use App\Enums\UserStatus;
-use App\Interfaces\Entity;
+use App\Traits\Entity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,9 +18,9 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements Entity
+class User extends Authenticatable
 {
-    use HasRoles, LogsActivity, HasApiTokens, HasFactory, Notifiable;
+    use Entity, HasRoles, LogsActivity, HasApiTokens, HasFactory, Notifiable;
     public const DEFAULT_PROFILE_PICTURE = 'default_profile_picture.png';
 
     protected $attributes = [

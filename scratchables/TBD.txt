@@ -20,8 +20,7 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 18. Comment required_if Status resolved -- done
 19. Resolver Panel -- done
 20. Configuration items -- done
-
-21. Users -- in progress
+21. Users -- done
 
 22. Table filters
 23. Knowledge articles for common problems
@@ -36,4 +35,6 @@ Purpose of the project "ticket_system" is to demonstrate my programming abilitie
 
 Use case problems:
 - checkbox svg does not allow to click on it
+- Description field does not go disabled, if it is not empty and user clicks "UPDATE" button
+- comment cards have too big font
 

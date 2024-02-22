@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
@@ -33,13 +34,8 @@ class Sla extends Model
         return $this->expires_at->diffInMinutes(Carbon::now());
     }
 
-    public function isOpened(): bool
+    public function scopeOpened(Builder $query): Builder
     {
-        return $this->isClosed() == null;
-    }
-
-    public function isClosed(): bool
-    {
-        return $this->closed_at != null;
+        return $query->where('closed_at', '=', null);
     }
 }

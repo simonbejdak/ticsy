@@ -7,23 +7,21 @@ use App\Enums\Priority;
 use App\Enums\Status;
 use App\Enums\TaskSequence;
 use App\Helpers\TaskPlan;
-use App\Interfaces\Activitable;
-use App\Interfaces\Entity;
-use App\Interfaces\Slable;
+use App\Interfaces\SLAble;
 use App\Interfaces\Taskable;
 use App\Interfaces\Ticket;
 use App\Models\Request\RequestCategory;
 use App\Models\Request\RequestItem;
-use App\Traits\HasSla;
 use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\Activitylog\LogOptions;
 
-class Request extends Model implements Entity, Ticket, Slable, Activitable, Taskable
+class Request extends Model implements Ticket, SLAble, Taskable
 {
-    use HasSla, HasFactory, TicketTrait;
+    use TicketTrait, HasFactory;
 
     protected $guarded = [];
     protected $casts = [
@@ -118,5 +116,21 @@ class Request extends Model implements Entity, Ticket, Slable, Activitable, Task
     public function editRoute(): string
     {
         return route('requests.edit', $this);
+    }
+
+    function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'category.name',
+                'item.name',
+                'description',
+                'status',
+                'on_hold_reason',
+                'priority',
+                'group.name',
+                'resolver.name',
+            ])
+            ->logOnlyDirty();
     }
 }

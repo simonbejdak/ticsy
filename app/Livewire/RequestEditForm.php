@@ -128,7 +128,7 @@ class RequestEditForm extends EditForm
             Select::make('group')->options(Group::all()),
             Select::make('resolver')->options(Group::find($this->group) ? Group::find($this->group)->resolvers : [])->blank(),
             function () {
-                if($this->request->sla->isOpened()){
+                if($this->request->sla){
                     return Bar::make('sla')
                         ->label('SLA expires at')
                         ->percentage($this->request->sla->toPercentage())

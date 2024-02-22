@@ -6,18 +6,16 @@ use App\Enums\ConfigurationItemStatus;
 use App\Enums\ConfigurationItemType;
 use App\Enums\Location;
 use App\Enums\OperatingSystem;
-use App\Interfaces\Activitable;
-use App\Interfaces\Entity;
+use App\Traits\Entity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
-class ConfigurationItem extends Model implements Entity, Activitable
+class ConfigurationItem extends Model
 {
-    use HasFactory, LogsActivity;
+    use Entity, HasFactory;
 
     protected $casts = [
         'location' => Location::class,

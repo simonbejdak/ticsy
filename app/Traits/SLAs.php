@@ -5,7 +5,7 @@ namespace App\Traits;
 use App\Models\Sla;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-trait HasSla
+trait SLAs
 {
     abstract function calculateSlaMinutes(): int;
 
@@ -14,8 +14,8 @@ trait HasSla
         return $this->morphMany(Sla::class, 'slable');
     }
 
-    function getSlaAttribute(): Sla
+    function getSlaAttribute(): Sla|null
     {
-        return $this->slas->last();
+        return $this->slas()->opened()->latest()->first();
     }
 }

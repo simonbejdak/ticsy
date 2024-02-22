@@ -13,7 +13,6 @@ interface Ticket
     function resolver(): BelongsTo;
     function group(): BelongsTo;
     function slas(): MorphMany;
-    function isStatus(Status ...$statuses): bool;
     function isArchived(): bool;
     function statusChanged(): bool;
     function statusChangedTo(Status $status): bool;

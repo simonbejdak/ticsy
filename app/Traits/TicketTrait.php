@@ -9,12 +9,10 @@ use App\Models\User;
 use App\Observers\TicketObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 trait TicketTrait
 {
-    use LogsActivity;
+    use Entity, SLAs;
 
     protected static function bootTicketTrait(): void
     {
@@ -96,21 +94,5 @@ trait TicketTrait
     function priorityChanged(): bool
     {
         return $this->isDirty('priority');
-    }
-
-    function getActivityLogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly([
-                'category.name',
-                'item.name',
-                'description',
-                'status',
-                'on_hold_reason',
-                'priority',
-                'group.name',
-                'resolver.name',
-            ])
-            ->logOnlyDirty();
     }
 }

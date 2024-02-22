@@ -6,7 +6,7 @@ namespace Tests\Unit;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Interfaces\Slable;
+use App\Interfaces\SLAble;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Incident\IncidentCategory;
@@ -24,7 +24,7 @@ class IncidentTest extends TestCase
 
     function test_it_is_slable(){
         $incident = Incident::factory()->create();
-        $this->assertTrue($incident instanceof Slable);
+        $this->assertTrue($incident instanceof SLAble);
     }
 
     function test_it_has_many_slas(){
@@ -212,16 +212,16 @@ class IncidentTest extends TestCase
     /**
      * @dataProvider slaClosingStatuses
      */
-    public function test_sla_is_closed_when_status_changes_to_sla_closing_statuses($status){
+    public function test_sla_is_null_when_status_changes_to_sla_closing_statuses($status){
         $incident = Incident::factory()->create();
 
-        $this->assertFalse($incident->sla->isClosed());
+        $this->assertNotNull($incident->sla);
 
         $incident->status = $status;
         $incident->save();
         $incident->refresh();
 
-        $this->assertTrue($incident->sla->isClosed());
+        $this->assertNull($incident->sla);
     }
 
     static function slaClosingStatuses(){

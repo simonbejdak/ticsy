@@ -48,7 +48,7 @@ class IndexTest extends TestCase
             'caller_id' => $user,
         ])->create();
 
-        Incident::factory(IncidentsController::DEFAULT_PAGINATION, [
+        Incident::factory(IncidentsController::DEFAULT_INDEX_PAGINATION, [
             'caller_id' => $user,
         ])->create();
 

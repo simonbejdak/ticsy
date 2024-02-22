@@ -5,11 +5,8 @@ namespace App\Models;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Interfaces\Activitable;
-use App\Interfaces\Entity;
-use App\Interfaces\Slable;
+use App\Interfaces\SLAble;
 use App\Interfaces\Ticket;
-use App\Traits\HasSla;
 use App\Traits\TicketTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,9 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 
-class Task extends Model implements Entity, Ticket, Slable, Activitable
+class Task extends Model implements Ticket, SLAble
 {
-    use HasSla, HasFactory, TicketTrait;
+    use TicketTrait, HasFactory;
 
     protected $guarded = [];
     protected $casts = [
@@ -28,6 +25,7 @@ class Task extends Model implements Entity, Ticket, Slable, Activitable
         'priority' => Priority::class,
         'resolved_at' => 'datetime',
     ];
+
     protected $attributes = [
         'status' => self::DEFAULT_STATUS,
         'group_id' => self::DEFAULT_GROUP,
@@ -100,5 +98,4 @@ class Task extends Model implements Entity, Ticket, Slable, Activitable
             ])
             ->logOnlyDirty();
     }
-
 }

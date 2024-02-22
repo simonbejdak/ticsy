@@ -3,7 +3,7 @@
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Interfaces\Slable;
+use App\Interfaces\SLAble;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
@@ -24,7 +24,7 @@ class RequestTest extends TestCase
     /** @test */
     function it_is_slable(){
         $request = Request::factory()->create();
-        $this->assertInstanceOf(Slable::class, $request);
+        $this->assertInstanceOf(SLAble::class, $request);
     }
 
     /** @test */
@@ -343,13 +343,13 @@ class RequestTest extends TestCase
     function sla_is_closed_when_status_changes_to_sla_closing_statuses($status){
         $request = Incident::factory()->create();
 
-        $this->assertFalse($request->sla->isClosed());
+        $this->assertNotNull($request->sla);
 
         $request->status = $status;
         $request->save();
         $request->refresh();
 
-        $this->assertTrue($request->sla->isClosed());
+        $this->assertNull($request->sla);
     }
 
     static function slaClosingStatuses(){

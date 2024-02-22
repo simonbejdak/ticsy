@@ -3,7 +3,7 @@
 namespace Tables;
 
 use App\Enums\Priority;
-use App\Helpers\Table\Table;
+use App\Livewire\Table;
 use App\Livewire\Tables\IncidentsTable;
 use App\Models\Incident;
 use App\Models\User;
