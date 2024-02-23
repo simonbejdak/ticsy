@@ -3,6 +3,8 @@
 namespace App\Helpers\Table;
 
 use App\Enums\SortOrder;
+use App\Helpers\Columns\Column;
+use App\Helpers\Columns\Columns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +13,7 @@ use UnitEnum;
 class Table
 {
     public Builder $builder;
-    public array $columns;
+    public Columns $columns;
     public array $searchCases;
     public bool $paginate;
     public bool $columnTextSearch;
@@ -28,6 +30,7 @@ class Table
     static function make(Builder $builder): TableBuilder
     {
         $static = new static();
+        $static->columns = Columns::create();
         $static->searchCases = [];
         $static->paginate = true;
         $static->columnTextSearch = true;
@@ -55,10 +58,10 @@ class Table
     function getHeaders(): array
     {
         $headers = [];
-        foreach (array_keys($this->columns) as $header){
+        foreach ($this->columns as $column){
             $headers[] = [
-                'header' => $header,
-                'property' => $this->columns[$header]['property'],
+                'header' => $column->header,
+                'property' => $column->property,
             ];
         }
         return $headers;
@@ -71,8 +74,8 @@ class Table
             $row = [];
             foreach ($this->columns as $column){
                 $row[] = [
-                    'value' => $this->getValue($model, $column['property']),
-                    'anchor' => $this->getAnchor($model, $column)
+                    'value' => $this->getValue($model, $column->property),
+                    'route' => $this->getRoute($model, $column)
                 ];
             }
             $rows[] = $row;
@@ -80,7 +83,7 @@ class Table
         return $rows;
     }
 
-    protected function getValue(Model $model, $property): string|null
+    protected function getValue(Model $model, string $property): string|null
     {
         return array_reduce(explode('.', $property),
             function ($o, $p) {
@@ -89,14 +92,14 @@ class Table
         );
     }
 
-    protected function getAnchor(Model $model, array $column): string|null
+    protected function getRoute(Model $model, Column $column): string|null
     {
-        if(isset($column['route'])){
+        if(isset($column->route)){
             $arguments = [];
-            foreach ($column['routeArguments'] as $argument){
+            foreach ($column->route->arguments as $argument){
                 $arguments[] = $this->getValue($model, $argument);
             }
-            return route($column['route'], $arguments);
+            return route($column->route->name, $arguments);
         }
         return null;
     }
@@ -106,7 +109,7 @@ class Table
         return $this->collection->skip($this->paginationIndex - 1)->take($this->itemsPerPage);
     }
 
-    // just get data from model based on provided property in dot notation, i.e. status.name
+    // just get data from model based on provided property in dot notation, i.e. status.route
     protected function data_get($model, string $property): string
     {
         $data = data_get($model, $property);

@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Tables;
 
+use App\Helpers\Columns\Column;
+use App\Helpers\Columns\ColumnRoute;
+use App\Helpers\Columns\Columns;
 use App\Helpers\Table\TableBuilder;
 use App\Livewire\Table;
 use App\Models\User;
@@ -16,11 +19,16 @@ class UsersTable extends Table
 
     function schema(): TableBuilder
     {
-        return $this->tableBuilder()
-            ->column('E-mail', 'email', 'users.edit', ['id'])
-            ->column('Name', 'name')
-            ->column('Location', 'location.value')
-            ->column('Status', 'status.value');
+        return $this->tableBuilder();
+    }
 
+    function columns(): Columns
+    {
+        return Columns::create(
+            Column::create('E-mail', 'email', ColumnRoute::create('users.edit', ['id'])),
+            Column::create('Name', 'name'),
+            Column::create('Location', 'location.value'),
+            Column::create('Status', 'status.value'),
+        );
     }
 }

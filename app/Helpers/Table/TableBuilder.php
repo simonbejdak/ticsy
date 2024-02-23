@@ -3,6 +3,8 @@
 namespace App\Helpers\Table;
 
 use App\Enums\SortOrder;
+use App\Helpers\Columns\Column;
+use App\Helpers\Columns\Columns;
 
 class TableBuilder
 {
@@ -12,13 +14,17 @@ class TableBuilder
         $this->table = $table;
     }
 
-    function column(string $title, string $property, string $route = null, array $routeArguments = null): self
+    function column(Column $column): self
     {
-        $this->table->columns[$title] = [
-            'property' => $property,
-            'route' => $route,
-            'routeArguments' => $routeArguments,
-        ];
+        $this->table->columns->add($column);
+        return $this;
+    }
+
+    function columns(Columns $columns): self
+    {
+        foreach($columns as $column){
+            $this->column($column);
+        }
         return $this;
     }
 
@@ -55,6 +61,13 @@ class TableBuilder
     function withoutColumnSearch(): self
     {
         $this->table->columnTextSearch = false;
+        return $this;
+    }
+
+    function simple(): self
+    {
+        $this->withoutPagination();
+        $this->withoutColumnSearch();
         return $this;
     }
 

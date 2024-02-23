@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Enums\SortOrder;
+use App\Helpers\Columns\Columns;
 use App\Helpers\Table\TableBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Locked;
@@ -30,7 +31,12 @@ abstract class Table extends Component
     public SortOrder $sortOrder = SortOrder::DESCENDING;
 
     abstract function query(): Builder;
-    abstract function schema(): TableBuilder;
+    abstract function columns(): Columns;
+
+    function schema(): TableBuilder
+    {
+        return $this->tableBuilder();
+    }
 
     function tableBuilder(): TableBuilder{
         return \App\Helpers\Table\Table::make($this->query())
@@ -38,7 +44,8 @@ abstract class Table extends Component
             ->sortOrder($this->sortOrder)
             ->itemsPerPage($this->itemsPerPage)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
-            ->searchCases($this->searchCases);
+            ->searchCases($this->searchCases)
+            ->columns($this->setColumns());
     }
 
     function mount(): void
@@ -48,7 +55,7 @@ abstract class Table extends Component
         $this->paginate = $table->paginate;
         $this->columnTextSearch = $table->columnTextSearch;
         foreach($table->columns as $column){
-            $this->properties[] = $column['property'];
+            $this->properties[] = $column->property;
         }
     }
 
@@ -132,5 +139,10 @@ abstract class Table extends Component
     protected function isPropertyValid(string $property): bool
     {
         return in_array($property, $this->properties);
+    }
+
+    protected function setColumns(): Columns
+    {
+        return $this->columns()->visible();
     }
 }

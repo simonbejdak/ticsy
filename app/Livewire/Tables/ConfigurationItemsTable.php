@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Tables;
 
-use App\Helpers\Table\TableBuilder;
+use App\Helpers\Columns\Column;
+use App\Helpers\Columns\ColumnRoute;
+use App\Helpers\Columns\Columns;
 use App\Livewire\Table;
 use App\Models\ConfigurationItem;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,11 +16,12 @@ class ConfigurationItemsTable extends Table
         return ConfigurationItem::query()->with('user');
     }
 
-    function schema(): TableBuilder
+    function columns(): Columns
     {
-        return $this->tableBuilder()
-            ->column('Serial Number', 'serial_number', 'configuration-items.edit', ['id'])
-            ->column('User', 'user.name')
-            ->column('Location', 'location.value');
+        return Columns::create(
+            Column::create('Serial Number', 'serial_number', ColumnRoute::create('configuration-items.edit', ['id'])),
+            Column::create('User', 'user.name'),
+            Column::create('Location', 'location.value'),
+        );
     }
 }

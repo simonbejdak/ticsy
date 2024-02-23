@@ -50,11 +50,11 @@
                 >
                     @foreach($row as $cell)
                         <td class="text-left pl-3 py-1">
-                            @if($cell['anchor'] != null)
-                                <a class="underline underline-offset-2 decoration-1 hover:cursor-pointer" href="{{ $cell['anchor'] }}">
+                            @if($cell['route'] != null)
+                                <a class="underline underline-offset-2 decoration-1 hover:cursor-pointer" href="{{ $cell['route'] }}">
                             @endif
                                 {{ $cell['value'] }}
-                            @if($cell['anchor'])
+                            @if($cell['route'])
                                 </a>
                             @endif
                         </td>

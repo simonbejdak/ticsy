@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Tables;
 
-use App\Helpers\Table\TableBuilder;
+use App\Helpers\Columns\Column;
+use App\Helpers\Columns\ColumnRoute;
+use App\Helpers\Columns\Columns;
 use App\Livewire\Table;
 use App\Models\Incident;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,14 +16,19 @@ class IncidentsTable extends Table
         return Incident::query()->with('caller');
     }
 
-    function schema(): TableBuilder
+    function columns(): Columns
     {
-        return $this->tableBuilder()
-            ->column('Number', 'id', 'incidents.edit', ['id'])
-            ->column('Description', 'description')
-            ->column('Caller', 'caller.name')
-            ->column('Resolver', 'resolver.name')
-            ->column('Status', 'status.value')
-            ->column('Priority', 'priority.value');
+        return Columns::create(
+            Column::create('Number', 'id', ColumnRoute::create('incidents.edit', ['id'])),
+            Column::create('Description', 'description'),
+            Column::create('Caller', 'caller.name'),
+            Column::create('Category', 'category.name')->hidden(),
+            Column::create('Item', 'item.name')->hidden(),
+            Column::create('Resolver', 'resolver.name'),
+            Column::create('Status', 'status.value'),
+            Column::create('Priority', 'priority.name'),
+            Column::create('Created at', 'created_at')->hidden(),
+            Column::create('Updated at', 'updated_at')->hidden(),
+        );
     }
 }
