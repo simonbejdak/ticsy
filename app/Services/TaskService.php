@@ -4,18 +4,22 @@ namespace App\Services;
 
 use App\Enums\Status;
 use App\Interfaces\Taskable;
+use App\Models\Group;
 use App\Models\Task;
 use Illuminate\Support\Carbon;
 
 class TaskService
 {
-    public static function createTask(string $description, Taskable $taskable = null): void
+    public static function createTask(string $description, Taskable $taskable = null, Group $group = null): void
     {
         $task = new Task();
         if($taskable){
             $task->taskable()->associate($taskable);
         }
         $task->description = $description;
+        if($group != null){
+            $task->group_id = $group->id;
+        }
         $task->save();
     }
 

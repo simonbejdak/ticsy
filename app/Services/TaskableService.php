@@ -7,17 +7,18 @@ use App\Interfaces\Taskable;
 
 class TaskableService
 {
+
     static function setTasks(Taskable $taskable): void
     {
-        $taskPlan = $taskable->taskPlan();
+        $strategy = $taskable->strategy();
 
-        foreach($taskPlan->tasks as $description){
-            TaskService::createTask($description, $taskable);
+        foreach($strategy->tasks as $task){
+            TaskService::createTask($task, $taskable, $strategy->group);
         }
 
-        if($taskPlan->sequence == TaskSequence::GRADUAL){
+        if($strategy->taskSequence == TaskSequence::GRADUAL){
             TaskService::startTask($taskable->tasks->first());
-        } elseif($taskPlan->sequence == TaskSequence::AT_ONCE){
+        } elseif($strategy->taskSequence == TaskSequence::AT_ONCE){
             foreach ($taskable->tasks as $task){
                 TaskService::startTask($task);
             }

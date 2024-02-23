@@ -6,6 +6,8 @@ use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
 use App\Enums\TaskSequence;
+use App\Helpers\Strategies\RequestStrategy;
+use App\Helpers\Strategies\TaskableStrategy;
 use App\Helpers\TaskPlan;
 use App\Interfaces\SLAble;
 use App\Interfaces\Taskable;
@@ -67,11 +69,6 @@ class Request extends Model implements Ticket, SLAble, Taskable
         return $this->morphMany(Task::class, 'taskable');
     }
 
-    function taskPlan(): TaskPlan
-    {
-        return $this->initializeTaskPlan($this->category_id, $this->item->id);
-    }
-
     function hasNonStartedTask(): bool
     {
         return count(($this->tasks()->notStarted()->get())) > 0;
@@ -82,35 +79,9 @@ class Request extends Model implements Ticket, SLAble, Taskable
         return count($this->tasks()->notClosed()->get()) == 0;
     }
 
-    protected function initializeTaskPlan($category, $item): TaskPlan
+    public function strategy(): TaskableStrategy
     {
-        $taskPlan = new TaskPlan();
-
-        if($category == RequestCategory::COMPUTER){
-            if($item == RequestItem::BACKUP){
-                $taskPlan
-                    ->addTask('Backup computer of user '. $this->caller->name .'. ')
-                    ->addTask('Verify if the backup from previous task is restorable.');
-            }
-        } elseif($category == RequestCategory::SERVER){
-            if($item == RequestItem::ACCESS){
-                $taskPlan
-                    ->addTask('Verify if '. $this->caller->name . ' is eligible for access to mentioned server.')
-                    ->addTask('Give the access to the user')
-                    ->addTask('Verify with '. $this->caller->name .', that the access works.');
-            } elseif($item == RequestItem::MAINTENANCE){
-                $taskPlan
-                    ->setSequence(TaskSequence::AT_ONCE)
-                    ->addTask('Restart database.')
-                    ->addTask('Restart respective services.');
-            }
-        }
-
-        if(count($taskPlan->tasks) == 0){
-            $taskPlan->addTask($this->description);
-        }
-
-        return $taskPlan;
+        return RequestStrategy::create($this);
     }
 
     public function editRoute(): string

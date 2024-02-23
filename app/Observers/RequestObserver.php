@@ -18,6 +18,8 @@ class RequestObserver
     function created(Request $request): void
     {
         TaskableService::setTasks($request);
+        $request->group_id = $request->strategy()->group->id;
+        $request->save();
     }
 
     function updated(Request $request): void

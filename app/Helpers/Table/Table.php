@@ -106,9 +106,10 @@ class Table
         return $this->collection->skip($this->paginationIndex - 1)->take($this->itemsPerPage);
     }
 
-    protected function data_get($target, string $property): string
+    // just get data from model based on provided property in dot notation, i.e. status.name
+    protected function data_get($model, string $property): string
     {
-        $data = data_get($target, $property);
+        $data = data_get($model, $property);
         if($data instanceof UnitEnum){
             $data = $data->value;
         }

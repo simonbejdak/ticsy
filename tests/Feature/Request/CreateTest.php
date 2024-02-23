@@ -5,9 +5,11 @@ namespace Tests\Feature\Request;
 
 use App\Livewire\RequestCreateForm;
 use App\Mail\RequestCreated;
+use App\Models\Group;
 use App\Models\Incident\IncidentItem;
 use App\Models\Request;
 use App\Models\Request\RequestCategory;
+use App\Models\Request\RequestItem;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -155,6 +157,20 @@ class CreateTest extends TestCase
         Mail::assertSent(RequestCreated::class, function (RequestCreated $mail) use ($caller) {
             return $mail->hasTo($caller->email);
         });
+    }
+
+    /** @test */
+    function it_assigns_all_tasks_to_group_LOCAL_6445_NEW_YORK_if_category_is_server_and_item_is_maintenance()
+    {
+        $request = Request::factory([
+            'category_id' => RequestCategory::SERVER,
+            'item_id' => RequestItem::MAINTENANCE,
+        ])->create();
+        $tasks = $request->tasks;
+
+        foreach ($tasks as $task) {
+            $this->assertEquals(Group::byName('LOCAL-6445-NEW-YORK')->id, $task->group_id);
+        }
     }
 
     static function invalidCategories(){

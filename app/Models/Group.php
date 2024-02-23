@@ -44,7 +44,7 @@ class Group extends Model
         return self::find(1);
     }
 
-    static function byName(string $name): self
+    static function byName(string $name): self|null
     {
         return self::where('name', '=', $name)->first();
     }
