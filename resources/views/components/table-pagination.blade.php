@@ -1,5 +1,5 @@
 @if($table->hasPreviousPage() || $table->hasNextPage())
-    <div class="flex flex-row w-full justify-end my-2 items-center text-gray-300">
+    <div class="flex flex-row w-full justify-end items-center text-gray-300">
         {{-- Double Backwards --}}
         <div
             {{ !$table->hasPreviousPage() ? 'disabled' : '' }}

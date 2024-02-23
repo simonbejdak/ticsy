@@ -1,5 +1,16 @@
 <div>
-    @if($paginate)<x-table-pagination :$table />@endif
+    <div class="flex flex-row justify-between my-2 items-center">
+        <div class="ml-1 text-blue-500 hover:cursor-pointer">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+            </svg>
+        </div>
+        <div>
+            @if($paginate)
+                <x-table-pagination :$table />
+            @endif
+        </div>
+    </div>
     <div class="border border-slate-400 rounded-sm overflow-hidden text-xs shadow-md">
         <table class="w-full">
             <tr>
@@ -63,5 +74,7 @@
             @endforeach
         </table>
     </div>
-    @if($paginate)<x-table-pagination :$table />@endif
+    <div class="flex flex-row justify-between my-2 items-center">
+        @if($paginate)<x-table-pagination :$table />@endif
+    </div>
 </div>
