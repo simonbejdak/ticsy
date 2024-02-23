@@ -6,6 +6,7 @@ use App\Enums\SortOrder;
 use App\Helpers\Columns\Columns;
 use App\Helpers\Table\TableBuilder;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -143,6 +144,9 @@ abstract class Table extends Component
 
     protected function setColumns(): Columns
     {
+        if(Auth::user()->tableConfiguration($this)){
+            return $this->columns()->configuration(Auth::user()->tableConfiguration($this)->columns)->visible();
+        }
         return $this->columns()->visible();
     }
 }

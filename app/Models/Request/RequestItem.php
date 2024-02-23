@@ -14,13 +14,13 @@ class RequestItem extends Enum
     const MAP = [
         'access' => 1,
         'backup' => 2,
-        'configure' => 3,
+        'configuration' => 3,
         'maintenance' => 4,
     ];
 
     const ACCESS = self::MAP['access'];
     const BACKUP = self::MAP['backup'];
-    const CONFIGURE = self::MAP['configure'];
+    const CONFIGURE = self::MAP['configuration'];
     const MAINTENANCE = self::MAP['maintenance'];
 
     public function requests(): HasMany

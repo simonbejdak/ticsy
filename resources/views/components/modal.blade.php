@@ -22,7 +22,7 @@ $maxWidth = [
             let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'
             return [...$el.querySelectorAll(selector)]
                 // All non-modifiable elements...
-                .filter(el => ! el.hasAttribute('modifiable'))
+                .configuration(el => ! el.hasAttribute('modifiable'))
         },
         firstFocusable() { return this.focusables()[0] },
         lastFocusable() { return this.focusables().slice(-1)[0] },

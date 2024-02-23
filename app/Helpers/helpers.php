@@ -74,3 +74,8 @@ function isEven(int $number): bool
 {
     return $number % 2 == 0;
 }
+
+function moveElement(&$array, $a, $b) {
+    $out = array_splice($array, $a, 1);
+    array_splice($array, $b, 0, $out);
+}

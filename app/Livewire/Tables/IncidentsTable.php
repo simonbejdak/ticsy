@@ -26,7 +26,7 @@ class IncidentsTable extends Table
             Column::create('Item', 'item.name')->hidden(),
             Column::create('Resolver', 'resolver.name'),
             Column::create('Status', 'status.value'),
-            Column::create('Priority', 'priority.name'),
+            Column::create('Priority', 'priority.value'),
             Column::create('Created at', 'created_at')->hidden(),
             Column::create('Updated at', 'updated_at')->hidden(),
         );

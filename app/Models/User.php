@@ -7,6 +7,7 @@ use App\Enums\Location;
 use App\Enums\ResolverPanelOption;
 use App\Enums\ResolverPanelTab;
 use App\Enums\UserStatus;
+use App\Livewire\Table;
 use App\Traits\Entity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -79,7 +80,17 @@ class User extends Authenticatable
         return $this->hasMany(ConfigurationItem::class);
     }
 
-    public function isGroupMember(Group $group)
+    public function tableConfigurations(): HasMany
+    {
+        return $this->hasMany(TableConfiguration::class);
+    }
+
+    public function tableConfiguration(Table $table): TableConfiguration|null
+    {
+        return $this->tableConfigurations()->byTable($table)->first();
+    }
+
+    public function isGroupMember(Group $group): bool
     {
         return $this->groups()->where('id', $group->id)->exists();
     }

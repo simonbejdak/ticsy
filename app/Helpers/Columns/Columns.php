@@ -47,8 +47,27 @@ class Columns implements IteratorAggregate
         return $this;
     }
 
+    function configuration(string $configuration): self
+    {
+        $configuration = explode(',', $configuration);
+        foreach ($this->columns as $column){
+            if(!in_array($column->header, $configuration)){
+                $column->hidden();
+            } else {
+                $this->moveColumn($column, $configuration);
+            }
+        }
+        return $this;
+    }
+
     function getIterator(): Traversable
     {
         return new ArrayIterator($this->columns);
+    }
+
+    // Function to reposition column based on provided configuration array
+    protected function moveColumn(Column $column, array $configuration): void
+    {
+        moveElement($this->columns, array_search($column, $this->columns), array_search($column->header, $configuration));
     }
 }
