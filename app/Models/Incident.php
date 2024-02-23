@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
+use App\Helpers\Strategies\IncidentStrategy;
+use App\Helpers\Strategies\TicketStrategy;
 use App\Interfaces\SLAble;
 use App\Interfaces\Ticket;
 use App\Models\Incident\IncidentCategory;
@@ -29,8 +31,8 @@ class Incident extends Model implements Ticket, SLAble
 
     protected $attributes = [
         'status' => self::DEFAULT_STATUS,
-        'group_id' => self::DEFAULT_GROUP,
         'priority' => self::DEFAULT_PRIORITY,
+        'group_id' => self::DEFAULT_GROUP,
     ];
 
     const PRIORITY_TO_SLA_MINUTES = [
@@ -64,9 +66,15 @@ class Incident extends Model implements Ticket, SLAble
     {
         return $this->belongsTo(IncidentCategory::class, 'category_id');
     }
+
     function item(): BelongsTo
     {
         return $this->belongsTo(IncidentItem::class, 'item_id');
+    }
+
+    function strategy(): TicketStrategy
+    {
+        return IncidentStrategy::create($this);
     }
 
     function getActivityLogOptions(): LogOptions

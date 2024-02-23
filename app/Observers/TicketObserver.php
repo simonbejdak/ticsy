@@ -22,6 +22,10 @@ class TicketObserver
         if($ticket->isStatus(Status::RESOLVED)){
             $ticket->resolved_at = Carbon::now();
         }
+
+        if(isset($ticket->strategy()->group)){
+            $ticket->group_id = $ticket->strategy()->group->id;
+        }
     }
 
     public function created($ticket): void

@@ -2,11 +2,11 @@
 
 namespace App\Helpers\Strategies;
 
-use App\Models\Incident;
+use App\Models\Task;
 
-class IncidentStrategy extends TicketStrategy
+class TaskStrategy extends TicketStrategy
 {
-    static function create(Incident $incident): self
+    static function create(Task $task): self
     {
         return new static();
     }

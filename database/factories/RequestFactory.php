@@ -17,7 +17,8 @@ class RequestFactory extends Factory
     {
         return [
             'caller_id' => User::factory(),
-            'category_id' => rand(1, RequestCategory::count()),
+            'category_id' => RequestCategory::COMPUTER,
+            'item_id' => RequestItem::CONFIGURE,
             'description' => fake()->realText(40),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

@@ -3,6 +3,7 @@
 namespace App\Interfaces;
 
 use App\Enums\Status;
+use App\Helpers\Strategies\TicketStrategy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\Activitylog\LogOptions;
@@ -20,4 +21,5 @@ interface Ticket
     function priorityChanged(): bool;
     function calculateSlaMinutes(): int;
     function getActivityLogOptions(): LogOptions;
+    function strategy(): TicketStrategy;
 }

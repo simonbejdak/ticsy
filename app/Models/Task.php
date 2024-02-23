@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
+use App\Helpers\Strategies\IncidentStrategy;
+use App\Helpers\Strategies\TaskStrategy;
+use App\Helpers\Strategies\TicketStrategy;
 use App\Interfaces\SLAble;
 use App\Interfaces\Ticket;
 use App\Traits\TicketTrait;
@@ -28,8 +31,8 @@ class Task extends Model implements Ticket, SLAble
 
     protected $attributes = [
         'status' => self::DEFAULT_STATUS,
-        'group_id' => self::DEFAULT_GROUP,
         'priority' => self::DEFAULT_PRIORITY,
+        'group_id' => self::DEFAULT_GROUP,
     ];
 
     const PRIORITY_TO_SLA_MINUTES = [
@@ -85,6 +88,12 @@ class Task extends Model implements Ticket, SLAble
             $this->getOriginal('status') == Status::CANCELLED
         ;
     }
+
+    function strategy(): TicketStrategy
+    {
+        return TaskStrategy::create($this);
+    }
+
     function getActivityLogOptions(): LogOptions
     {
         return LogOptions::defaults()

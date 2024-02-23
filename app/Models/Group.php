@@ -38,7 +38,7 @@ class Group extends Model
         return $this->resolvers()->select('id')->get()->pluck('id')->toArray();
     }
 
-    static function getServiceDeskGroup(): self
+    static function serviceDesk(): self
     {
         // the first group being created is SERVICE-DESK in GroupSeeder, so ID is 1
         return self::find(1);

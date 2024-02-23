@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Incident;
 use App\Models\Request;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tests\TestCase;
 
 class GroupTest extends TestCase
@@ -32,9 +33,8 @@ class GroupTest extends TestCase
 
     public function test_it_has_many_requests(){
         $group = Group::firstOrFail();
-        Request::factory(2, ['group_id' => $group])->create();
 
-        $this->assertCount(2, $group->requests);
+        $this->assertInstanceOf(HasMany::class, $group->requests());
     }
 
     /** @test */

@@ -8,7 +8,6 @@ use App\Enums\Status;
 use App\Enums\TaskSequence;
 use App\Helpers\Strategies\RequestStrategy;
 use App\Helpers\Strategies\TaskableStrategy;
-use App\Helpers\TaskPlan;
 use App\Interfaces\SLAble;
 use App\Interfaces\Taskable;
 use App\Interfaces\Ticket;
@@ -35,8 +34,8 @@ class Request extends Model implements Ticket, SLAble, Taskable
     ];
     protected $attributes = [
         'status' => self::DEFAULT_STATUS,
-        'group_id' => self::DEFAULT_GROUP,
         'priority' => self::DEFAULT_PRIORITY,
+        'group_id' => self::DEFAULT_GROUP,
     ];
 
     const PRIORITY_TO_SLA_MINUTES = [

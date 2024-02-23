@@ -4,6 +4,8 @@ namespace App\Traits;
 
 use App\Enums\Priority;
 use App\Enums\Status;
+use App\Helpers\Strategies\IncidentStrategy;
+use App\Helpers\Strategies\TicketStrategy;
 use App\Models\Group;
 use App\Models\User;
 use App\Observers\TicketObserver;
@@ -19,8 +21,8 @@ trait TicketTrait
         static::observe(TicketObserver::class);
     }
 
-    const DEFAULT_PRIORITY = Priority::FOUR;
     const DEFAULT_STATUS = Status::OPEN;
+    const DEFAULT_PRIORITY = Priority::FOUR;
     const DEFAULT_GROUP = Group::SERVICE_DESK_ID;
     const ARCHIVE_AFTER_DAYS = 3;
 

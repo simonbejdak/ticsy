@@ -371,10 +371,10 @@ class UpdateTest extends TestCase
 
     public function test_selected_resolver_is_empty_when_resolver_group_changes()
     {
-        $groupOne = Group::factory()->create();
+        $request = Request::factory()->create();
+        $groupOne = $request->group;
         $groupTwo = Group::factory()->create();
         $resolver = User::factory()->resolverAllGroups()->create();
-        $request = Request::factory(['group_id' => $groupOne])->create();
 
         Livewire::actingAs($resolver)
             ->test(RequestEditForm::class, ['request' => $request])
