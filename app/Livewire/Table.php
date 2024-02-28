@@ -14,6 +14,7 @@ abstract class Table extends Component
 {
     const DEFAULT_ITEMS_PER_PAGE = 25;
 
+    public string $selectedColumn = '';
     public array $searchCases = [];
     public array $hiddenColumns = [];
     public array $visibleColumns = [];
@@ -123,6 +124,22 @@ abstract class Table extends Component
     function doubleForwardClicked(): void
     {
         $this->paginationIndex = $this->count - $this->itemsPerPage;
+    }
+
+    function setSelectedColumnVisible(): void
+    {
+        if(array_search($this->selectedColumn, $this->hiddenColumns) && !array_search($this->selectedColumn, $this->visibleColumns) && array_search($this->selectedColumn, $this->columns)){
+            $this->visibleColumns[] = $this->selectedColumn;
+            $this->render();
+        }
+    }
+
+    function setSelectedColumnHidden(): void
+    {
+        if(array_search($this->selectedColumn, $this->visibleColumns) && !array_search($this->selectedColumn, $this->hiddenColumns) && array_search($this->selectedColumn, $this->columns)){
+            $this->hiddenColumns[] = $this->selectedColumn;
+            $this->render();
+        }
     }
 
     function hiddenColumns(): Columns

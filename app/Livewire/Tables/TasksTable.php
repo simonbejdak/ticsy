@@ -19,7 +19,7 @@ class TasksTable extends Table
     function columns(): Columns
     {
         return Columns::create(
-            Column::create('Number', 'id', ColumnRoute::create('incidents.edit', ['id'])),
+            Column::create('Number', 'id', ColumnRoute::create('tasks.edit', ['id'])),
             Column::create('Description', 'description'),
             Column::create('Caller', 'caller.name'),
             Column::create('Category', 'category.name')->hidden(),

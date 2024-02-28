@@ -13,10 +13,13 @@
         @apply text-xl;
     }
     h4 {
-        @apply font-medium;
+        @apply text-lg font-medium;
+    }
+    h5 {
+        @apply text-sm font-semibold;
     }
     h6 {
-        @apply text-xs font-light;
+        @apply text-xs font-semibold;
     }
     p {
         @apply text-sm;

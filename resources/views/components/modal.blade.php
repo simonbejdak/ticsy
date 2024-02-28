@@ -8,8 +8,8 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <div class="relative overflow-hidden rounded-sm bg-white text-left shadow-xl">
-                    <div class="flex flex-col bg-white pt-1 pb-2">
-                        <div class="flex flex-row justify-between align-middle px-4 pb-2 mb-4 border-b border-gray-200">
+                    <div class="flex flex-col bg-white pt-1">
+                        <div class="flex flex-row justify-between align-middle px-4 pb-1 mb-5 border-b border-slate-300">
                             <h4>{{ $title }}</h4>
                             <div
                                 @click="isOpen = false"
