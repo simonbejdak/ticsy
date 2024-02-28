@@ -14,14 +14,18 @@ abstract class Table extends Component
 {
     const DEFAULT_ITEMS_PER_PAGE = 25;
 
-    public $paginationIndex = 1;
     public array $searchCases = [];
+    public array $hiddenColumns = [];
+    public array $visibleColumns = [];
+    public $paginationIndex = 1;
     #[Locked]
     public $itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
     #[Locked]
     public int $count;
     #[Locked]
     public array $properties;
+    #[Locked]
+    public array $columns = [];
     #[Locked]
     public bool $paginate;
     #[Locked]
@@ -46,7 +50,7 @@ abstract class Table extends Component
             ->itemsPerPage($this->itemsPerPage)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
             ->searchCases($this->searchCases)
-            ->columns($this->setColumns());
+            ->columns($this->visibleColumns());
     }
 
     function mount(): void
@@ -58,6 +62,9 @@ abstract class Table extends Component
         foreach($table->columns as $column){
             $this->properties[] = $column->property;
         }
+        $this->columns = $this->columns()->headers();
+        $this->hiddenColumns = $this->hiddenColumns()->headers();
+        $this->visibleColumns = $this->visibleColumns()->headers();
     }
 
     function table(): \App\Helpers\Table\Table
@@ -118,6 +125,16 @@ abstract class Table extends Component
         $this->paginationIndex = $this->count - $this->itemsPerPage;
     }
 
+    function hiddenColumns(): Columns
+    {
+        return $this->setColumns()->hidden();
+    }
+
+    function visibleColumns(): Columns
+    {
+        return $this->setColumns()->visible();
+    }
+
     protected function switchSortOrder(): void
     {
         $this->sortOrder == SortOrder::DESCENDING ? $this->sortOrder = SortOrder::ASCENDING : $this->sortOrder = SortOrder::DESCENDING;
@@ -145,8 +162,8 @@ abstract class Table extends Component
     protected function setColumns(): Columns
     {
         if(Auth::user()->tableConfiguration($this)){
-            return $this->columns()->configuration(Auth::user()->tableConfiguration($this)->columns)->visible();
+            return $this->columns()->configuration(Auth::user()->tableConfiguration($this));
         }
-        return $this->columns()->visible();
+        return $this->columns();
     }
 }

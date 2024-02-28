@@ -97,7 +97,11 @@ class Table
         if(isset($column->route)){
             $arguments = [];
             foreach ($column->route->arguments as $argument){
-                $arguments[] = $this->getValue($model, $argument);
+                if($this->getValue($model, $argument) == null) {
+                    return null;
+                } else {
+                    $arguments[] = $this->getValue($model, $argument);
+                }
             }
             return route($column->route->name, $arguments);
         }

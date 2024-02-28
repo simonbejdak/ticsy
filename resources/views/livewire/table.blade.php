@@ -1,10 +1,63 @@
 <div>
     <div class="flex flex-row justify-between my-2 items-center">
-        <div class="ml-1 text-blue-500 hover:cursor-pointer">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+        <div
+            @click="$dispatch('open-modal')"
+            class="ml-1 hover:cursor-pointer"
+        >
+            <svg viewBox="0 0 24 24" fill="currentColor" class="text-blue-500 w-6 h-6">
                 <path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
             </svg>
         </div>
+        <x-modal title="Personalize table">
+            <div
+                x-data="{ selected: '', hiddenColumns: @entangle('hiddenColumns'), visibleColumns: @entangle('visibleColumns')}"
+                class="flex flex-row justify-center"
+            >
+                <div class="flex flex-col">
+                    <h6 class="pl-1">Hidden columns</h6>
+                    <div class="flex flex-col border border-slate-400 w-32 rounded-sm mt-2 text-xs h-60 space-y-0.5">
+                        <template x-for="column in hiddenColumns">
+                            <div
+                                @click="selected = column"
+                                class="pl-2 hover:cursor-pointer"
+                                :class="selected === column ? 'text-white bg-blue-500' : '' "
+                                x-text="column"
+                            ></div>
+                        </template>
+                    </div>
+                </div>
+                <div class="flex flex-col mx-4 justify-center items-center space-y-2">
+                    <button
+                        class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
+                    >
+                        <svg x-cloak class="h-5 w-5 rotate-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <button class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110">
+                        <svg x-cloak class="h-5 w-5 -rotate-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex flex-col">
+                    <h6 class="pl-1">Visible columns</h6>
+                    <div class="flex flex-col border border-slate-400 w-32 rounded-sm mt-2 text-xs h-60 space-y-0.5">
+                        <template x-for="column in visibleColumns">
+                            <div
+                                @click="selected = column"
+                                class="pl-2 hover:cursor-pointer"
+                                :class="selected === column ? 'text-white bg-blue-500' : '' "
+                                x-text="column"
+                            ></div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row justify-end w-full mt-4">
+                <x-primary-button>Apply</x-primary-button>
+            </div>
+        </x-modal>
         <div>
             @if($paginate)
                 <x-table-pagination :$table />

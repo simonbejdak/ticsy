@@ -5,6 +5,7 @@ namespace App\Helpers\Columns;
 use App\Enums\FieldPosition;
 use App\Helpers\Fields\Field;
 use App\Helpers\Fields\Fields;
+use App\Models\TableConfiguration;
 use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
@@ -47,14 +48,34 @@ class Columns implements IteratorAggregate
         return $this;
     }
 
-    function configuration(string $configuration): self
+    function hidden(): self
     {
-        $configuration = explode(',', $configuration);
+        foreach($this->columns as $column){
+            if($column->visible){
+                unset($this->columns[array_search($column, $this->columns)]);
+            }
+        }
+        return $this;
+    }
+
+    function headers(): array
+    {
+        $headers = [];
+        foreach ($this->columns as $column)
+        {
+            $headers[] = $column->header;
+        }
+        return $headers;
+    }
+
+    function configuration(TableConfiguration $configuration): self
+    {
+        $columns = explode(',', $configuration->columns);
         foreach ($this->columns as $column){
-            if(!in_array($column->header, $configuration)){
+            if(!in_array($column->header, $columns)){
                 $column->hidden();
             } else {
-                $this->moveColumn($column, $configuration);
+                $this->moveColumn($column, $columns);
             }
         }
         return $this;
