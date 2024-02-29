@@ -19,7 +19,7 @@ class ConfigurationItemsTable extends Table
     function columns(): Columns
     {
         return Columns::create(
-            Column::create('Serial Number', 'serial_number', ColumnRoute::create('configuration-items.edit', ['id'])),
+            Column::create('Serial Number', 'serial_number', ColumnRoute::create('userConfiguration-items.edit', ['id'])),
             Column::create('User', 'user.name'),
             Column::create('Location', 'location.value'),
         );

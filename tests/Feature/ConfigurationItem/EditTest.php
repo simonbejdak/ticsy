@@ -24,7 +24,7 @@ class EditTest extends TestCase
     function it_redirect_guests_to_login_page()
     {
         $configurationItem = ConfigurationItem::factory()->create();
-        $response = $this->get(route('configuration-items.edit', $configurationItem->id));
+        $response = $this->get(route('userConfiguration-items.edit', $configurationItem->id));
 
         $response->assertRedirectToRoute('login');
     }
@@ -35,7 +35,7 @@ class EditTest extends TestCase
         $configurationItem = ConfigurationItem::factory()->create();
 
         $this->actingAs(User::factory()->create());
-        $response = $this->get(route('configuration-items.edit', $configurationItem->id));
+        $response = $this->get(route('userConfiguration-items.edit', $configurationItem->id));
 
         $response->assertForbidden();
     }
@@ -46,7 +46,7 @@ class EditTest extends TestCase
         $configurationItem = ConfigurationItem::factory()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('configuration-items.edit', $configurationItem));
+        $response = $this->get(route('userConfiguration-items.edit', $configurationItem));
         $response->assertSuccessful();
     }
 
@@ -74,7 +74,7 @@ class EditTest extends TestCase
 
         $this->actingAs(User::factory()->resolver()->create());
 
-        $response = $this->get(route('configuration-items.edit', $configurationItem->id));
+        $response = $this->get(route('userConfiguration-items.edit', $configurationItem->id));
         $response->assertSuccessful();
         $response->assertSee($serialNumber);
         $response->assertSee($location->value);
@@ -94,7 +94,7 @@ class EditTest extends TestCase
         $this->actingAs($resolver);
         ActivityService::comment($configuration_item, 'Comment Body');
 
-        $this->get(route('configuration-items.edit', $configuration_item))
+        $this->get(route('userConfiguration-items.edit', $configuration_item))
             ->assertSuccessful()
             ->assertSee('Comment Body');
     }

@@ -6,6 +6,7 @@ use App\Enums\FieldPosition;
 use App\Helpers\Fields\Field;
 use App\Helpers\Fields\Fields;
 use App\Models\TableConfiguration;
+use App\Models\TablePersonalization;
 use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
@@ -68,13 +69,14 @@ class Columns implements IteratorAggregate
         return $headers;
     }
 
-    function configuration(TableConfiguration $configuration): self
+    function personalize(TablePersonalization $personalization): self
     {
-        $columns = explode(',', $configuration->columns);
+        $columns = explode(',', $personalization->columns);
         foreach ($this->columns as $column){
             if(!in_array($column->header, $columns)){
                 $column->hidden();
             } else {
+                $column->visible();
                 $this->moveColumn($column, $columns);
             }
         }
@@ -86,9 +88,9 @@ class Columns implements IteratorAggregate
         return new ArrayIterator($this->columns);
     }
 
-    // Function to reposition column based on provided configuration array
-    protected function moveColumn(Column $column, array $configuration): void
+    // Function to reposition column based on provided userConfiguration array
+    protected function moveColumn(Column $column, array $personalization): void
     {
-        moveElement($this->columns, array_search($column, $this->columns), array_search($column->header, $configuration));
+        moveElement($this->columns, array_search($column, $this->columns), array_search($column->header, $personalization));
     }
 }

@@ -11,7 +11,7 @@ class SlaTest extends TestCase
 
     public function test_it_belongs_to_slable()
     {
-        // Incident is SLAble, as per its configuration
+        // Incident is SLAble, as per its userConfiguration
         $slable = Incident::factory()->create();
         $sla = $slable->sla;
 

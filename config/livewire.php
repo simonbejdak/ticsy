@@ -59,7 +59,7 @@ return [
     |
     | Livewire handles file uploads by storing uploads in a temporary directory
     | before the file is stored permanently. All file uploads are directed to
-    | a global endpoint for temporary storage. You may configuration this below:
+    | a global endpoint for temporary storage. You may userConfiguration this below:
     |
     */
 

@@ -64,7 +64,7 @@ class UserEditForm extends EditForm
                 if($this->user->hasPrimaryConfigurationItem()){
                     return TextInput::make('configurationItem')
                         ->value($this->user->configurationItems()->primary()->first()->serial_number)
-                        ->anchor(route('configuration-items.edit', $this->user->configurationItems()->primary()->first()));
+                        ->anchor(route('userConfiguration-items.edit', $this->user->configurationItems()->primary()->first()));
                 } return null;
             },
             Select::make('location')->options(Location::class),

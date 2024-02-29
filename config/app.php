@@ -24,7 +24,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | This value determines the "environment" your application is currently
-    | running in. This may determine how you prefer to configuration various
+    | running in. This may determine how you prefer to userConfiguration various
     | services the application utilizes. Set this in your ".env" file.
     |
     */
@@ -131,7 +131,7 @@ return [
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
     |
-    | These configuration options determine the driver used to determine and
+    | These userConfiguration options determine the driver used to determine and
     | manage Laravel's "maintenance mode" status. The "cache" driver will
     | allow maintenance mode to be controlled across multiple machines.
     |

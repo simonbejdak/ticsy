@@ -64,8 +64,8 @@ class ConfigurationItemEditForm extends EditForm
             ActivityService::comment($this->configurationItem, $this->comment);
         }
 
-        Session::flash('success', 'You have successfully updated the configuration item');
-        return redirect()->route('configuration-items.edit', $this->configurationItem);
+        Session::flash('success', 'You have successfully updated the userConfiguration item');
+        return redirect()->route('userConfiguration-items.edit', $this->configurationItem);
     }
 
     function schema(): Fields

@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TableConfiguration extends Model
+class TablePersonalization extends Model
 {
+    protected $guarded = [];
+
     function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

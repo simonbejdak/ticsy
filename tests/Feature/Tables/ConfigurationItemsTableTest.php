@@ -26,7 +26,7 @@ class ConfigurationItemsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.configuration-items'));
+        $response = $this->get(route('resolver-panel.userConfiguration-items'));
 
         $response->assertSeeInOrder($headers);
     }
@@ -38,7 +38,7 @@ class ConfigurationItemsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.configuration-items'));
+        $response = $this->get(route('resolver-panel.userConfiguration-items'));
         foreach ($configurationItems as $configurationItem) {
             $response->assertSeeInOrder([
                 $configurationItem->serial_number,
@@ -57,7 +57,7 @@ class ConfigurationItemsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.configuration-items'));
+        $response = $this->get(route('resolver-panel.userConfiguration-items'));
 
         $response->assertSeeInOrder([
             $configurationItemThree->serial_number,

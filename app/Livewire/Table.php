@@ -5,8 +5,10 @@ namespace App\Livewire;
 use App\Enums\SortOrder;
 use App\Helpers\Columns\Columns;
 use App\Helpers\Table\TableBuilder;
+use App\Models\TablePersonalization;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -128,8 +130,12 @@ abstract class Table extends Component
 
     function setSelectedColumnVisible(): void
     {
-        if(array_search($this->selectedColumn, $this->hiddenColumns) && !array_search($this->selectedColumn, $this->visibleColumns) && array_search($this->selectedColumn, $this->columns)){
+        if(
+            array_search($this->selectedColumn, $this->hiddenColumns) !== null &&
+            array_search($this->selectedColumn, $this->visibleColumns) === null &&
+            array_search($this->selectedColumn, $this->columns) === null){
             $this->visibleColumns[] = $this->selectedColumn;
+            unset($this->hiddenColumns[array_search($this->selectedColumn, $this->hiddenColumns)]);
             $this->render();
         }
     }
@@ -138,7 +144,26 @@ abstract class Table extends Component
     {
         if(array_search($this->selectedColumn, $this->visibleColumns) && !array_search($this->selectedColumn, $this->hiddenColumns) && array_search($this->selectedColumn, $this->columns)){
             $this->hiddenColumns[] = $this->selectedColumn;
+            unset($this->visibleColumns[array_search($this->selectedColumn, $this->visibleColumns)]);
             $this->render();
+        }
+    }
+
+    function personalize()
+    {
+        if($this->areColumnsValid($this->visibleColumns)) {
+            $personalization = $this->userPersonalization() ??
+                TablePersonalization::make(['user_id' => Auth::user()->id, 'table_name' => get_class_name($this)]);
+
+            $personalization->columns = '';
+            foreach ($this->visibleColumns as $column){
+                $personalization->columns .= $column . ',';
+            }
+
+            $personalization->save();
+            $this->render();
+//            Session::flash('success', 'You have successfully personalized the table');
+//            return redirect()->route('tasks.edit', $this->task);
         }
     }
 
@@ -176,11 +201,26 @@ abstract class Table extends Component
         return in_array($property, $this->properties);
     }
 
+    protected function areColumnsValid(array $columns): bool
+    {
+        foreach ($columns as $column){
+            if(!in_array($column, $this->columns)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected function setColumns(): Columns
     {
-        if(Auth::user()->tableConfiguration($this)){
-            return $this->columns()->configuration(Auth::user()->tableConfiguration($this));
+        if($this->userPersonalization()){
+            return $this->columns()->personalize($this->userPersonalization());
         }
         return $this->columns();
+    }
+
+    protected function userPersonalization(): TablePersonalization|null
+    {
+        return Auth::user()->tablePersonalization($this);
     }
 }

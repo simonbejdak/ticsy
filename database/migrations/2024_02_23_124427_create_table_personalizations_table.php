@@ -8,17 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('table_configurations', function (Blueprint $table) {
+        Schema::create('table_personalizations', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('table_name');
-            $table->string('columns');
-            $table->primary(['user_id', 'table_name']);
+            $table->text('columns');
+            $table->unique(['user_id', 'table_name']);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('table_configurations');
+        Schema::dropIfExists('table_personalizations');
     }
 };

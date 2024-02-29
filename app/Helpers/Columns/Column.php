@@ -29,4 +29,10 @@ class Column
         $this->visible = false;
         return $this;
     }
+
+    function visible(): self
+    {
+        $this->visible = true;
+        return $this;
+    }
 }

@@ -20,7 +20,7 @@ return [
     | Mailer Configurations
     |--------------------------------------------------------------------------
     |
-    | Here you may configuration all of the mailers used by your application plus
+    | Here you may userConfiguration all of the mailers used by your application plus
     | their respective settings. Several examples have been configured for
     | you and you are free to add your own as your application requires.
     |
@@ -108,7 +108,7 @@ return [
     | Markdown Mail Settings
     |--------------------------------------------------------------------------
     |
-    | If you are using Markdown based email rendering, you may configuration your
+    | If you are using Markdown based email rendering, you may userConfiguration your
     | theme and component paths here, allowing you to customize the design
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |

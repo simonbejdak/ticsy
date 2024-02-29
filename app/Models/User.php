@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -80,14 +81,14 @@ class User extends Authenticatable
         return $this->hasMany(ConfigurationItem::class);
     }
 
-    public function tableConfigurations(): HasMany
+    public function tablePersonalizations(): HasMany
     {
-        return $this->hasMany(TableConfiguration::class);
+        return $this->hasMany(TablePersonalization::class);
     }
 
-    public function tableConfiguration(Table $table): TableConfiguration|null
+    public function tablePersonalization(Table $table): TablePersonalization|null
     {
-        return $this->tableConfigurations()->byTable($table)->first();
+        return $this->tablePersonalizations()->byTable($table)->first();
     }
 
     public function isGroupMember(Group $group): bool
