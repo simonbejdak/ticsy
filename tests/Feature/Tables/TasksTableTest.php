@@ -3,7 +3,7 @@
 namespace Tables;
 
 use App\Enums\Priority;
-use App\Livewire\Table;
+use App\Livewire\Tables\Table;
 use App\Livewire\Tables\TasksTable;
 use App\Models\Task;
 use App\Models\User;

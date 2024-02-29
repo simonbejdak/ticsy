@@ -2,9 +2,8 @@
 
 namespace Tables;
 
-use App\Enums\Priority;
-use App\Livewire\Table;
 use App\Livewire\Tables\ConfigurationItemsTable;
+use App\Livewire\Tables\Table;
 use App\Livewire\Tables\TasksTable;
 use App\Models\ConfigurationItem;
 use App\Models\Task;

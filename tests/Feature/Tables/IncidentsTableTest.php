@@ -3,8 +3,8 @@
 namespace Tables;
 
 use App\Enums\Priority;
-use App\Livewire\Table;
 use App\Livewire\Tables\IncidentsTable;
+use App\Livewire\Tables\Table;
 use App\Models\Incident;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

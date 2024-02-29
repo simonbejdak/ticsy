@@ -5,7 +5,6 @@ namespace App\Livewire\Tables;
 use App\Helpers\Columns\Column;
 use App\Helpers\Columns\ColumnRoute;
 use App\Helpers\Columns\Columns;
-use App\Livewire\Table;
 use App\Models\ConfigurationItem;
 use Illuminate\Database\Eloquent\Builder;
 

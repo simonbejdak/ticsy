@@ -5,7 +5,6 @@ namespace App\Livewire\Tables;
 use App\Helpers\Columns\Column;
 use App\Helpers\Columns\ColumnRoute;
 use App\Helpers\Columns\Columns;
-use App\Livewire\Table;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -30,5 +29,10 @@ class TasksTable extends Table
             Column::create('Created at', 'created_at')->hidden(),
             Column::create('Updated at', 'updated_at')->hidden(),
         );
+    }
+
+    function route(): string
+    {
+        return route('resolver-panel.tasks');
     }
 }

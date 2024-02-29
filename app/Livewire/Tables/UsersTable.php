@@ -6,7 +6,6 @@ use App\Helpers\Columns\Column;
 use App\Helpers\Columns\ColumnRoute;
 use App\Helpers\Columns\Columns;
 use App\Helpers\Table\TableBuilder;
-use App\Livewire\Table;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -30,5 +29,10 @@ class UsersTable extends Table
             Column::create('Location', 'location.value'),
             Column::create('Status', 'status.value'),
         );
+    }
+
+    function route(): string
+    {
+        return route('resolver-panel.users');
     }
 }

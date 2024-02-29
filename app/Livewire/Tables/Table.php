@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Tables;
 
 use App\Enums\SortOrder;
 use App\Helpers\Columns\Columns;
@@ -14,15 +14,6 @@ use Livewire\Component;
 
 abstract class Table extends Component
 {
-    const DEFAULT_ITEMS_PER_PAGE = 25;
-
-    public string $selectedColumn = '';
-    public array $searchCases = [];
-    public array $hiddenColumns = [];
-    public array $visibleColumns = [];
-    public $paginationIndex = 1;
-    #[Locked]
-    public $itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
     #[Locked]
     public int $count;
     #[Locked]
@@ -30,16 +21,13 @@ abstract class Table extends Component
     #[Locked]
     public array $columns = [];
     #[Locked]
-    public bool $paginate;
-    #[Locked]
-    public bool $columnTextSearch;
-    #[Locked]
     public string $sortProperty = 'id';
     #[Locked]
     public SortOrder $sortOrder = SortOrder::DESCENDING;
 
     abstract function query(): Builder;
     abstract function columns(): Columns;
+    abstract function route(): string;
 
     function schema(): TableBuilder
     {
@@ -131,22 +119,29 @@ abstract class Table extends Component
     function setSelectedColumnVisible(): void
     {
         if(
-            array_search($this->selectedColumn, $this->hiddenColumns) !== null &&
-            array_search($this->selectedColumn, $this->visibleColumns) === null &&
-            array_search($this->selectedColumn, $this->columns) === null){
+            in_array($this->selectedColumn, $this->columns) &&
+            in_array($this->selectedColumn, $this->hiddenColumns) &&
+            !in_array($this->selectedColumn, $this->visibleColumns)
+        ) {
             $this->visibleColumns[] = $this->selectedColumn;
             unset($this->hiddenColumns[array_search($this->selectedColumn, $this->hiddenColumns)]);
             $this->render();
         }
     }
 
-    function setSelectedColumnHidden(): void
+    function setSelectedColumnHidden()
     {
-        if(array_search($this->selectedColumn, $this->visibleColumns) && !array_search($this->selectedColumn, $this->hiddenColumns) && array_search($this->selectedColumn, $this->columns)){
+        if(
+            in_array($this->selectedColumn, $this->columns) &&
+            in_array($this->selectedColumn, $this->visibleColumns) &&
+            !in_array($this->selectedColumn, $this->hiddenColumns)
+        ) {
             $this->hiddenColumns[] = $this->selectedColumn;
             unset($this->visibleColumns[array_search($this->selectedColumn, $this->visibleColumns)]);
-            $this->render();
+            Session::flash('success', 'You have successfully personalized your table');
+            return redirect()->to($this->route());
         }
+        return null;
     }
 
     function personalize()

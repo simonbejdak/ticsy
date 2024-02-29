@@ -8,10 +8,9 @@ use App\Helpers\Columns\ColumnRoute;
 use App\Helpers\Columns\Columns;
 use App\Helpers\Table\TableBuilder;
 use App\Interfaces\Taskable;
-use App\Livewire\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class TaskableTasksTable extends Table
+class TaskableTasksTable extends SimpleTable
 {
     public Taskable $taskable;
     public SortOrder $sortOrder = SortOrder::ASCENDING;
@@ -19,11 +18,6 @@ class TaskableTasksTable extends Table
     function query(): Builder
     {
         return $this->taskable->tasks()->started()->getQuery();
-    }
-
-    function schema(): TableBuilder
-    {
-        return $this->tableBuilder()->simple();
     }
 
     function columns(): Columns

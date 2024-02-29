@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Livewire\Table;
+use App\Livewire\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
