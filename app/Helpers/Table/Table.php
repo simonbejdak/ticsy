@@ -14,45 +14,20 @@ class Table
 {
     public Builder $builder;
     public Columns $columns;
-    public array $searchCases;
-    public bool $paginate;
-    public bool $columnTextSearch;
-    public int $itemsPerPage;
-    public int $paginationIndex;
     public int $count;
     public string $sortProperty;
     public SortOrder $sortOrder;
     public Collection $collection;
-    public Collection $paginatedCollection;
 
     protected function __construct(){}
 
     static function make(Builder $builder): TableBuilder
     {
         $static = new static();
-        $static->columns = Columns::create();
-        $static->searchCases = [];
-        $static->paginate = true;
-        $static->columnTextSearch = true;
-        $static->paginationIndex = 1;
         $static->builder = $builder;
+        $static->columns = Columns::create();
         $static->sortOrder = SortOrder::ASCENDING;
         return new TableBuilder($static);
-    }
-
-    function hasPreviousPage(): bool
-    {
-        return $this->paginationIndex > 1;
-    }
-
-    function hasNextPage(): int
-    {
-        return $this->paginationIndex < ($this->count - $this->itemsPerPage);
-    }
-
-    function to(): int
-    {
-        return $this->paginationIndex + $this->itemsPerPage;
     }
 
     function getHeaders(): array
@@ -70,7 +45,7 @@ class Table
     function getRows(): array
     {
         $rows = [];
-        foreach ($this->paginatedCollection as $model){
+        foreach ($this->collection as $model){
             $row = [];
             foreach ($this->columns as $column){
                 $row[] = [
@@ -108,11 +83,6 @@ class Table
         return null;
     }
 
-    protected function paginateCollection(): Collection
-    {
-        return $this->collection->skip($this->paginationIndex - 1)->take($this->itemsPerPage);
-    }
-
     // just get data from model based on provided property in dot notation, i.e. status.route
     protected function data_get($model, string $property): string
     {
@@ -126,13 +96,7 @@ class Table
     function create(): self
     {
         $this->collection = $this->builder->get();
-        foreach ($this->searchCases as $property => $value){
-            $this->collection = $this->collection->filter(function ($model) use ($property, $value){
-                return str_contains($this->data_get($model, $property), $value);
-            });
-        }
         $this->collection = $this->sortOrder == SortOrder::DESCENDING ? $this->collection->sortByDesc($this->sortProperty) : $this->collection->sortBy($this->sortProperty);
-        $this->paginatedCollection = $this->paginateCollection();
         $this->count = count($this->collection);
         return $this;
     }

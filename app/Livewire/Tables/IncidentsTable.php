@@ -8,7 +8,7 @@ use App\Helpers\Columns\Columns;
 use App\Models\Incident;
 use Illuminate\Database\Eloquent\Builder;
 
-class IncidentsTable extends Table
+class IncidentsTable extends ExtendedTable
 {
     function query(): Builder
     {
@@ -23,7 +23,7 @@ class IncidentsTable extends Table
             Column::create('Caller', 'caller.name'),
             Column::create('Category', 'category.name')->hidden(),
             Column::create('Item', 'item.name')->hidden(),
-            Column::create('Resolver', 'resolver.name', ColumnRoute::create('users.edit', ['resolver.id'])),
+            Column::create('Resolver', 'resolver.name'),
             Column::create('Status', 'status.value'),
             Column::create('Priority', 'priority.value'),
             Column::create('Created at', 'created_at')->hidden(),

@@ -1,3 +1,3 @@
 <x-app-layout>
-    <livewire:tables.incidents-table />
+    <livewire:tables.incidents-table-view />
 </x-app-layout>

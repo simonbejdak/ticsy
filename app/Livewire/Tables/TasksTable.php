@@ -8,7 +8,7 @@ use App\Helpers\Columns\Columns;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
 
-class TasksTable extends Table
+class TasksTable extends ExtendedTable
 {
     function query(): Builder
     {

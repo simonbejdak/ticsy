@@ -2,17 +2,18 @@
 
 namespace App\Livewire\Tables;
 
-use App\Enums\SortOrder;
 use App\Helpers\Columns\Columns;
+use App\Helpers\Table\Table;
 use App\Helpers\Table\TableBuilder;
 use App\Models\TablePersonalization;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
 
 abstract class ExtendedTable extends Table
 {
+    const DEFAULT_ITEMS_PER_PAGE = 25;
+
     public string $selectedColumn = '';
     public array $searchCases = [];
     public array $hiddenColumns = [];
@@ -21,74 +22,30 @@ abstract class ExtendedTable extends Table
     #[Locked]
     public $itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
     #[Locked]
-    public int $count;
-    #[Locked]
     public array $properties;
-    #[Locked]
-    public array $columns = [];
-    #[Locked]
-    public bool $paginate;
-    #[Locked]
-    public bool $columnTextSearch;
-    #[Locked]
-    public string $sortProperty = 'id';
-    #[Locked]
-    public SortOrder $sortOrder = SortOrder::DESCENDING;
 
-    abstract function query(): Builder;
-    abstract function columns(): Columns;
     abstract function route(): string;
 
-    function schema(): TableBuilder
-    {
-        return $this->tableBuilder();
-    }
-
     function tableBuilder(): TableBuilder{
-        return \App\Helpers\Table\Table::make($this->query())
+        return ExtendedTable::make($this->query())
             ->sortProperty($this->sortProperty)
             ->sortOrder($this->sortOrder)
+            ->columns($this->visibleColumns())
             ->itemsPerPage($this->itemsPerPage)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
-            ->searchCases($this->searchCases)
-            ->columns($this->visibleColumns());
+            ->searchCases($this->searchCases);
     }
 
     function mount(): void
     {
         $table = $this->table();
         $this->count = $table->count;
-        $this->paginate = $table->paginate;
-        $this->columnTextSearch = $table->columnTextSearch;
         foreach($table->columns as $column){
             $this->properties[] = $column->property;
         }
         $this->columns = $this->columns()->headers();
         $this->hiddenColumns = $this->hiddenColumns()->headers();
         $this->visibleColumns = $this->visibleColumns()->headers();
-    }
-
-    function table(): \App\Helpers\Table\Table
-    {
-        return $this->schema()->create();
-    }
-
-    function render()
-    {
-        return view('livewire.table', ['table' => $this->table()]);
-    }
-
-    function columnHeaderClicked(string $property): void
-    {
-        if($this->isPropertyValid($property)){
-            if($this->sortProperty == $property){
-                $this->switchSortOrder();
-            } else {
-                $this->sortOrder = SortOrder::ASCENDING;
-            }
-            $this->sortProperty = $property;
-            $this->render();
-        }
     }
 
     function searchCase(string $property): void
@@ -135,11 +92,10 @@ abstract class ExtendedTable extends Table
         ) {
             $this->visibleColumns[] = $this->selectedColumn;
             unset($this->hiddenColumns[array_search($this->selectedColumn, $this->hiddenColumns)]);
-            $this->render();
         }
     }
 
-    function setSelectedColumnHidden()
+    function setSelectedColumnHidden(): void
     {
         if(
             in_array($this->selectedColumn, $this->columns) &&
@@ -148,10 +104,7 @@ abstract class ExtendedTable extends Table
         ) {
             $this->hiddenColumns[] = $this->selectedColumn;
             unset($this->visibleColumns[array_search($this->selectedColumn, $this->visibleColumns)]);
-            Session::flash('success', 'You have successfully personalized your table');
-            return redirect()->to($this->route());
         }
-        return null;
     }
 
     function personalize()
@@ -164,11 +117,9 @@ abstract class ExtendedTable extends Table
             foreach ($this->visibleColumns as $column){
                 $personalization->columns .= $column . ',';
             }
-
             $personalization->save();
-            $this->render();
-//            Session::flash('success', 'You have successfully personalized the table');
-//            return redirect()->route('tasks.edit', $this->task);
+            Session::flash('success', 'You have successfully personalized the table');
+            return redirect()->to($this->route());
         }
     }
 
@@ -180,11 +131,6 @@ abstract class ExtendedTable extends Table
     function visibleColumns(): Columns
     {
         return $this->setColumns()->visible();
-    }
-
-    protected function switchSortOrder(): void
-    {
-        $this->sortOrder == SortOrder::DESCENDING ? $this->sortOrder = SortOrder::ASCENDING : $this->sortOrder = SortOrder::DESCENDING;
     }
 
     protected function isPaginationIndexValid(): bool
@@ -201,27 +147,12 @@ abstract class ExtendedTable extends Table
         return false;
     }
 
-    protected function isPropertyValid(string $property): bool
-    {
-        return in_array($property, $this->properties);
-    }
-
-    protected function areColumnsValid(array $columns): bool
-    {
-        foreach ($columns as $column){
-            if(!in_array($column, $this->columns)){
-                return false;
-            }
-        }
-        return true;
-    }
-
     protected function setColumns(): Columns
     {
         if($this->userPersonalization()){
             return $this->columns()->personalize($this->userPersonalization());
         }
-        return $this->columns();
+        return parent::setColumns();
     }
 
     protected function userPersonalization(): TablePersonalization|null

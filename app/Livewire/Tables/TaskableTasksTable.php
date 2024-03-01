@@ -10,7 +10,7 @@ use App\Helpers\Table\TableBuilder;
 use App\Interfaces\Taskable;
 use Illuminate\Database\Eloquent\Builder;
 
-class TaskableTasksTable extends SimpleTable
+class TaskableTasksTable extends Table
 {
     public Taskable $taskable;
     public SortOrder $sortOrder = SortOrder::ASCENDING;

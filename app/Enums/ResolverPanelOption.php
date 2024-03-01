@@ -13,7 +13,7 @@ enum ResolverPanelOption: string
     function route(): string
     {
         return match($this){
-            ResolverPanelOption::CONFIGURATION_ITEMS => 'resolver-panel.userConfiguration-items',
+            ResolverPanelOption::CONFIGURATION_ITEMS => 'resolver-panel.configuration-items',
             ResolverPanelOption::INCIDENTS => 'resolver-panel.incidents',
             ResolverPanelOption::REQUESTS => 'resolver-panel.requests',
             ResolverPanelOption::TASKS => 'resolver-panel.tasks',

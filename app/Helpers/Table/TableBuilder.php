@@ -28,18 +28,6 @@ class TableBuilder
         return $this;
     }
 
-    function itemsPerPage(int $number): self
-    {
-        $this->table->itemsPerPage = $number;
-        return $this;
-    }
-
-    function paginationIndex(int $number): self
-    {
-        $this->table->paginationIndex = $number;
-        return $this;
-    }
-
     function sortProperty(string $property): self
     {
         $this->table->sortProperty = $property;
@@ -52,44 +40,8 @@ class TableBuilder
         return $this;
     }
 
-    function withoutPagination(): self
-    {
-        $this->table->paginate = false;
-        return $this;
-    }
-
-    function withoutColumnSearch(): self
-    {
-        $this->table->columnTextSearch = false;
-        return $this;
-    }
-
-    function simple(): self
-    {
-        $this->withoutPagination();
-        $this->withoutColumnSearch();
-        return $this;
-    }
-
     function create(): Table
     {
         return $this->table->create();
-    }
-
-    function searchCases(array $searchCases): self
-    {
-        foreach($searchCases as $property => $value){
-            if(is_array($value)){
-                $value = array_values($value)[0];
-            }
-            $this->searchCase($property, $value);
-        }
-        return $this;
-    }
-
-    protected function searchCase(string $property, string $value): self
-    {
-        $this->table->searchCases[$property] = $value;
-        return $this;
     }
 }

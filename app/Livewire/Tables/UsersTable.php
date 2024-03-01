@@ -9,7 +9,7 @@ use App\Helpers\Table\TableBuilder;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class UsersTable extends Table
+class UsersTable extends ExtendedTable
 {
     function query(): Builder
     {

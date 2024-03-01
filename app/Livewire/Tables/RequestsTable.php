@@ -8,7 +8,7 @@ use App\Helpers\Columns\Columns;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Builder;
 
-class RequestsTable extends Table
+class RequestsTable extends ExtendedTable
 {
     function query(): Builder
     {
