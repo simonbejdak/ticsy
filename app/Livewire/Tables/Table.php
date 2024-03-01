@@ -11,6 +11,8 @@ use Livewire\Component;
 
 abstract class Table extends Component
 {
+    const DEFAULT_ITEMS_PER_PAGE = 25;
+
     #[Locked]
     public int $count;
     #[Locked]

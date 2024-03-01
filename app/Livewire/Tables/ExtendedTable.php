@@ -3,7 +3,6 @@
 namespace App\Livewire\Tables;
 
 use App\Helpers\Columns\Columns;
-use App\Helpers\Table\Table;
 use App\Helpers\Table\TableBuilder;
 use App\Models\TablePersonalization;
 use Illuminate\Support\Facades\Auth;
@@ -12,8 +11,6 @@ use Livewire\Attributes\Locked;
 
 abstract class ExtendedTable extends Table
 {
-    const DEFAULT_ITEMS_PER_PAGE = 25;
-
     public string $selectedColumn = '';
     public array $searchCases = [];
     public array $hiddenColumns = [];
@@ -27,7 +24,7 @@ abstract class ExtendedTable extends Table
     abstract function route(): string;
 
     function tableBuilder(): TableBuilder{
-        return ExtendedTable::make($this->query())
+        return \App\Helpers\Table\ExtendedTable::make($this->query())
             ->sortProperty($this->sortProperty)
             ->sortOrder($this->sortOrder)
             ->columns($this->visibleColumns())

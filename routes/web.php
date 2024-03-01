@@ -21,10 +21,6 @@ Route::middleware('auth')->group(function (){
     Route::resource('/tasks', TasksController::class)->only(['edit']);
     Route::resource('/users', UsersController::class)->only(['edit']);
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     Route::middleware(ResolverPanel::class)->group(function (){
         Route::get('/resolver/panel/userConfiguration-items', [ResolverPanelController::class, 'configurationItems'])->name('resolver-panel.configuration-items');
         Route::get('/resolver/panel/incidents', [ResolverPanelController::class, 'incidents'])->name('resolver-panel.incidents');

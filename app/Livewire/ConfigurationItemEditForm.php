@@ -65,7 +65,7 @@ class ConfigurationItemEditForm extends EditForm
         }
 
         Session::flash('success', 'You have successfully updated the configuration item');
-        return redirect()->route('userConfiguration-items.edit', $this->configurationItem);
+        return redirect()->route('configuration-items.edit', $this->configurationItem);
     }
 
     function schema(): Fields

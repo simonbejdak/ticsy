@@ -2,6 +2,7 @@
 
 namespace Tables;
 
+use App\Helpers\Table\ExtendedTable;
 use App\Livewire\Tables\ConfigurationItemsTable;
 use App\Livewire\Tables\Table;
 use App\Livewire\Tables\TasksTable;
@@ -25,7 +26,7 @@ class ConfigurationItemsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.userConfiguration-items'));
+        $response = $this->get(route('resolver-panel.configuration-items'));
 
         $response->assertSeeInOrder($headers);
     }
@@ -37,7 +38,7 @@ class ConfigurationItemsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.userConfiguration-items'));
+        $response = $this->get(route('resolver-panel.configuration-items'));
         foreach ($configurationItems as $configurationItem) {
             $response->assertSeeInOrder([
                 $configurationItem->serial_number,
@@ -56,7 +57,7 @@ class ConfigurationItemsTableTest extends TestCase
         $resolver = User::factory()->resolver()->create();
 
         $this->actingAs($resolver);
-        $response = $this->get(route('resolver-panel.userConfiguration-items'));
+        $response = $this->get(route('resolver-panel.configuration-items'));
 
         $response->assertSeeInOrder([
             $configurationItemThree->serial_number,
