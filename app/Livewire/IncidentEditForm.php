@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
+use App\Enums\Tab;
 use App\Helpers\Fields\Bar;
 use App\Helpers\Fields\Fields;
 use App\Helpers\Fields\Select;

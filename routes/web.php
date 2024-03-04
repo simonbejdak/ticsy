@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function (){
     Route::resource('/users', UsersController::class)->only(['edit']);
 
     Route::middleware(ResolverPanel::class)->group(function (){
-        Route::get('/resolver/panel/userConfiguration-items', [ResolverPanelController::class, 'configurationItems'])->name('resolver-panel.configuration-items');
+        Route::get('/resolver/panel/configuration-items', [ResolverPanelController::class, 'configurationItems'])->name('resolver-panel.configuration-items');
         Route::get('/resolver/panel/incidents', [ResolverPanelController::class, 'incidents'])->name('resolver-panel.incidents');
         Route::get('/resolver/panel/requests', [ResolverPanelController::class, 'requests'])->name('resolver-panel.requests');
         Route::get('/resolver/panel/tasks', [ResolverPanelController::class, 'tasks'])->name('resolver-panel.tasks');
