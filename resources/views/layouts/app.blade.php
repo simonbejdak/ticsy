@@ -25,7 +25,7 @@
                             <livewire:resolver-panel />
                         @endif
                     @endauth
-                    <div class="w-full px-8 py-4">
+                    <div class="w-full px-8">
                         {{ $slot }}
                     </div>
                 </div>

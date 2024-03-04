@@ -7,6 +7,7 @@ use App\Helpers\Table\TableBuilder;
 use App\Models\TablePersonalization;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 
 abstract class ExtendedTable extends Table
@@ -22,6 +23,13 @@ abstract class ExtendedTable extends Table
     public array $properties;
 
     abstract function route(): string;
+
+    public function rules(): array
+    {
+        return [
+            'selectedColumn' => ['required', Rule::in($this->columns)],
+        ];
+    }
 
     function tableBuilder(): TableBuilder{
         return \App\Helpers\Table\ExtendedTable::make($this->query())
@@ -53,9 +61,9 @@ abstract class ExtendedTable extends Table
     }
 
     function doubleBackwardsClicked(): void
-{
-    $this->paginationIndex = 1;
-}
+    {
+        $this->paginationIndex = 1;
+    }
 
     function backwardsClicked(): void
     {
@@ -82,8 +90,8 @@ abstract class ExtendedTable extends Table
 
     function setSelectedColumnVisible(): void
     {
+        $this->validate();
         if(
-            in_array($this->selectedColumn, $this->columns) &&
             in_array($this->selectedColumn, $this->hiddenColumns) &&
             !in_array($this->selectedColumn, $this->visibleColumns)
         ) {
@@ -94,13 +102,37 @@ abstract class ExtendedTable extends Table
 
     function setSelectedColumnHidden(): void
     {
+        $this->validate();
         if(
-            in_array($this->selectedColumn, $this->columns) &&
             in_array($this->selectedColumn, $this->visibleColumns) &&
             !in_array($this->selectedColumn, $this->hiddenColumns)
         ) {
             $this->hiddenColumns[] = $this->selectedColumn;
             unset($this->visibleColumns[array_search($this->selectedColumn, $this->visibleColumns)]);
+        }
+    }
+
+    function moveSelectedVisibleColumnUp(): void
+    {
+        $this->validate();
+        if($this->isSelectedColumnInVisibleColumns()) {
+            moveElement(
+                $this->visibleColumns,
+                array_search($this->selectedColumn, $this->visibleColumns),
+                array_search($this->selectedColumn, $this->visibleColumns) - 1)
+            ;
+        }
+    }
+
+    function moveSelectedVisibleColumnDown(): void
+    {
+        $this->validate();
+        if($this->isSelectedColumnInVisibleColumns()) {
+            moveElement(
+                $this->visibleColumns,
+                array_search($this->selectedColumn, $this->visibleColumns),
+                array_search($this->selectedColumn, $this->visibleColumns) + 1)
+            ;
         }
     }
 
@@ -155,5 +187,15 @@ abstract class ExtendedTable extends Table
     protected function userPersonalization(): TablePersonalization|null
     {
         return Auth::user()->tablePersonalization($this);
+    }
+
+    protected function isSelectedColumnInVisibleColumns(): bool
+    {
+        return in_array($this->selectedColumn, $this->visibleColumns);
+    }
+
+    protected function isSelectedColumnInHiddenColumns(): bool
+    {
+        return in_array($this->selectedColumn, $this->hiddenColumns);
     }
 }

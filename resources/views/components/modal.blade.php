@@ -25,7 +25,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="px-4">
+                        <div class="px-3">
                             {{ $slot }}
                         </div>
                     </div>

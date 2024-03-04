@@ -1,6 +1,6 @@
 <div>
     @if($this instanceof \App\Livewire\Tables\ExtendedTable)
-        <div class="flex flex-row justify-between my-2 items-center">
+        <div class="flex flex-row justify-between mt-3 mb-2 items-center">
             <div class="flex flex-row">
                 <div
                     @click="$dispatch('open-modal')"
@@ -15,72 +15,9 @@
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.3" stroke="currentColor" class="text-blue-500 w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
                     </svg>
-
                 </div>
             </div>
-            <x-modal title="Personalize table">
-                <form wire:submit="personalize">
-                    <div
-                        x-data="{ selectedColumn: @entangle('selectedColumn'), hiddenColumns: @entangle('hiddenColumns'), visibleColumns: @entangle('visibleColumns')}"
-                        class="flex flex-row justify-center"
-                    >
-                        <div class="flex flex-col">
-                            <h6 class="pl-0.5">Hidden columns</h6>
-                            <div class="flex flex-col border border-slate-400 w-32 rounded-sm mt-1 text-xs h-60">
-                                <template x-for="column in hiddenColumns">
-                                    <div
-                                        @click="selectedColumn = column"
-                                        class="pl-2 hover:cursor-pointer font-light"
-                                        :class="selectedColumn === column ? 'text-white bg-blue-500' : '' "
-                                        x-text="column"
-                                    ></div>
-                                </template>
-                            </div>
-                        </div>
-                        <div class="flex flex-row mx-4 justify-center items-center space-x-2">
-                            <button
-                                wire:click.prevent="setSelectedColumnHidden"
-                                class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
-                            >
-                                <svg x-cloak class="h-5 w-5 rotate-90" viewBox="0 0 20 20" fill="currentColor"
-                                     aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                          clip-rule="evenodd"/>
-                                </svg>
-                            </button>
-                            <button
-                                wire:click.prevent="setSelectedColumnVisible"
-                                class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
-                            >
-                                <svg x-cloak class="h-5 w-5 -rotate-90" viewBox="0 0 20 20" fill="currentColor"
-                                     aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                          clip-rule="evenodd"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="flex flex-col">
-                            <h6 class="pl-0.5">Visible columns</h6>
-                            <div
-                                class="flex flex-col border border-slate-400 w-32 rounded-sm mt-1 text-xs h-60 space-y-0.5">
-                                <template x-for="column in visibleColumns">
-                                    <div
-                                        @click="selectedColumn = column"
-                                        class="pl-2 hover:cursor-pointer font-light"
-                                        :class="selectedColumn === column ? 'text-white bg-blue-500' : '' "
-                                        x-text="column"
-                                    ></div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-row justify-end w-full my-4">
-                        <x-primary-button>Apply</x-primary-button>
-                    </div>
-                </form>
-            </x-modal>
+            <x-table-personalization-modal />
             <div>
                 @if($table instanceof \App\Helpers\Table\ExtendedTable)
                     <x-table-pagination :$table/>

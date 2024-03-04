@@ -1,4 +1,4 @@
-<div class="bg-white rounded-sm p-8">
+<div class="bg-white rounded-sm pt-10">
     <div class="pr-48">
         <form wire:submit="save">
             <div class="flex flex-col space-y-4 mb-4">
