@@ -35,4 +35,3 @@ Role names are in match with email addresses, so user has email address "user@gm
 - Allow to save custom tables
 - Implement customizable Dashboards, which will show arbitrary data based on provided logic by user
 - Add new Entity "Changes", which will represent standard CAB like changes
-
