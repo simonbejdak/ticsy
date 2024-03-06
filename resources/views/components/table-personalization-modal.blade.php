@@ -1,7 +1,41 @@
 <x-modal title="Personalize table">
     <form wire:submit="personalize">
         <div
-            x-data="{ selectedColumn: @entangle('selectedColumn'), hiddenColumns: @entangle('hiddenColumns'), visibleColumns: @entangle('visibleColumns')}"
+            x-data="{
+                selectedColumn: @entangle('selectedColumn'),
+                hiddenColumns: @entangle('hiddenColumns'),
+                visibleColumns: @entangle('visibleColumns'),
+                setSelectedColumnHidden: function () {
+                    if(this.visibleColumns.includes(this.selectedColumn)){
+                        this.visibleColumns = this.visibleColumns.filter(item => item !== this.selectedColumn)
+                        this.hiddenColumns.push(this.selectedColumn)
+                    }
+                },
+                setSelectedColumnVisible: function () {
+                    if(this.hiddenColumns.includes(this.selectedColumn)){
+                        this.hiddenColumns = this.hiddenColumns.filter(item => item !== this.selectedColumn)
+                        this.visibleColumns.push(this.selectedColumn)
+                    }
+                },
+                moveSelectedVisibleColumnUp: function () {
+                    if(this.visibleColumns.includes(this.selectedColumn)){
+                        const currentIndex = this.visibleColumns.indexOf(this.selectedColumn);
+                        if (currentIndex > 0) {
+                            this.visibleColumns.splice(currentIndex, 1);
+                            this.visibleColumns.splice(currentIndex - 1, 0, this.selectedColumn);
+                        }
+                    }
+                },
+                moveSelectedVisibleColumnDown: function () {
+                    if(this.visibleColumns.includes(this.selectedColumn)){
+                        const currentIndex = this.visibleColumns.indexOf(this.selectedColumn);
+                        if (currentIndex < this.visibleColumns.length) {
+                            this.visibleColumns.splice(currentIndex, 1);
+                            this.visibleColumns.splice(currentIndex + 1, 0, this.selectedColumn);
+                        }
+                    }
+                }
+            }"
             class="flex flex-row justify-center"
         >
             <div class="flex flex-col ml-2">
@@ -19,7 +53,7 @@
             </div>
             <div class="flex flex-row mx-2 justify-center items-center space-x-1">
                 <button
-                    wire:click.prevent="setSelectedColumnHidden"
+                    @click.prevent="setSelectedColumnHidden()"
                     class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
                 >
                     <svg x-cloak class="h-5 w-5 rotate-90" viewBox="0 0 20 20" fill="currentColor"
@@ -30,7 +64,7 @@
                     </svg>
                 </button>
                 <button
-                    wire:click.prevent="setSelectedColumnVisible"
+                    @click.prevent="setSelectedColumnVisible()"
                     class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
                 >
                     <svg x-cloak class="h-5 w-5 -rotate-90" viewBox="0 0 20 20" fill="currentColor"
@@ -58,7 +92,7 @@
                 </div>
                 <div class="flex flex-col ml-2 space-y-1">
                     <button
-                        wire:click.prevent="moveSelectedVisibleColumnUp"
+                        @click.prevent="moveSelectedVisibleColumnUp()"
                         class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
                     >
                         <svg x-cloak class="h-5 w-5 rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -68,7 +102,7 @@
                         </svg>
                     </button>
                     <button
-                        wire:click.prevent="moveSelectedVisibleColumnDown"
+                        @click.prevent="moveSelectedVisibleColumnDown()"
                         class="rounded-sm bg-slate-800 text-white justify-center text-center hover:scale-110"
                     >
                         <svg x-cloak class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

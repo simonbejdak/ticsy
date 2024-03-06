@@ -12,7 +12,6 @@ use Livewire\Attributes\Locked;
 
 abstract class ExtendedTable extends Table
 {
-    public string $selectedColumn = '';
     public array $searchCases = [];
     public array $hiddenColumns = [];
     public array $visibleColumns = [];
@@ -27,7 +26,7 @@ abstract class ExtendedTable extends Table
     public function rules(): array
     {
         return [
-            'selectedColumn' => ['required', Rule::in($this->columns)],
+            'visibleColumns.*' => ['required', Rule::in($this->columns)],
         ];
     }
 
@@ -88,68 +87,19 @@ abstract class ExtendedTable extends Table
         $this->paginationIndex = $this->count - $this->itemsPerPage;
     }
 
-    function setSelectedColumnVisible(): void
-    {
-        $this->validate();
-        if(
-            in_array($this->selectedColumn, $this->hiddenColumns) &&
-            !in_array($this->selectedColumn, $this->visibleColumns)
-        ) {
-            $this->visibleColumns[] = $this->selectedColumn;
-            unset($this->hiddenColumns[array_search($this->selectedColumn, $this->hiddenColumns)]);
-        }
-    }
-
-    function setSelectedColumnHidden(): void
-    {
-        $this->validate();
-        if(
-            in_array($this->selectedColumn, $this->visibleColumns) &&
-            !in_array($this->selectedColumn, $this->hiddenColumns)
-        ) {
-            $this->hiddenColumns[] = $this->selectedColumn;
-            unset($this->visibleColumns[array_search($this->selectedColumn, $this->visibleColumns)]);
-        }
-    }
-
-    function moveSelectedVisibleColumnUp(): void
-    {
-        $this->validate();
-        if($this->isSelectedColumnInVisibleColumns()) {
-            moveElement(
-                $this->visibleColumns,
-                array_search($this->selectedColumn, $this->visibleColumns),
-                array_search($this->selectedColumn, $this->visibleColumns) - 1)
-            ;
-        }
-    }
-
-    function moveSelectedVisibleColumnDown(): void
-    {
-        $this->validate();
-        if($this->isSelectedColumnInVisibleColumns()) {
-            moveElement(
-                $this->visibleColumns,
-                array_search($this->selectedColumn, $this->visibleColumns),
-                array_search($this->selectedColumn, $this->visibleColumns) + 1)
-            ;
-        }
-    }
-
     function personalize()
     {
-        if($this->areColumnsValid($this->visibleColumns)) {
-            $personalization = $this->userPersonalization() ??
-                TablePersonalization::make(['user_id' => Auth::user()->id, 'table_name' => get_class_name($this)]);
+        $this->validate();
+        $personalization = $this->userPersonalization() ??
+            TablePersonalization::make(['user_id' => Auth::user()->id, 'table_name' => get_class_name($this)]);
 
-            $personalization->columns = '';
-            foreach ($this->visibleColumns as $column){
-                $personalization->columns .= $column . ',';
-            }
-            $personalization->save();
-            Session::flash('success', 'You have successfully personalized the table');
-            return redirect()->to($this->route());
+        $personalization->columns = '';
+        foreach ($this->visibleColumns as $column){
+            $personalization->columns .= $column . ',';
         }
+        $personalization->save();
+        Session::flash('success', 'You have successfully personalized the table');
+        return redirect()->to($this->route());
     }
 
     function hiddenColumns(): Columns
