@@ -1,66 +1,38 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Ticketing System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a fun project, which in it's current iteration offers reusable Livewire create, edit forms, and tables, which help with management of Entities (Entities are just extended Model) within the system. That involves:
 
-## About Laravel
+- Conditional hiding and disabling of fields inside these form components on Controller level
+- Easily configurable Tables (what query builder to work with, specify columns which to display)
+- Service Level Agreement (SLA) assignment based on state of entity, the entity however needs to implement SLAble interface
+- Activities, which are generated when state of Entity changes, these are automatically displayed within Edit Forms
+- Comments, which can be added on Edit Forms, these are displayed together with activities
+- Panel, which allows to save favorite panel options
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The specific use case of the system is currently a Ticket Management (Incidents, Requests and Tasks). That involves creation, assignment of these entities to resolver groups, changing the status based on resolution state, and setting priority, which we use to calculate SLA duration. We are then able to search for these entities in respective tables located in panel option named Incidents, Requests and Tasks.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+There are PHP packages like Filament, that do much more than that, but as mentioned above, this is a fun project, so I don't mind reinventing the wheel.
 
-Laravel is accessible, powerful, and provides tools blank for large, robust applications.
+## How to use the system
 
-## Learning Laravel
+After you run all the Laravel migrations just login with:
+- E-mail: resolver@gmail.com
+- Password: password
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to create started with the framework.
+There are 3 total roles User, Resolver and Manager within the system.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+User is able to only use Incident and Request create forms, and edit forms for Incidents and Requests created by themselves.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Resolver has all permissions as User able to view edit forms for all existing entities within the system. Also Resolver is able to view panel on the left side. There are links to Tables for Incidents, Requests and Tasks.
 
-## Laravel Sponsors
+Manager has all permissions as Resolver and User, but in addition Manager is able to change Incident and Request priorities.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Role names are in match with email addresses, so user has email address "user@gmail.com". Password is always set as "password".
 
-### Premium Partners
+## Future plans
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+- Add support for custom table Filters
+- Allow to save custom tables
+- Implement customizable Dashboards, which will show arbitrary data based on provided logic by user
+- Add new Entity "Changes", which will represent standard CAB like changes
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
