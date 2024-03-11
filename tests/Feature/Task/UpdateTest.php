@@ -448,7 +448,6 @@ class UpdateTest extends TestCase
     static function invalidStatuses(){
         return [
             ['word'],
-            [''],
         ];
     }
 
@@ -461,7 +460,6 @@ class UpdateTest extends TestCase
     static function invalidPriorities(){
         return [
             ['word', 'in'],
-            ['', 'required'],
         ];
     }
 

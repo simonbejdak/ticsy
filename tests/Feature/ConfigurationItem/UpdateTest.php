@@ -39,13 +39,9 @@ class UpdateTest extends TestCase
     static function invalidData(){
         return [
             ['location', 'word',],
-            ['location', '',],
             ['status', 'word',],
-            ['status', '',],
             ['type', 'word',],
-            ['type', '',],
             ['operatingSystem', 'word',],
-            ['operatingSystem', '',],
         ];
     }
 

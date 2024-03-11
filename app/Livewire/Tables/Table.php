@@ -36,7 +36,7 @@ abstract class Table extends Component
         return \App\Helpers\Table\Table::make($this->query())
             ->sortProperty($this->sortProperty)
             ->sortOrder($this->sortOrder)
-            ->columns($this->columns());
+            ->columns($this->getColumns());
     }
 
     function mount(): void
@@ -91,7 +91,7 @@ abstract class Table extends Component
         return true;
     }
 
-    protected function setColumns(): Columns
+    protected function getColumns(): Columns
     {
         return $this->columns();
     }

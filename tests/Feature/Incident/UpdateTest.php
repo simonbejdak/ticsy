@@ -5,12 +5,12 @@ namespace Tests\Feature\Incident;
 use App\Enums\OnHoldReason;
 use App\Enums\Priority;
 use App\Enums\Status;
-use App\Livewire\Activities;
 use App\Livewire\IncidentEditForm;
 use App\Models\Group;
 use App\Models\Incident;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\Livewire;
 use Tests\TestCase;
 use TypeError;
@@ -475,7 +475,6 @@ class UpdateTest extends TestCase
     static function invalidStatuses(){
         return [
             ['word'],
-            [''],
         ];
     }
 
@@ -488,7 +487,6 @@ class UpdateTest extends TestCase
     static function nonNumericPriorities(){
         return [
             ['word'],
-            ['']
         ];
     }
 

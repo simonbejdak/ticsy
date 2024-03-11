@@ -23,7 +23,9 @@ class TableBuilder
     function columns(Columns $columns): self
     {
         foreach($columns as $column){
-            $this->column($column);
+            if($column->visible){
+                $this->column($column);
+            }
         }
         return $this;
     }

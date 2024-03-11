@@ -34,7 +34,7 @@ abstract class ExtendedTable extends Table
         return \App\Helpers\Table\ExtendedTable::make($this->query())
             ->sortProperty($this->sortProperty)
             ->sortOrder($this->sortOrder)
-            ->columns($this->visibleColumns())
+            ->columns($this->getColumns())
             ->itemsPerPage($this->itemsPerPage)
             ->paginationIndex($this->isPaginationIndexValid() ? $this->paginationIndex : 1)
             ->searchCases($this->searchCases);
@@ -104,12 +104,12 @@ abstract class ExtendedTable extends Table
 
     function hiddenColumns(): Columns
     {
-        return $this->setColumns()->hidden();
+        return $this->getColumns()->hidden();
     }
 
     function visibleColumns(): Columns
     {
-        return $this->setColumns()->visible();
+        return $this->getColumns()->visible();
     }
 
     protected function isPaginationIndexValid(): bool
@@ -126,12 +126,12 @@ abstract class ExtendedTable extends Table
         return false;
     }
 
-    protected function setColumns(): Columns
+    protected function getColumns(): Columns
     {
         if($this->userPersonalization()){
             return $this->columns()->personalize($this->userPersonalization());
         }
-        return parent::setColumns();
+        return parent::getColumns();
     }
 
     protected function userPersonalization(): TablePersonalization|null
