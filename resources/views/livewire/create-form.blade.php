@@ -11,7 +11,7 @@
                         <x-field :$field />
                     @endforeach
                     <div class="flex flex-row justify-end">
-                        <x-secondary-button class="mt-2">Create</x-secondary-button>
+                        <x-primary-button class="mt-2">Create</x-primary-button>
                     </div>
                 </div>
             </section>

@@ -8,7 +8,7 @@
                         <x-field :$field />
                     @endforeach
                         <div class="flex flex-row justify-end col-span-2 mt-2 mb-4">
-                            <x-secondary-button>Update</x-secondary-button>
+                            <x-primary-button>Update</x-primary-button>
                         </div>
                         @foreach($activities as $activity)
                             <x-activity-card :activity="$activity" />
