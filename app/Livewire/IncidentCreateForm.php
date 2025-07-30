@@ -37,7 +37,7 @@ class IncidentCreateForm extends CreateForm
     public function mount(): void
     {
         $this->formTitle = 'Create an Incident';
-        $this->formDescription = 'Report to us, that something does not work the way it should, we\'ll take a look';
+        $this->formDescription = 'Report to us, that something does not work the way it should.';
         $this->category = null;
         $this->item = null;
         $this->description = null;

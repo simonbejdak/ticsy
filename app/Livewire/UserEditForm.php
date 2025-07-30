@@ -71,7 +71,6 @@ class UserEditForm extends EditForm
             Select::make('status')->options(UserStatus::class),
             TextInput::make('created')->label('Created at')->value($this->user->created_at->format('d.m.Y h:i:s')),
             TextInput::make('updated')->label('Updated at')->value($this->user->updated_at->format('d.m.Y h:i:s')),
-            CheckBox::make('isResolver')->label('Is Resolver')->checkedIf($this->user->isResolver()),
         );
     }
 

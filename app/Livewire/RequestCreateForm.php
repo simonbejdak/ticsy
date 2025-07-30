@@ -37,7 +37,7 @@ class RequestCreateForm extends CreateForm
     public function mount(): void
     {
         $this->formTitle = 'Create a Request';
-        $this->formDescription = 'Everything works as expected, you just need IT to do something for you';
+        $this->formDescription = 'Everything works as expected, you just need us to do something for you';
         $this->category = null;
         $this->item = null;
         $this->description = null;

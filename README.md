@@ -5,7 +5,7 @@ Ticsy is a tool, which allows to manage ITIL processes and integrations like Inc
 - Dynamic SLA calculation
 - Arbitrary definitions of Create, Edit Forms and Tables on code level
 - Intuitive user-friendly interface
-- Personalizable Tables
+- Personalized Tables
 
 [supported-databases]: https://laravel.com/docs/10.x/database
 [php]: https://www.php.net/
@@ -15,14 +15,14 @@ Ticsy is a tool, which allows to manage ITIL processes and integrations like Inc
 [git]: https://git-scm.com/
 
 ## Requirements
-* [PHP][php] 8.2.12+
+* [PHP][php] 8.2.0+
 * [MySQL][mysql] 5.7+ (or any other DB system [supported][supported-databases] by Laravel)
 * [Composer][composer] 2.7.1+
 * [Node.js][node] 10.2.4+
 * [Git][git]
 
 ## Installation
-First of all, run the command:
+First of all, run these commands:
 ```
 git clone https://www.github.com/bejdakxd/ticsy
 cd ticsy
@@ -32,7 +32,7 @@ php artisan key:generate
 npm install
 npm run build
 ```
-Next, create a new database in your DB system and modify the following entries in the .env file (located in the root of the folder) to match your database configuration:
+Next, create a new database in your DB system and modify the following entries in the .env file (located in the root folder) to match your database configuration:
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1

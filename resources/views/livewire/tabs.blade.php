@@ -7,7 +7,7 @@
             >{{ ucfirst($tab->value) }}</div>
         @endforeach
     </div>
-    <div class="bg-white border border-slate-400 -mt-1 px-4 py-8">
+    <div class="bg-white border border-slate-400 -mt-1 px-4 py-8 mb-4">
 {{--        Due to Livewire nature we need to have a key defined for such dynamic Livewire component rendering, otherwise the component does not create refreshed properly after clicking on another tab --}}
         @livewire($this->viewedTab()->value, ['model' => $model], key(array_search($this->viewedTab(), $this->tabs())))
     </div>

@@ -5,7 +5,7 @@ namespace Tables;
 use App\Enums\Location;
 use App\Enums\Priority;
 use App\Enums\UserStatus;
-use App\Helpers\Table\Table;
+use App\Livewire\Tables\Table;
 use App\Livewire\Tables\TasksTable;
 use App\Livewire\Tables\UsersTable;
 use App\Models\Task;
